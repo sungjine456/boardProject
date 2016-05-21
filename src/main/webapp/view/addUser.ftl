@@ -56,7 +56,7 @@
 					</tr>
 					<tr>
 						<td colspan="2" style="padding-left: 80%">
-							<button type="submit" class="btn btn-primary">회원가입</button>
+							<button type="submit" id="join_btn" class="btn btn-primary">회원가입</button>
 						</td>
 					</tr>
 				</table>
