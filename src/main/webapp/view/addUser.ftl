@@ -8,50 +8,50 @@
 	<body>
 		<div class="container">
 			<h1> 회원 가입 </h1>
-			<form id="form" action="/" method="post">
+			<form action="/" method="post">
 				<table class="table table-hover">
 					<colgroup>
 						<col width="10%"/>
 						<col width="90%"/>
 					</colgroup>
 					<tr>
-						<td>
+						<th>
 							<label for="u_i">아이디 : </label>
-						</td>
+						</th>
 						<td>
-							<input type="text" id="u_i" class="form-control" name="user_id"/>
+							<input type="text" id="id" class="form-control" name="id"/>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<th>
 							<label for="p_w">비밀번호 : </label>
-						</td>
+						</th>
 						<td>
-							<input type="password" id="p_w" class="form-control" name="password"/>
+							<input type="password" id="password" class="form-control" name="password"/>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<th>
 							<label for="p_w_confirm">비밀번호 확인 : </label>
-						</td>
+						</th>
 						<td>
-							<input type="password" id="p_w_confirm" class="form-control"/>
+							<input type="password" id="passwordConfirm" class="form-control"/>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<th>
 							<label for="n_a">이름 : </label>
-						</td>
+						</th>
 						<td>
-							<input type="text" id="n_a" class="form-control" name="name"/>
+							<input type="text" id="name" class="form-control" name="name"/>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<th>
 							<label for="e_m">이메일 : </label>
-						</td>
+						</th>
 						<td>
-							<input type="text" id="e_m" class="form-control" name="email"/>
+							<input type="text" id="email" class="form-control" name="email"/>
 						</td>
 					</tr>
 					<tr>
@@ -62,8 +62,8 @@
 				</table>
 			</form>
 		</div>
+		<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>
+		<script type="text/javascript" src="js/boot/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/user/join.js"></script>
 	</body>
-	<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>
-	<script type="text/javascript" src="js/boot/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/user/join.js"></script>
 </html>

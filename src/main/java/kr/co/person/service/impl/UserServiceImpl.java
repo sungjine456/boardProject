@@ -15,11 +15,19 @@ public class UserServiceImpl implements UserService {
 	@Autowired Common common;
 	
 	@Override
-	public void create(User user){
+	public boolean create(User user){
 		String password = user.getPassword();
 		password = common.passwordEncryptiop(password);
+		if(password == null){
+			return false;
+		}
 		user.setPassword(password);
 		
-		userRepository.save(user);
+		User u = userRepository.save(user);
+		if(u == null){
+			return false;
+		}
+		
+		return true;
 	}
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Common {
 	public String passwordEncryptiop(String str){
-		String SHA = ""; 
+		String sha = ""; 
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
 			sh.update(str.getBytes()); 
@@ -17,12 +17,12 @@ public class Common {
 			for(int i = 0 ; i < byteData.length ; i++){
 				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
 			}
-			SHA = sb.toString();
+			sha = sb.toString() + "personProject";
 			
 		}catch(NoSuchAlgorithmException e){
 			e.printStackTrace(); 
-			SHA = null; 
+			sha = null; 
 		}
-		return SHA;
+		return sha;
 	}
 }

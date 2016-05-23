@@ -41,8 +41,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-		configurer.ignoreUnknownPathExtensions(false)
-				  .defaultContentType(MediaType.TEXT_HTML);
+		configurer.ignoreUnknownPathExtensions(false).defaultContentType(MediaType.TEXT_HTML);
 	}
 	
 	@Override
@@ -51,14 +50,12 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	}
 	
 	@Override
-	public void configureDefaultServletHandling(
-			DefaultServletHandlerConfigurer configurer) {
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
 	}
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/**")
-				.addResourceLocations("classpath:/static/");
+		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 	}
 }
