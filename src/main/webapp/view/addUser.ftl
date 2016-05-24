@@ -8,7 +8,7 @@
 	<body>
 		<div class="container">
 			<h1> 회원 가입 </h1>
-			<form action="/" method="post">
+			<form id="form" action="/" method="post">
 				<table class="table table-hover">
 					<colgroup>
 						<col width="10%"/>
