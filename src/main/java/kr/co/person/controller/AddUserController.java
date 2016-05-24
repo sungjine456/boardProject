@@ -23,7 +23,8 @@ public class AddUserController {
 	@Autowired UserService userService;
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String addUserView(){
+	public String addUserView(HttpServletRequest req){
+		req.setAttribute("message", "");
 		return "view/addUser";
 	}
 	
