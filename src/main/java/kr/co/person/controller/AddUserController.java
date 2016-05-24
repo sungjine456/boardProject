@@ -2,6 +2,8 @@ package kr.co.person.controller;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,19 @@ public class AddUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String addUser(@ModelAttribute User user){
+	public String addUser(@ModelAttribute User user, HttpServletRequest req){
 		log.info("AddUserController");
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
-		userService.create(user);
-		
-		return "view/addUser";
+		boolean bool = userService.create(user);
+		if(!bool){
+			req.setAttribute("message", "회원가입에 실패하셨습니다.");
+			return "view/addUser";
+		} else {
+			req.setAttribute("message", "회원가입에 성공하셨습니다.");
+			return "view/addUser";
+		}
 	}
 }
