@@ -4,4 +4,5 @@ import kr.co.person.domain.User;
 
 public interface UserService {
 	boolean create(User user);
+	boolean idCheck(String id);
 }

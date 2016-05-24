@@ -30,4 +30,14 @@ public class UserServiceImpl implements UserService {
 		
 		return true;
 	}
+
+	@Override
+	public boolean idCheck(String id) {
+		String idVal = userRepository.checkUserId(id);
+		if(idVal == null){
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

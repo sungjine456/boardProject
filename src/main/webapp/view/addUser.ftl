@@ -23,6 +23,7 @@
 							<input type="text" id="id" class="form-control" name="id"/>
 						</td>
 						<td>
+							<span id="idSpan"></span>
 						</td>
 					</tr>
 					<tr>
@@ -30,9 +31,10 @@
 							<label for="password">비밀번호 : </label>
 						</th>
 						<td>
-							<input type="password" id="password" class="form-control" name="password"/>
+							<input type="password" id="password" class="form-control" name="password" maxlength="15"/>
 						</td>
 						<td>
+							<font>6자 이상 15자 이하로 입력하셔야 합니다.</font>
 						</td>
 					</tr>
 					<tr>
@@ -40,7 +42,7 @@
 							<label for="passwordConfirm">비밀번호 확인 : </label>
 						</th>
 						<td>
-							<input type="password" id="passwordConfirm" class="form-control"/>
+							<input type="password" id="passwordConfirm" class="form-control" maxlength="15"/>
 						</td>
 						<td>
 							<span id="passwordSpan"></span>

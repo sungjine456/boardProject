@@ -24,13 +24,14 @@ public class AddUserController {
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String addUserView(HttpServletRequest req){
+		log.info("execute AddUserViewController");
 		req.setAttribute("message", "");
 		return "view/addUser";
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
 	public String addUser(@ModelAttribute User user, HttpServletRequest req){
-		log.info("AddUserController");
+		log.info("execute AddUserController");
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
@@ -43,5 +44,18 @@ public class AddUserController {
 			req.setAttribute("message", "회원가입에 성공하셨습니다.");
 			return "view/addUser";
 		}
+	}
+	
+	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
+	public String idCheck(@ModelAttribute User user, HttpServletRequest req){
+		log.info("execute idCheckController");
+		boolean bool = userService.idCheck(user.getId());
+		if(bool){
+			req.setAttribute("message", "가입 가능한 아이디입니다");
+		} else {
+			req.setAttribute("message", "이미 가입되어 있는 아이디입니다.");
+		}
+		
+		return "view/ajaxPage";
 	}
 }

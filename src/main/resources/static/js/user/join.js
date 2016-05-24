@@ -9,7 +9,12 @@ $("#joinBtn").click(function(){
 	}
 	
 	if(pw.val() !== pwConfirm.val()){
-		alert("비밀번호를 확인해주세요");
+		alert("비밀번호확인을 다시 입력해주세요");
+		return false;
+	}
+	
+	if(pw.val().length < 6 && pwConfirm.val().length < 6){
+		alert("비밀번호는 6자 이상 15자 이하로 입력하셔야 합니다.");
 		return false;
 	}
 	
@@ -38,4 +43,16 @@ $("#form #passwordConfirm").keyup(function(){
 	} else {
 		$("#passwordSpan").html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
 	}
+});
+
+$("#form #id").keyup(function(){
+	var id = $(this).val();
+	$.ajax({
+		url : "/idCheck",
+		type : "POST",
+		data : {"id" : id},
+		success : function(data){
+			$("#idSpan").html("<font>"+data+"</font>");
+		}
+	});
 });
