@@ -66,6 +66,7 @@
 							<input type="text" id="email" class="form-control" name="email"/>
 						</td>
 						<td>
+							<span id="emailSpan"></span>
 						</td>
 					</tr>
 					<tr>

@@ -2,12 +2,13 @@ package kr.co.person.common;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class Common {
-	public String passwordEncryptiop(String str){
+	public String passwordEncryption(String str){
 		String sha = ""; 
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
@@ -25,4 +26,8 @@ public class Common {
 		}
 		return sha;
 	}
+	
+	public boolean isEmail(String email) {
+		return Pattern.compile("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$").matcher(email).matches();
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.domain.User;
@@ -47,14 +48,23 @@ public class AddUserController {
 	}
 	
 	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
-	public String idCheck(@ModelAttribute User user, HttpServletRequest req){
+	public String idCheck(@RequestParam String id, HttpServletRequest req){
 		log.info("execute idCheckController");
-		boolean bool = userService.idCheck(user.getId());
+		boolean bool = userService.idCheck(id);
 		if(bool){
 			req.setAttribute("message", "가입 가능한 아이디입니다");
 		} else {
 			req.setAttribute("message", "이미 가입되어 있는 아이디입니다.");
 		}
+		
+		return "view/ajaxPage";
+	}
+	
+	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
+	public String emailCheck(@RequestParam String email, HttpServletRequest req){
+		log.info("execute emailCheckController   : "  + email);
+		
+		req.setAttribute("message", userService.emailCheck(email));
 		
 		return "view/ajaxPage";
 	}
