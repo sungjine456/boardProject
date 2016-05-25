@@ -18,19 +18,19 @@ import kr.co.person.domain.User;
 import kr.co.person.service.UserService;
 
 @Controller
-public class AddUserController {
+public class UserController {
 	static final Logger log = LoggerFactory.getLogger(BoardProjectApplication.class);
 	
 	@Autowired UserService userService;
 	
-	@RequestMapping(value="/", method=RequestMethod.GET)
+	@RequestMapping(value="/addUser", method=RequestMethod.GET)
 	public String addUserView(HttpServletRequest req){
 		log.info("execute AddUserViewController");
 		req.setAttribute("message", "");
 		return "view/addUser";
 	}
 	
-	@RequestMapping(value="/", method=RequestMethod.POST)
+	@RequestMapping(value="/addUser", method=RequestMethod.POST)
 	public String addUser(@ModelAttribute User user, HttpServletRequest req){
 		log.info("execute AddUserController");
 		Date date = new Date();
@@ -57,7 +57,7 @@ public class AddUserController {
 			req.setAttribute("message", "이미 가입되어 있는 아이디입니다.");
 		}
 		
-		return "view/ajaxPage";
+		return "common/ajaxPage";
 	}
 	
 	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
@@ -66,6 +66,11 @@ public class AddUserController {
 		
 		req.setAttribute("message", userService.emailCheck(email));
 		
-		return "view/ajaxPage";
+		return "common/ajaxPage";
+	}
+	
+	@RequestMapping(value="/")
+	public String login(){
+		return "view/login";
 	}
 }
