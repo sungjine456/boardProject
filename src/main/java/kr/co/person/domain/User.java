@@ -14,17 +14,17 @@ public class User {
 	@Id
 	@GeneratedValue
 	private int idx;
-	@Column(name="id")
+	@Column(name="id", nullable=false)
 	private String id;
-	@Column(name="password")
+	@Column(name="password", nullable=false)
 	private String password;
-	@Column(name="name")
+	@Column(name="name", nullable=false)
 	private String name;
-	@Column(name="email")
+	@Column(name="email", nullable=false)
 	private String email;
-	@Column(name="reg_date")
+	@Column(name="reg_date", nullable=false)
 	private Date regDate;
-	@Column(name="up_date")
+	@Column(name="up_date", nullable=false)
 	private Date upDate;
 	
 	public User(){
