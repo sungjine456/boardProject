@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script>
+			<#assign message = Request.message!"">
+			<#if message != "">
+				alert("${Request.message}");
+			</#if>
+		</script>
 		<title>로그인</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
