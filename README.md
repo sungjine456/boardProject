@@ -1,12 +1,26 @@
-## È¥ÀÚ¼­ °Ô½ÃÆÇ¸¸µé±â
+## í˜¼ìì„œ ê²Œì‹œíŒë§Œë“¤ê¸°
 ----
 
-## »ç¿ë±â¼ú
+## ì‚¬ìš©ê¸°ìˆ 
 ----
-1. Spring Boot
-2. Gradle
-3. Spring Data JPA
-4. SLF4J
-5. Freemarker
-6. jQuery
-7. bootstrap
+```
+--- front-end
+	1. Freemarker
+	2. bootstrap
+	3. jQuery
+```
+```
+--- back-end
+	1. java 8
+	2. Spring Boot
+	3. Spring Data JPA(ORM)
+	4. MySql
+	5. SLF4J(Logger)
+	6. jUnit(Test)
+```
+```
+--- issue tracker
+	1. Gradle
+	2. Trello
+	3. Git
+```
