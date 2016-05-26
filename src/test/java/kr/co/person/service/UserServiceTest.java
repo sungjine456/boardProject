@@ -1,4 +1,4 @@
-package kr.co.person.repository;
+package kr.co.person.service;
 
 import java.util.Date;
 
@@ -17,11 +17,11 @@ import kr.co.person.domain.User;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BoardProjectApplication.class)
 @WebAppConfiguration
-public class UserRepositoryTest {
-
-	@Autowired private UserRepository userRepository;
+public class UserServiceTest {
+	
+	@Autowired private UserService userService;
     private User user;
- 
+    
     @Before
     public void setUp(){
     	Date d = new Date();
@@ -32,24 +32,11 @@ public class UserRepositoryTest {
         user.setPassword("123456");
         user.setRegDate(d);
         user.setUpDate(d);
-        userRepository.save(user);
-    }
- 
-    @Test
-    public void testUserICheck() {
-    	String id = userRepository.userIdCheck("sungjin");
-    	Assert.assertEquals("sungjin", id);
-    }
-    
-    @Test
-    public void testUserEmialCheck() {
-    	String email = userRepository.userEmialCheck("sungjin@naver.com");
-    	Assert.assertEquals("sungjin@naver.com", email);
+        userService.create(user);
     }
 
     @Test
-    public void testLoginCheck() {
-    	String login = userRepository.loginCheck("sungjin", "123456");
-    	Assert.assertEquals("sungjin", login);
+    public void testLoginCheck(){
+    	Assert.assertTrue(userService.loginCheck("sungjin", "123456"));
     }
 }
