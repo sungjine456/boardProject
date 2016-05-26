@@ -25,14 +25,13 @@ public class UserController {
 	
 	@RequestMapping(value="/addUser", method=RequestMethod.GET)
 	public String addUserView(HttpServletRequest req){
-		log.info("execute AddUserViewController");
-		req.setAttribute("message", "");
+		log.info("execute AddUserViewController addUserView");
 		return "view/addUser";
 	}
 	
 	@RequestMapping(value="/addUser", method=RequestMethod.POST)
 	public String addUser(@ModelAttribute User user, HttpServletRequest req){
-		log.info("execute AddUserController");
+		log.info("execute AddUserViewController addUser");
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
@@ -43,13 +42,13 @@ public class UserController {
 			return "view/addUser";
 		} else {
 			req.setAttribute("message", "회원가입에 성공하셨습니다.");
-			return "view/addUser";
+			return "view/login";
 		}
 	}
 	
 	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
 	public String idCheck(@RequestParam String id, HttpServletRequest req){
-		log.info("execute idCheckController");
+		log.info("execute AddUserViewController idCheck");
 		boolean bool = userService.idCheck(id);
 		if(bool){
 			req.setAttribute("message", "가입 가능한 아이디입니다");
@@ -62,15 +61,29 @@ public class UserController {
 	
 	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
 	public String emailCheck(@RequestParam String email, HttpServletRequest req){
-		log.info("execute emailCheckController   : "  + email);
-		
+		log.info("execute AddUserViewController emailCheck");
 		req.setAttribute("message", userService.emailCheck(email));
 		
 		return "common/ajaxPage";
 	}
 	
-	@RequestMapping(value="/")
-	public String login(){
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public String loginView(){
+		log.info("execute AddUserViewController loginView");
 		return "view/login";
+	}
+	
+	@RequestMapping(value="/", method=RequestMethod.POST)
+	public String login(@ModelAttribute User user, HttpServletRequest req){
+		log.info("execute AddUserViewController login");
+		String id = user.getId();
+		String password = user.getPassword();
+		if(userService.loginCheck(id, password)){
+			req.setAttribute("user", user);
+			return "view/board";
+		} else {
+			req.setAttribute("message", "로그인에 실패하셨습니다.");
+			return "view/login";
+		}
 	}
 }

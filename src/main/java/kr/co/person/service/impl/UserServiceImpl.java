@@ -20,7 +20,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean create(User user){
-		log.info("execute UserService");
+		log.info("execute UserService create");
+		if(user == null){
+			return false;
+		}
 		String password = user.getPassword();
 		String email = user.getEmail();
 		if(!common.isEmail(email)){
@@ -35,16 +38,19 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(password);
 		
 		User u = userRepository.save(user);
+		log.info("create User success");
 		if(u == null){
 			return false;
 		}
-		log.info("create User success");
 		return true;
 	}
 
 	@Override
 	public boolean idCheck(String id) {
-		String idVal = userRepository.checkUserId(id);
+		if(id.equals("") || id == null){
+			return false;
+		}
+		String idVal = userRepository.userIdCheck(id);
 		if(idVal == null){
 			return true;
 		} else {
@@ -54,7 +60,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String emailCheck(String email) {
-		String emailVal = userRepository.checkUserId(email);
+		if(email.equals("") || email == null){
+			return "올바른 형식의 메일을 입력해주세요.";
+		}
+		String emailVal = userRepository.userIdCheck(email);
 		if(emailVal == null && common.isEmail(email)){
 			return "가입 가능한 이메일입니다";
 		} else if(emailVal != null){
@@ -62,5 +71,25 @@ public class UserServiceImpl implements UserService {
 		} else {
 			return "올바른 형식의 메일을 입력해주세요.";
 		}
+	}
+
+	@Override
+	public boolean loginCheck(String id, String password) {
+		log.info("execute UserService loginCheck");
+		if(id == null || id.equals("") || password == null || password.equals("")){
+			return false;
+		}
+		log.info("id & password not null");
+		password = common.passwordEncryption(password);
+		if(password == null){
+			return false;
+		}
+		log.info("passwordEncryption function success");
+		String login = userRepository.loginCheck(id, password);
+		log.info("function loginCheck success");
+		if(login == null){
+			return false;
+		}
+		return true;
 	}
 }

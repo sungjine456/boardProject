@@ -6,4 +6,5 @@ public interface UserService {
 	boolean create(User user);
 	boolean idCheck(String id);
 	String emailCheck(String email);
+	boolean loginCheck(String id, String password);
 }

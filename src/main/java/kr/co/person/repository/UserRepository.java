@@ -8,8 +8,11 @@ import kr.co.person.domain.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	@Query(value = "select id from user where id = ?1", nativeQuery = true)
-	String checkUserId(String id);
+	String userIdCheck(String id);
 
 	@Query(value = "select email from user where email = ?1", nativeQuery = true)
-	String checkUserEmial(String emial);
+	String userEmialCheck(String emial);
+	
+	@Query(value = "select id from user where id = ?1 and password = ?2", nativeQuery = true)
+	String loginCheck(String id, String password);
 }

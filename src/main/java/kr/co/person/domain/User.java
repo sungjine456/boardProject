@@ -16,7 +16,7 @@ public class User {
 	private int idx;
 	@Column(name="id", nullable=false)
 	private String id;
-	@Column(name="password", nullable=false)
+	@Column(name="password", nullable=false, length = 100)
 	private String password;
 	@Column(name="name", nullable=false)
 	private String name;
