@@ -102,4 +102,17 @@ public class UserController {
 		req.setAttribute("message", "로그아웃 하셨습니다.");
 		return "view/login";
 	}
+	
+	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
+	public String translatePassword(@RequestParam String email, HttpServletRequest req){
+		log.info("execute AddUserViewController translatePassword");
+		String password = userService.translatePassword(email);
+		if(password != null){
+			req.setAttribute("message", "비밀번호가 " + password + "로 수정되었습니다.");
+			return "view/login";
+		} else {
+			req.setAttribute("message", "비밀번호 수정을 실패했습니다.");
+			return "view/login";
+		}
+	}
 }

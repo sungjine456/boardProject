@@ -8,4 +8,5 @@ public interface UserService {
 	String emailCheck(String email);
 	User loginCheck(String id, String password);
 	boolean leave(User user);
+	String translatePassword(String email);
 }

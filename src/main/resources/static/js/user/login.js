@@ -7,6 +7,11 @@ $("#joinBtn").click(function(){
 	$(location).attr("href", "/addUser");
 });
 
+$("#translatePasswordBtn").click(function(){
+	alert("asdads");
+	$(location).attr("href", "/translatePassword");
+});
+
 $("#loginBtn").click(function(){
 	if(login.id.val() === ""){
 		alert("아이디를 입력해주세요.");

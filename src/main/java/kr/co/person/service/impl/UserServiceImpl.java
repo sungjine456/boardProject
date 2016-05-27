@@ -98,4 +98,29 @@ public class UserServiceImpl implements UserService {
 		log.info("passwordEncryption function success");
 		return userRepository.loginCheck(id, password);
 	}
+
+	@Override
+	public String translatePassword(String email) {
+		log.info("execute UserService findPassword");
+		if(email == null && !common.isEmail(email)){
+			return null;
+		}
+		User user = userRepository.passwordCheck(email); 
+		if(user == null){
+			return null;
+		}
+		String random = "";
+		for(int i = 0; i < 6; i++){
+			random += ((int)(Math.random() * 10));
+		}
+		String password = common.passwordEncryption(random);
+		if(password == null){
+			return null;
+		}
+		log.info("passwordEncryption function success");
+		user.setPassword(password);
+		userRepository.save(user);
+		
+		return random;
+	}
 }
