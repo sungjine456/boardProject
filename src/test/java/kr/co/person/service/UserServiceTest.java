@@ -2,6 +2,7 @@ package kr.co.person.service;
 
 import java.util.Date;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,11 +33,17 @@ public class UserServiceTest {
         user.setPassword("123456");
         user.setRegDate(d);
         user.setUpDate(d);
-        userService.create(user);
+        userService.join(user);
+    }
+    
+    @After
+    public void tearDown() {
+    	userService.leave(user);
     }
 
     @Test
     public void testLoginCheck(){
-    	Assert.assertTrue(userService.loginCheck("sungjin", "123456"));
+    	user = userService.loginCheck("sungjin", "123456");
+    	Assert.assertEquals("sungjin", user.getId());
     }
 }

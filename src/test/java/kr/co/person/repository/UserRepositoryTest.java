@@ -2,6 +2,7 @@ package kr.co.person.repository;
 
 import java.util.Date;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +35,11 @@ public class UserRepositoryTest {
         user.setUpDate(d);
         userRepository.save(user);
     }
+    
+    @After
+    public void tearDown() {
+    	userRepository.delete(user);
+    }
  
     @Test
     public void testUserICheck() {
@@ -49,7 +55,7 @@ public class UserRepositoryTest {
 
     @Test
     public void testLoginCheck() {
-    	String login = userRepository.loginCheck("sungjin", "123456");
-    	Assert.assertEquals("sungjin", login);
+    	user = userRepository.loginCheck("sungjin", "123456");
+    	Assert.assertEquals("sungjin", user.getId());
     }
 }

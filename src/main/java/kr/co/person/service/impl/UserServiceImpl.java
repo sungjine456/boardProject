@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired Common common;
 	
 	@Override
-	public boolean create(User user){
+	public boolean join(User user){
 		log.info("execute UserService create");
 		if(user == null){
 			return false;
@@ -40,6 +40,17 @@ public class UserServiceImpl implements UserService {
 		User u = userRepository.save(user);
 		log.info("create User success");
 		if(u == null){
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean leave(User user){
+		try{
+			userRepository.delete(user);
+		} catch (Exception e){
+			log.error("UserService leave function : " + e.getMessage());
 			return false;
 		}
 		return true;
@@ -74,22 +85,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean loginCheck(String id, String password) {
+	public User loginCheck(String id, String password) {
 		log.info("execute UserService loginCheck");
 		if(id == null || id.equals("") || password == null || password.equals("")){
-			return false;
+			return null;
 		}
 		log.info("id & password not null");
 		password = common.passwordEncryption(password);
 		if(password == null){
-			return false;
+			return null;
 		}
 		log.info("passwordEncryption function success");
-		String login = userRepository.loginCheck(id, password);
-		log.info("function loginCheck success");
-		if(login == null){
-			return false;
-		}
-		return true;
+		return userRepository.loginCheck(id, password);
 	}
 }
