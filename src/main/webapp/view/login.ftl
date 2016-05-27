@@ -57,8 +57,8 @@
 					</tr>
 				</table>
 			</form>
-			<div class="modal fade" id="layerpop" >
-				<div class="modal-dialog">
+			<div class="modal fade" id="layerpop">
+				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
 						 <div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal">×</button>
@@ -67,7 +67,7 @@
 	 					<div class="modal-body">
 	 						<form id="form" class="form-signin" action="/translatePassword" method="post">
 								<input id="email class="form-control" name="email" "type="text"/> 
-								<button type="submit" class="btn btn-default">재발급</button>
+								<button type="submit" class="btn btn-default" style="float:right">재발급</button>
 							</form>
 						</div>
 					</div>
