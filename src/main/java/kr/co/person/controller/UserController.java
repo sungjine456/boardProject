@@ -2,6 +2,7 @@ package kr.co.person.controller;
 
 import java.util.Date;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -76,7 +77,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@ModelAttribute User user, HttpServletRequest req, HttpServletResponse res){
+	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, HttpServletRequest req, HttpServletResponse res){
 		log.info("execute AddUserViewController login");
 		HttpSession session = req.getSession();
 		String id = user.getId();
@@ -88,6 +89,12 @@ public class UserController {
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 			req.setAttribute("user", user);
+			if(idSave != null && idSave.equals("check")){
+				Cookie cookie = new Cookie("saveId", user.getId());
+			    cookie.setMaxAge(60*60*24);
+			    res.addCookie(cookie);
+			}
+		
 			return "view/board";
 		} else {
 			req.setAttribute("message", "로그인에 실패하셨습니다.");

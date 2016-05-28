@@ -46,7 +46,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<input type="checkbox" id="idSaveCheck"> 로그인 상태 유지
+							<input id="idSaveCheck" name="idSave" type="checkbox" value="check"> 아이디 저장
 						</td>
 						<td>
 							<a data-target="#layerpop" data-toggle="modal" style="float:right">비밀번호 재발급</button>
