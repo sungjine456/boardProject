@@ -45,11 +45,16 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
-							<a id="joinBtn">회원가입</button>
+						<td colspan="2">
+							<input type="checkbox" id="idSaveCheck"> 로그인 상태 유지
 						</td>
 						<td>
-							<a data-target="#layerpop" data-toggle="modal">비밀번호 재발급</button>
+							<a data-target="#layerpop" data-toggle="modal" style="float:right">비밀번호 재발급</button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<a id="joinBtn">회원가입</button>
 						</td>
 						<td>
 							<button type="submit" id="loginBtn" class="btn btn-primary" style="float:right">로그인</button>
