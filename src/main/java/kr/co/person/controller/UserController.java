@@ -71,8 +71,11 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(){
+	public String loginView(HttpServletRequest req){
 		log.info("execute AddUserViewController loginView");
+		if(req.getSession().getAttribute("name") != null){
+			return "view/board";
+		}
 		return "view/login";
 	}
 	
@@ -94,7 +97,6 @@ public class UserController {
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
-		
 			return "view/board";
 		} else {
 			req.setAttribute("message", "로그인에 실패하셨습니다.");
