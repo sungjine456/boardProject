@@ -26,13 +26,13 @@ public class UserController {
 	
 	@Autowired UserService userService;
 	
-	@RequestMapping(value="/addUser", method=RequestMethod.GET)
+	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String addUserView(HttpServletRequest req){
 		log.info("execute AddUserViewController addUserView");
-		return "view/addUser";
+		return "view/user/join";
 	}
 	
-	@RequestMapping(value="/addUser", method=RequestMethod.POST)
+	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String addUser(@ModelAttribute User user, HttpServletRequest req){
 		log.info("execute AddUserViewController addUser");
 		Date date = new Date();
@@ -42,10 +42,10 @@ public class UserController {
 		boolean bool = userService.join(user);
 		if(!bool){
 			req.setAttribute("message", "회원가입에 실패하셨습니다.");
-			return "view/addUser";
+			return "view/user/join";
 		} else {
 			req.setAttribute("message", "회원가입에 성공하셨습니다.");
-			return "view/login";
+			return "view/user/login";
 		}
 	}
 	
@@ -74,9 +74,9 @@ public class UserController {
 	public String loginView(HttpServletRequest req){
 		log.info("execute AddUserViewController loginView");
 		if(req.getSession().getAttribute("name") != null){
-			return "view/board";
+			return "view/board/board";
 		}
-		return "view/login";
+		return "view/user/login";
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
@@ -97,10 +97,10 @@ public class UserController {
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
-			return "view/board";
+			return "view/board/board";
 		} else {
 			req.setAttribute("message", "로그인에 실패하셨습니다.");
-			return "view/login";
+			return "view/user/login";
 		}
 	}
 	
@@ -109,7 +109,7 @@ public class UserController {
 		HttpSession session = req.getSession();
 		session.invalidate();
 		req.setAttribute("message", "로그아웃 하셨습니다.");
-		return "view/login";
+		return "view/user/login";
 	}
 	
 	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
@@ -118,10 +118,10 @@ public class UserController {
 		String password = userService.translatePassword(email);
 		if(password != null){
 			req.setAttribute("message", "비밀번호가 " + password + "로 수정되었습니다.");
-			return "view/login";
+			return "view/user/login";
 		} else {
 			req.setAttribute("message", "비밀번호 수정을 실패했습니다.");
-			return "view/login";
+			return "view/user/login";
 		}
 	}
 }
