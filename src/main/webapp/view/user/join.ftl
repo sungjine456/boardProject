@@ -14,7 +14,7 @@
 	<body>
 		<div class="container">
 			<h1> 회원 가입 </h1>
-			<form id="form" action="/addUser" method="post">
+			<form id="form" action="/join" method="post">
 				<table class="table table-hover">
 					<colgroup>
 						<col width="10%"/>

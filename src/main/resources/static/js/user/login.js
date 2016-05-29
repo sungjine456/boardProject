@@ -5,7 +5,7 @@ var login = {
 };
 
 $("#joinBtn").click(function(){
-	$(location).attr("href", "/addUser");
+	$(location).attr("href", "/join");
 });
 
 $("#translatePasswordBtn").click(function(){

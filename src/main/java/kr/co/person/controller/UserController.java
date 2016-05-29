@@ -74,7 +74,7 @@ public class UserController {
 	public String loginView(HttpServletRequest req){
 		log.info("execute AddUserViewController loginView");
 		if(req.getSession().getAttribute("name") != null){
-			return "view/board/board";
+			return "view/board/frame";
 		}
 		return "view/user/login";
 	}
@@ -97,17 +97,20 @@ public class UserController {
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
-			return "view/board/board";
+			return "view/board/frame";
 		} else {
 			req.setAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
 	}
 	
-	@RequestMapping(value="/logout", method=RequestMethod.POST)
-	public String logout(HttpServletRequest req){
+	@RequestMapping(value="/logout", method=RequestMethod.GET)
+	public String logout(HttpServletRequest req, HttpServletResponse res){
 		HttpSession session = req.getSession();
 		session.invalidate();
+		Cookie cookie = new Cookie("saveId", null);
+		cookie.setMaxAge(0);
+	    res.addCookie(cookie);
 		req.setAttribute("message", "로그아웃 하셨습니다.");
 		return "view/user/login";
 	}
