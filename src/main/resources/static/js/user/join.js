@@ -23,7 +23,7 @@ $("#joinBtn").click(function(){
 	}
 	
 	if(join.pw.val().length < 6 && join.pwConfirm.val().length < 6){
-		alert("비밀번호는 6자 이상 입력하셔야 합니다.");
+		alert("비밀번호는 6자 이상 입력해주세요.");
 		return false;
 	}
 	
@@ -47,6 +47,8 @@ $("#joinBtn").click(function(){
 join.pw.keyup(function(){
 	if(join.pw.val() !== join.pwConfirm.val()){
 		$("#passwordSpan").html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
+	} else if(join.pw.val().length < 6 && join.pwConfirm.val().length < 6){
+		$("#passwordSpan").html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
 	} else {
 		$("#passwordSpan").html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
 	}
@@ -55,6 +57,8 @@ join.pw.keyup(function(){
 join.pwConfirm.keyup(function(){
 	if(join.pw.val() !== join.pwConfirm.val()){
 		$("#passwordSpan").html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
+	} else if(join.pw.val().length < 6 && join.pwConfirm.val().length < 6){
+		$("#passwordSpan").html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
 	} else {
 		$("#passwordSpan").html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
 	}
@@ -66,7 +70,7 @@ join.id.keyup(function(){
 		type : "POST",
 		data : {"id" : join.id.val()},
 		success : function(data){
-			$("#idSpan").html("<font>"+data+"</font>");
+			$("#idSpan").html(data);
 		}
 	});
 });
@@ -77,7 +81,7 @@ join.email.keyup(function(){
 		type : "POST",
 		data : {"email" : join.email.val()},
 		success : function(data){
-			$("#emailSpan").html("<font>"+data+"</font>");
+			$("#emailSpan").html(data);
 		}
 	});
 });

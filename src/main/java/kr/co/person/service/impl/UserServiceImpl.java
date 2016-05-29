@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Common;
+import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;
@@ -19,10 +20,10 @@ public class UserServiceImpl implements UserService {
 	@Autowired Common common;
 	
 	@Override
-	public String join(User user){
+	public OkCheck join(User user){
 		log.info("execute UserService create");
 		if(user == null){
-			return "회원가입에 실패하셨습니다.";
+			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
 		String id = user.getId();
 		String password = user.getPassword();
@@ -30,15 +31,15 @@ public class UserServiceImpl implements UserService {
 		
 		String joinCheck = userRepository.userIdCheck(id);
 		if(joinCheck != null){
-			return "이미 가입되어있는 회원입니다.";
+			return new OkCheck("이미 가입되어있는 회원입니다.", false);
 		}
 		if(!common.isEmail(email)){
-			return "회원가입에 실패하셨습니다.";
+			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
 		log.info("isEmail function success");
 		password = common.passwordEncryption(password);
 		if(password == null){
-			return "회원가입에 실패하셨습니다.";
+			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
@@ -46,9 +47,9 @@ public class UserServiceImpl implements UserService {
 		User saveUser = userRepository.save(user);
 		log.info("create User success");
 		if(saveUser == null){
-			return "회원가입에 실패하셨습니다.";
+			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
-		return "회원가입에 성공하셨습니다.";
+		return new OkCheck("회원가입에 성공하셨습니다.", true);
 	}
 	
 	@Override
@@ -63,30 +64,30 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean idCheck(String id) {
+	public OkCheck idCheck(String id) {
 		if(id.equals("") || id == null){
-			return false;
+			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
 		}
 		String idVal = userRepository.userIdCheck(id);
 		if(idVal == null){
-			return true;
+			return new OkCheck("가입 가능한 아이디입니다", true);
 		} else {
-			return false;
+			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
 		}
 	}
 
 	@Override
-	public String emailCheck(String email) {
-		if(email.equals("") || email == null){
-			return "올바른 형식의 메일을 입력해주세요.";
+	public OkCheck emailCheck(String email) {
+		if(email == null || email.equals("")){
+			return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
 		}
-		String emailVal = userRepository.userIdCheck(email);
-		if(emailVal == null && common.isEmail(email)){
-			return "가입 가능한 이메일입니다";
-		} else if(emailVal != null){
-			return "이미 가입되어 있는 이메일입니다.";
+		String emailVal = userRepository.userEmialCheck(email);
+		if(emailVal != null && common.isEmail(email)){
+			return new OkCheck("이미 가입되어 있는 이메일입니다.", false);
+		} else if(emailVal == null && common.isEmail(email)){
+			return new OkCheck("가입 가능한 이메일입니다.", true);
 		} else {
-			return "올바른 형식의 메일을 입력해주세요.";
+			return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
 		}
 	}
 

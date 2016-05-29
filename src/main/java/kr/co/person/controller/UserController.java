@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
 import kr.co.person.service.UserService;
 
@@ -33,26 +34,33 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@ModelAttribute User user, HttpServletRequest req){
+	public String join(@ModelAttribute User user, HttpServletRequest req, HttpServletResponse res){
 		log.info("execute AddUserViewController addUser");
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
-		String str = userService.join(user);
-		req.setAttribute("message", str);
-		return "view/user/login";
+		OkCheck ok = userService.join(user);
+		req.setAttribute("message", ok.getMessage());
+		if(ok.isBool()){
+			HttpSession session = req.getSession();
+			session.setAttribute("idx", user.getIdx());
+			session.setAttribute("id", user.getId());
+			session.setAttribute("name", user.getName());
+			session.setAttribute("email", user.getEmail());
+			req.setAttribute("user", user);
+		    
+			return "view/board/frame";
+		} else {
+			return "view/user/join";
+		}
 	}
 	
 	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
 	public String idCheck(@RequestParam String id, HttpServletRequest req){
 		log.info("execute AddUserViewController idCheck");
-		boolean bool = userService.idCheck(id);
-		if(bool){
-			req.setAttribute("message", "가입 가능한 아이디입니다");
-		} else {
-			req.setAttribute("message", "이미 가입되어 있는 아이디입니다.");
-		}
+		req.setAttribute("message", userService.idCheck(id).getMessage());
+		req.setAttribute("bool", userService.idCheck(id).isBool());
 		
 		return "common/ajaxPage";
 	}
@@ -60,7 +68,8 @@ public class UserController {
 	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
 	public String emailCheck(@RequestParam String email, HttpServletRequest req){
 		log.info("execute AddUserViewController emailCheck");
-		req.setAttribute("message", userService.emailCheck(email));
+		req.setAttribute("message", userService.emailCheck(email).getMessage());
+		req.setAttribute("bool", userService.emailCheck(email).isBool());
 		
 		return "common/ajaxPage";
 	}
@@ -88,7 +97,7 @@ public class UserController {
 			session.setAttribute("email", user.getEmail());
 			req.setAttribute("user", user);
 			if(idSave != null && idSave.equals("check")){
-				Cookie cookie = new Cookie("saveId", user.getId());
+				Cookie cookie = new Cookie("saveId", idSave);
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
@@ -103,9 +112,6 @@ public class UserController {
 	public String logout(HttpServletRequest req, HttpServletResponse res){
 		HttpSession session = req.getSession();
 		session.invalidate();
-		Cookie cookie = new Cookie("saveId", null);
-		cookie.setMaxAge(0);
-	    res.addCookie(cookie);
 		req.setAttribute("message", "로그아웃 하셨습니다.");
 		return "view/user/login";
 	}
