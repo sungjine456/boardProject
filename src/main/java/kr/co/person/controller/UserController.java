@@ -27,26 +27,21 @@ public class UserController {
 	@Autowired UserService userService;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
-	public String addUserView(HttpServletRequest req){
+	public String joinView(HttpServletRequest req){
 		log.info("execute AddUserViewController addUserView");
 		return "view/user/join";
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String addUser(@ModelAttribute User user, HttpServletRequest req){
+	public String join(@ModelAttribute User user, HttpServletRequest req){
 		log.info("execute AddUserViewController addUser");
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
-		boolean bool = userService.join(user);
-		if(!bool){
-			req.setAttribute("message", "회원가입에 실패하셨습니다.");
-			return "view/user/join";
-		} else {
-			req.setAttribute("message", "회원가입에 성공하셨습니다.");
-			return "view/user/login";
-		}
+		String str = userService.join(user);
+		req.setAttribute("message", str);
+		return "view/user/login";
 	}
 	
 	@RequestMapping(value="/idCheck", method=RequestMethod.POST)

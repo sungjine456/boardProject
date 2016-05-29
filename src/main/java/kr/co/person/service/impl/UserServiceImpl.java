@@ -19,30 +19,36 @@ public class UserServiceImpl implements UserService {
 	@Autowired Common common;
 	
 	@Override
-	public boolean join(User user){
+	public String join(User user){
 		log.info("execute UserService create");
 		if(user == null){
-			return false;
+			return "회원가입에 실패하셨습니다.";
 		}
+		String id = user.getId();
 		String password = user.getPassword();
 		String email = user.getEmail();
+		
+		String joinCheck = userRepository.userIdCheck(id);
+		if(joinCheck != null){
+			return "이미 가입되어있는 회원입니다.";
+		}
 		if(!common.isEmail(email)){
-			return false;
+			return "회원가입에 실패하셨습니다.";
 		}
 		log.info("isEmail function success");
 		password = common.passwordEncryption(password);
 		if(password == null){
-			return false;
+			return "회원가입에 실패하셨습니다.";
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
 		
-		User u = userRepository.save(user);
+		User saveUser = userRepository.save(user);
 		log.info("create User success");
-		if(u == null){
-			return false;
+		if(saveUser == null){
+			return "회원가입에 실패하셨습니다.";
 		}
-		return true;
+		return "회원가입에 성공하셨습니다.";
 	}
 	
 	@Override
