@@ -51,6 +51,8 @@ public class UserRepositoryTest {
     public void testUserEmialCheck() {
     	String email = userRepository.userEmialCheck("sungjin@naver.com");
     	Assert.assertEquals("sungjin@naver.com", email);
+    	email = userRepository.userEmialCheck("ass@naver.com");
+    	Assert.assertNull(email);
     }
 
     @Test

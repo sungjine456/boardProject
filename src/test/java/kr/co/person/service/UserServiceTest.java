@@ -46,4 +46,18 @@ public class UserServiceTest {
     	user = userService.loginCheck("sungjin", "123456");
     	Assert.assertEquals("sungjin", user.getId());
     }
+    
+    @Test
+    public void testEmailCheck(){
+    	String email = null;
+    	Assert.assertEquals("올바른 형식의 메일을 입력해주세요.", userService.emailCheck(email).getMessage());
+    	email = "";
+    	Assert.assertEquals("올바른 형식의 메일을 입력해주세요.", userService.emailCheck(email).getMessage());
+    	email = "tjdwls@naver.com";
+    	Assert.assertEquals("가입 가능한 이메일입니다.", userService.emailCheck(email).getMessage());
+    	email = user.getEmail();
+    	Assert.assertEquals("이미 가입되어 있는 이메일입니다.", userService.emailCheck(email).getMessage());
+    	email = "sungjin";
+    	Assert.assertEquals("올바른 형식의 메일을 입력해주세요.", userService.emailCheck(email).getMessage());
+    }
 }
