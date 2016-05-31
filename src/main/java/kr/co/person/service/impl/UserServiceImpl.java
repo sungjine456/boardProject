@@ -130,4 +130,9 @@ public class UserServiceImpl implements UserService {
 		
 		return random;
 	}
+
+	@Override
+	public User findUserForIdx(int idx) {
+		return userRepository.findOne(idx);
+	}
 }

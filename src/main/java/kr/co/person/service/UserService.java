@@ -10,4 +10,5 @@ public interface UserService {
 	User loginCheck(String id, String password);
 	boolean leave(User user);
 	String translatePassword(String email);
+	User findUserForIdx(int idx);
 }
