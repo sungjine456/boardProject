@@ -22,6 +22,8 @@ public class UserServiceTest {
 	@Autowired
 	private UserService userService;
 	private User user;
+	// 비밀번호 123456을 암호화한 형태
+    private String password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92personProject";
 
 	@Test
 	public void testLoginCheck(){
@@ -50,9 +52,13 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void test(){
+	public void testChangePassword(){
+		user = userService.findUserForIdx(1);
+		Assert.assertEquals(password, user.getPassword());
 		OkCheck ok = userService.changePassword(1, "123456", "654321");
 		Assert.assertTrue(ok.isBool());
 		Assert.assertEquals("비밀번호 수정이 완료되었습니다.", ok.getMessage());
+		user = userService.findUserForIdx(1);
+		Assert.assertEquals("481f6cc0511143ccdd7e2d1b1b94faf0a700a8b49cd13922a70b5ae28acaa8c5personProject", user.getPassword());
 	}
 }
