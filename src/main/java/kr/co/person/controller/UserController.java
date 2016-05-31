@@ -144,4 +144,23 @@ public class UserController {
 		req.setAttribute("email", user.getEmail());
 		return "view/user/mypage";
 	}
+	
+	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
+	public String changePassword(@RequestParam String password, @RequestParam String changePassword, HttpServletRequest req){
+		log.info("execute AddUserViewController mypageView");
+		if(req.getSession().getAttribute("idx") == null){
+			log.info("execute AddUserViewController no login");
+			req.setAttribute("message", "로그인 후 이용해 주세요.");
+			return "view/user/login";
+		}
+		int idx = (int)req.getSession().getAttribute("idx");
+		User user = userService.findUserForIdx(idx);
+		req.setAttribute("id", user.getId());
+		req.setAttribute("name", user.getName());
+		req.setAttribute("email", user.getEmail());
+		
+		OkCheck ok = userService.changePassword(idx, password, changePassword);
+		req.setAttribute("message", ok.getMessage());
+		return "view/user/mypage";
+	}
 }

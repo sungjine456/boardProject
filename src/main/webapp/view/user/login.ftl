@@ -71,7 +71,7 @@
 						</div>
 	 					<div class="modal-body">
 	 						<form id="form" class="form-signin" action="/translatePassword" method="post">
-								<input id="email class="form-control" name="email" "type="text"/> 
+								<input id="email" class="form-control" name="email" "type="text"/> 
 								<button type="submit" class="btn btn-default" style="float:right">재발급</button>
 							</form>
 						</div>

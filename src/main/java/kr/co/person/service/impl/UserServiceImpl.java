@@ -135,4 +135,34 @@ public class UserServiceImpl implements UserService {
 	public User findUserForIdx(int idx) {
 		return userRepository.findOne(idx);
 	}
+
+	@Override
+	public OkCheck changePassword(int idx, String password, String changePassword) {
+		log.info("execute UserService changePassword");
+		if(idx == 0){
+			return new OkCheck("로그인 후 이용해주세요.", false);
+		}
+		if(password == null){
+			return new OkCheck("비밀번호를 입력해 주세요", false);
+		}
+		if(changePassword == null){
+			return new OkCheck("비밀번호 수정을 입력해 주세요", false);
+		}
+		User user = userRepository.findOne(idx);
+		password = common.passwordEncryption(password);
+		if(password == null){
+			return new OkCheck("비밀번호를 다시 입력해 주세요", false);
+		} else if(!password.equals(user.getPassword())){
+			return new OkCheck("아이디의 비밀번호가 맞지 않습니다.", false);
+		}
+		changePassword = common.passwordEncryption(changePassword);
+		if(changePassword == null){
+			return new OkCheck("비밀번호 수정을 다시 입력해 주세요", false);
+		}
+		log.info("passwordEncryption function success");
+		user.setPassword(changePassword);
+		userRepository.save(user);
+		
+		return new OkCheck("비밀번호 수정이 완료되었습니다.", true);
+	}
 }
