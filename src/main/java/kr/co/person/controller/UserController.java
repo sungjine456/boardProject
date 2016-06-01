@@ -119,14 +119,16 @@ public class UserController {
 	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
 	public String translatePassword(@RequestParam String email, HttpServletRequest req){
 		log.info("execute AddUserViewController translatePassword");
+		if(email == null || email.equals("")){
+			req.setAttribute("message", "이메일을 입력해주세요.");
+		}
 		String password = userService.translatePassword(email);
 		if(password != null){
 			req.setAttribute("message", "비밀번호가 " + password + "로 수정되었습니다.");
-			return "view/user/login";
 		} else {
 			req.setAttribute("message", "비밀번호 수정을 실패했습니다.");
-			return "view/user/login";
 		}
+		return "view/user/login";
 	}
 	
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)

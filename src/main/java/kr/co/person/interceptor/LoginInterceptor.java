@@ -15,8 +15,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
-    	String uri = req.getRequestURI();
-    	if(uri.equals("/") || uri.equals("/join") || uri.equals("/idCheck") || uri.equals("/emailCheck")){
+    	String url = req.getRequestURI();
+    	if(url.equals("/") || url.equals("/join") || url.equals("/idCheck") || url.equals("/emailCheck") || url.equals("/translatePassword")){
     		return true;
     	}
 		HttpSession session = req.getSession();
