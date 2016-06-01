@@ -1,5 +1,7 @@
 package kr.co.person.service;
 
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,5 +62,29 @@ public class UserServiceTest {
 		Assert.assertEquals("비밀번호 수정이 완료되었습니다.", ok.getMessage());
 		user = userService.findUserForIdx(1);
 		Assert.assertEquals("481f6cc0511143ccdd7e2d1b1b94faf0a700a8b49cd13922a70b5ae28acaa8c5personProject", user.getPassword());
+	}
+	
+	@Test
+	public void testJoin(){
+		user = new User();
+		Date date = new Date();
+		user.setEmail("sungjin1@naver.com");
+		user.setId("sungjin1");
+		user.setName("홍길동");
+		user.setPassword("123456");
+		user.setRegDate(date);
+		user.setUpDate(date);
+		OkCheck ok = userService.join(user);
+		Assert.assertEquals("회원가입에 성공하셨습니다.", ok.getMessage());
+		Assert.assertTrue(ok.isBool());
+		user.setEmail("sungjin@naver.com");
+		user.setId("sungjin1");
+		user.setName("홍길동");
+		user.setPassword("123456");
+		user.setRegDate(date);
+		user.setUpDate(date);
+		ok = userService.join(user);
+		Assert.assertEquals("이미 가입되어있는 회원입니다.", ok.getMessage());
+		Assert.assertFalse(ok.isBool());
 	}
 }

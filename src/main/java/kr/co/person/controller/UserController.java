@@ -37,19 +37,19 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(@ModelAttribute User user, HttpServletRequest req, HttpServletResponse res){
 		log.info("execute UserController addUser");
+		HttpSession session = req.getSession();
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
 		OkCheck ok = userService.join(user);
-		req.setAttribute("message", ok.getMessage());
+		session.setAttribute("message", ok.getMessage());
 		if(ok.isBool()){
-			HttpSession session = req.getSession();
+			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
-			req.setAttribute("user", user);
 		    
 			return "view/board/frame";
 		} else {
@@ -60,7 +60,8 @@ public class UserController {
 	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
 	public String idCheck(@RequestParam String id, HttpServletRequest req){
 		log.info("execute UserController idCheck");
-		req.setAttribute("message", userService.idCheck(id).getMessage());
+		HttpSession session = req.getSession();
+		session.setAttribute("message", userService.idCheck(id).getMessage());
 		req.setAttribute("bool", userService.idCheck(id).isBool());
 		
 		return "common/ajaxPage";
@@ -69,7 +70,8 @@ public class UserController {
 	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
 	public String emailCheck(@RequestParam String email, HttpServletRequest req){
 		log.info("execute UserController emailCheck");
-		req.setAttribute("message", userService.emailCheck(email).getMessage());
+		HttpSession session = req.getSession();
+		session.setAttribute("message", userService.emailCheck(email).getMessage());
 		req.setAttribute("bool", userService.emailCheck(email).isBool());
 		
 		return "common/ajaxPage";
@@ -78,10 +80,11 @@ public class UserController {
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String loginView(HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
-		if(req.getSession().getAttribute("name") != null){
+		HttpSession session = req.getSession();
+		if(session.getAttribute("name") != null){
 			return "view/board/frame";
 		}
-		req.setAttribute("message", rea.getFlashAttributes().get("message"));
+		session.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/user/login";
 	}
 	
@@ -104,7 +107,7 @@ public class UserController {
 			}
 			return "view/board/frame";
 		} else {
-			req.setAttribute("message", "로그인에 실패하셨습니다.");
+			session.setAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
 	}
@@ -112,8 +115,12 @@ public class UserController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpServletRequest req, HttpServletResponse res){
 		HttpSession session = req.getSession();
-		session.invalidate();
-		req.setAttribute("message", "로그아웃 하셨습니다.");
+		session.setAttribute("loginYn", "N");
+		session.removeAttribute("idx");
+		session.removeAttribute("id");
+		session.removeAttribute("name");
+		session.removeAttribute("email");
+		session.setAttribute("message", "로그아웃 하셨습니다.");
 		return "redirect:/";
 	}
 	
@@ -135,11 +142,6 @@ public class UserController {
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
 	public String mypageView(HttpServletRequest req){
 		log.info("execute UserController mypageView");
-		if(req.getSession().getAttribute("idx") == null){
-			log.info("execute UserController no login");
-			req.setAttribute("message", "로그인 후 이용해 주세요.");
-			return "redirect:/";
-		}
 		req.setAttribute("id", req.getSession().getAttribute("id"));
 		req.setAttribute("name", req.getSession().getAttribute("name"));
 		req.setAttribute("email", req.getSession().getAttribute("email"));
@@ -149,10 +151,12 @@ public class UserController {
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
 	public String changePassword(@RequestParam String password, @RequestParam String changePassword, HttpServletRequest req){
 		log.info("execute UserController mypageView");
-		if(req.getSession().getAttribute("idx") == null){
-			log.info("execute UserController no login");
-			req.setAttribute("message", "로그인 후 이용해 주세요.");
-			return "redirect:/";
+		HttpSession session = req.getSession();
+		if(password == null || password.equals("")){
+			session.setAttribute("message", "페스워드를 입력해주세요");
+		}
+		if(changePassword == null || changePassword.equals("")){
+			session.setAttribute("message", "수정할 페스워드를 입력해주세요");
 		}
 		int idx = (int)req.getSession().getAttribute("idx");
 		User user = userService.findUserForIdx(idx);
@@ -161,33 +165,29 @@ public class UserController {
 		req.setAttribute("email", user.getEmail());
 		
 		OkCheck ok = userService.changePassword(idx, password, changePassword);
-		req.setAttribute("message", ok.getMessage());
+		session.setAttribute("message", ok.getMessage());
 		return "redirect:/mypage";
 	}
 	
 	@RequestMapping(value="/leave")
 	public String leave(@RequestParam String password, HttpServletRequest req){
 		log.info("execute UserController leave");
-		if(req.getSession().getAttribute("idx") == null){
-			log.info("execute UserController no login");
-			req.setAttribute("message", "로그인 후 이용해 주세요.");
-			return "redirect:/";
-		}
+		HttpSession session = req.getSession();
 		if(password == null || password.equals("")){
-			req.setAttribute("message", "password를 입력해주세요.");
+			session.setAttribute("message", "password를 입력해주세요.");
 			return "redirect:/mypage";
 		}
 		User user = userService.loginCheck((String)req.getSession().getAttribute("id"), password);
 		if(user == null || user.getIdx() != (int)req.getSession().getAttribute("idx")){
-			req.setAttribute("message", "존재하지 않는 아이디입니다.");
+			session.setAttribute("message", "존재하지 않는 아이디입니다.");
 			return "redirect:/";
 		}
 		boolean bool = userService.leave(user.getIdx());
 		if(bool){
-			req.setAttribute("message", "탈퇴에 성공하셨습니다.");
+			session.setAttribute("message", "탈퇴에 성공하셨습니다.");
 			return "redirect:/";
 		} else {
-			req.setAttribute("message", "탈퇴에 실패하셨습니다.");
+			session.setAttribute("message", "탈퇴에 실패하셨습니다.");
 			return "redirect:/mypage";
 		}
 	}

@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<script>
-			<#assign message = Request.message!""> 
+			<#assign message = Session.message!""> 
 			<#if message != "">
-				alert("${Request.message}");
+				alert("${message}");
 			</#if>
 		</script>
 		<title> 회원가입 </title>

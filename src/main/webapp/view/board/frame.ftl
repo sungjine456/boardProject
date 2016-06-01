@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script>
+			<#assign include = Request.include!"board.ftl">
+		</script>
 		<title>Person Board Projec</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
@@ -11,8 +14,8 @@
 			<div id="header" style="background-color: black">
 				<#include "top.ftl">
 			</div>
-			<div id="middle" style="background-color: #EBEBEB">
-				<#include "board.ftl">
+			<div id="middle">
+				<#include include>
 			</div>
 		<div>
 		<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>

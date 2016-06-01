@@ -19,8 +19,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     	if(url.equals("/") || url.equals("/join") || url.equals("/idCheck") || url.equals("/emailCheck") || url.equals("/translatePassword")){
     		return true;
     	}
-		HttpSession session = req.getSession();
-		if(session.getAttribute("idx") == null) {
+    	HttpSession session = req.getSession();
+		if(session.getAttribute("loginYn") == null || session.getAttribute("loginYn").equals("N")){
+			log.info("execute UserController no login");
+			session.setAttribute("message", "로그인 후 이용해주세요.");
 			res.sendRedirect("/");
 			return false;
 		}
