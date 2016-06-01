@@ -56,15 +56,20 @@
 							<label>비밀번호 : </label>
 						</th>
 						<td>
-							<button data-target="#layerpop" data-toggle="modal" type="button" class="btn btn-default">비밀번호 수정</button>
+							<button data-target="#change" data-toggle="modal" type="button" class="btn btn-primary">비밀번호 수정</button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button data-target="#leave" data-toggle="modal" class="btn btn-danger" type="button" style="float:right">회원탈퇴</button>
 						</td>
 					</tr>
 				</table>
 			</form>
-			<div class="modal fade" id="layerpop">
+			<div class="modal fade" id="change">
 				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
-						 <div class="modal-header">
+						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal">×</button>
 							<h4 class="modal-title">비밀번호 수정</h4>
 						</div>
@@ -101,8 +106,37 @@
 									</tr>
 									<tr>
 										<td colspan="2">
-											<button id="passwordChangeBtn" type="submit" class="btn btn-default" style="float:right">비밀번호 수정</button>
+											<button id="passwordChangeBtn" type="submit" class="btn btn-primary" style="float:right">비밀번호 수정</button>
 										<td>
+									</tr>
+								</table>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="leave">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						 <div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">×</button>
+							<h4 class="modal-title">회원탈퇴</h4>
+						</div>
+	 					<div class="modal-body">
+	 						<form id="form" class="form-signin" action="/leave" method="post">
+	 							<table>
+	 								<tr>
+										<th>
+											<label>비밀번호 : </label> 
+										</th>
+										<td>
+											<input id="leavePassword" class="form-control" name="password" type="password"/>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2"> 
+											<button type="submit" class="btn btn-danger" style="float:right">회원탈퇴</button>
+										</td>
 									</tr>
 								</table>
 							</form>

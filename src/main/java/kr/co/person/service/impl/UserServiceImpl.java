@@ -53,9 +53,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean leave(User user){
+	public boolean leave(int idx){
 		try{
-			userRepository.delete(user);
+			userRepository.delete(idx);
 		} catch (Exception e){
 			log.error("UserService leave function : " + e.getMessage());
 			return false;

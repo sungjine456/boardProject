@@ -60,4 +60,13 @@ public class UserRepositoryTest {
     	Assert.assertEquals("sungjin", user.getId());
     	Assert.assertEquals(password, user.getPassword());
     }
+    
+    @Test
+    public void testDelete(){
+    	user = userRepository.findOne(1);
+		Assert.assertEquals("sungjin", user.getId());
+		userRepository.delete(1);
+		user = userRepository.findOne(1);
+		Assert.assertNull(user);
+    }
 }
