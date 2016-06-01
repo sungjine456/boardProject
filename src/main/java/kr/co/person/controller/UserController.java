@@ -97,9 +97,8 @@ public class UserController {
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
-			req.setAttribute("user", user);
 			if(idSave != null && idSave.equals("check")){
-				Cookie cookie = new Cookie("saveId", idSave);
+				Cookie cookie = new Cookie("saveId", id);
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
