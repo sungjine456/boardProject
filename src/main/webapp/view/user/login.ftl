@@ -10,6 +10,7 @@
 		<title>로그인</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="css/common/common.css">
 		<style type="text/css">
 			.container {
 				width : 30%;
@@ -71,8 +72,21 @@
 						</div>
 	 					<div class="modal-body">
 	 						<form id="form" class="form-signin" action="/translatePassword" method="post">
-								<input id="email" class="form-control" name="email" "type="text"/> 
-								<button type="submit" class="btn btn-default" style="float:right">재발급</button>
+	 							<table>
+	 								<tr>
+										<th>
+											<label>이메일 : </label> 
+										</th>
+										<td>
+											<input id="email" class="form-control" name="email" "type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2"> 
+											<button type="submit" class="btn btn-default" style="float:right">재발급</button>
+										</td>
+									</tr>
+								</table>
 							</form>
 						</div>
 					</div>

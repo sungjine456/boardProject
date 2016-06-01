@@ -4,6 +4,7 @@
 		<title>Person Board Projec</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="css/common/common.css">
 	</head>
 	<body>
 		<div id="wrap">

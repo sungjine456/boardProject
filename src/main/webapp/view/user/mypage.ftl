@@ -29,7 +29,7 @@
 					</colgroup>
 					<tr>
 						<th>
-							<label for="id">아이디 : </label>
+							<label>아이디 : </label>
 						</th>
 						<td>
 							${Request.id}
@@ -37,7 +37,7 @@
 					</tr>
 					<tr>
 						<th>
-							<label for="password">이메일 : </label>
+							<label>이메일 : </label>
 						</th>
 						<td>
 							${Request.email}
@@ -45,7 +45,7 @@
 					</tr>
 					<tr>
 						<th>
-							<label for="password">이름 : </label>
+							<label>이름 : </label>
 						</th>
 						<td>
 							${Request.name}
@@ -53,7 +53,7 @@
 					</tr>
 					<tr>
 						<th>
-							<label for="password">비밀번호 : </label>
+							<label>비밀번호 : </label>
 						</th>
 						<td>
 							<button data-target="#layerpop" data-toggle="modal" type="button" class="btn btn-default">비밀번호 수정</button>
