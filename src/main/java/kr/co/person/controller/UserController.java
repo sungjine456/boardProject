@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.domain.OkCheck;
@@ -75,11 +76,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(HttpServletRequest req){
+	public String loginView(HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute AddUserViewController loginView");
 		if(req.getSession().getAttribute("name") != null){
 			return "view/board/frame";
 		}
+		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/user/login";
 	}
 	
@@ -113,22 +115,22 @@ public class UserController {
 		HttpSession session = req.getSession();
 		session.invalidate();
 		req.setAttribute("message", "로그아웃 하셨습니다.");
-		return "view/user/login";
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
-	public String translatePassword(@RequestParam String email, HttpServletRequest req){
+	public String translatePassword(@RequestParam String email, RedirectAttributes rea){
 		log.info("execute AddUserViewController translatePassword");
 		if(email == null || email.equals("")){
-			req.setAttribute("message", "이메일을 입력해주세요.");
+			rea.addFlashAttribute("message", "이메일을 입력해주세요.");
 		}
 		String password = userService.translatePassword(email);
 		if(password != null){
-			req.setAttribute("message", "비밀번호가 " + password + "로 수정되었습니다.");
+			rea.addFlashAttribute("message", "비밀번호가 " + password + "로 수정되었습니다.");
 		} else {
-			req.setAttribute("message", "비밀번호 수정을 실패했습니다.");
+			rea.addFlashAttribute("message", "비밀번호 수정을 실패했습니다.");
 		}
-		return "view/user/login";
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
@@ -137,7 +139,7 @@ public class UserController {
 		if(req.getSession().getAttribute("idx") == null){
 			log.info("execute AddUserViewController no login");
 			req.setAttribute("message", "로그인 후 이용해 주세요.");
-			return "view/user/login";
+			return "redirect:/";
 		}
 		int idx = (int)req.getSession().getAttribute("idx");
 		User user = userService.findUserForIdx(idx);
@@ -153,7 +155,7 @@ public class UserController {
 		if(req.getSession().getAttribute("idx") == null){
 			log.info("execute AddUserViewController no login");
 			req.setAttribute("message", "로그인 후 이용해 주세요.");
-			return "view/user/login";
+			return "redirect:/";
 		}
 		int idx = (int)req.getSession().getAttribute("idx");
 		User user = userService.findUserForIdx(idx);
