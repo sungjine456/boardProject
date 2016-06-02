@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<script>
-			<#assign message = Session.message!"">
+			<#assign message = Request.message!"">
 			<#if message != "">
 				alert("${message}");
 			</#if>
