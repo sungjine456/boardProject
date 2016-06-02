@@ -17,15 +17,15 @@ public class Board {
 	@Id
 	@GeneratedValue
 	private int idx;
-	@Column(name="id", nullable=false)
+	@Column(name="title", nullable=false)
 	private String title;
-	@Column(name="id", nullable=false)
+	@Column(name="content", nullable=false)
 	private String content;
-	@Column(name="id", nullable=false)
+	@Column(name="writer", nullable=false)
 	private int writer;
-	@Column(name="id", nullable=false)
+	@Column(name="regDate", nullable=false)
 	private Date regDate;
-	@Column(name="id", nullable=false)
+	@Column(name="upDate", nullable=false)
 	private Date upDate;
 	
 	public Board(){
