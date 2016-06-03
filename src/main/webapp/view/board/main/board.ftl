@@ -24,6 +24,11 @@
 			</tr>
 		</thead>
 		<tbody>
+			<tr>
+				<td colspan="4">
+					<button type="button" id="write" class="btn btn-primary" style="margin-left:80%;">글쓰기</button>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>

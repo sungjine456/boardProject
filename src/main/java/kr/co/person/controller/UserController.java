@@ -51,7 +51,7 @@ public class UserController {
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 		    
-			return "redirect:/board/";
+			return "redirect:/board";
 		} else {
 			return "view/user/join";
 		}
@@ -81,8 +81,8 @@ public class UserController {
 	public String loginView(HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
 		HttpSession session = req.getSession();
-		if(session.getAttribute("name") != null){
-			return "redirect:/board/";
+		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
+			return "redirect:/board";
 		}
 		session.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/user/login";
@@ -96,6 +96,7 @@ public class UserController {
 		String password = user.getPassword();
 		user = userService.loginCheck(id, password);
 		if(user != null){
+			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
@@ -105,7 +106,7 @@ public class UserController {
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
-			return "redirect:/board/";
+			return "redirect:/board";
 		} else {
 			session.setAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
