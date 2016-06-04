@@ -9,7 +9,7 @@ public interface UserService {
 	OkCheck emailCheck(String email);
 	User loginCheck(String id, String password);
 	boolean leave(int idx);
-	String translatePassword(String email);
+	OkCheck translatePassword(String email);
 	User findUserForIdx(int idx);
 	OkCheck changePassword(int idx, String password, String changePassword);
 }

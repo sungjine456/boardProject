@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class UserController {
 	@Autowired UserService userService;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
-	public String joinView(HttpServletRequest req){
+	public String joinView(){
 		log.info("execute UserController addUserView");
 		return "view/user/join";
 	}
@@ -38,6 +39,10 @@ public class UserController {
 	public String join(@ModelAttribute User user, HttpServletRequest req, HttpServletResponse res){
 		log.info("execute UserController addUser");
 		HttpSession session = req.getSession();
+		if(user == null){
+			session.setAttribute("message", "회원가입에 실패하셨습니다.");
+			return "view/user/join";
+		}
 		Date date = new Date();
 		user.setRegDate(date);
 		user.setUpDate(date);
@@ -61,6 +66,12 @@ public class UserController {
 	public String idCheck(@RequestParam String id, HttpServletRequest req){
 		log.info("execute UserController idCheck");
 		HttpSession session = req.getSession();
+		if(StringUtils.isEmpty(id)){
+			session.setAttribute("message", "아이디를 다시입력해주세요.");
+			req.setAttribute("bool", false);
+			
+			return "common/ajaxPage";
+		}
 		session.setAttribute("message", userService.idCheck(id).getMessage());
 		req.setAttribute("bool", userService.idCheck(id).isBool());
 		
@@ -71,6 +82,12 @@ public class UserController {
 	public String emailCheck(@RequestParam String email, HttpServletRequest req){
 		log.info("execute UserController emailCheck");
 		HttpSession session = req.getSession();
+		if(StringUtils.isEmpty(email)){
+			session.setAttribute("message", "이메일을 다시입력해주세요.");
+			req.setAttribute("bool", false);
+			
+			return "common/ajaxPage";
+		}
 		session.setAttribute("message", userService.emailCheck(email).getMessage());
 		req.setAttribute("bool", userService.emailCheck(email).isBool());
 		
@@ -92,6 +109,10 @@ public class UserController {
 	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, HttpServletRequest req, HttpServletResponse res){
 		log.info("execute UserController login");
 		HttpSession session = req.getSession();
+		if(user == null){
+			session.setAttribute("message", "로그인에 실패하셨습니다.");
+			return "view/user/login";
+		}
 		String id = user.getId();
 		String password = user.getPassword();
 		user = userService.loginCheck(id, password);
@@ -128,14 +149,14 @@ public class UserController {
 	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
 	public String translatePassword(@RequestParam String email, RedirectAttributes rea){
 		log.info("execute UserController translatePassword");
-		if(email == null || email.equals("")){
+		if(StringUtils.isEmpty(email)){
 			rea.addFlashAttribute("message", "이메일을 입력해주세요.");
 		}
-		String password = userService.translatePassword(email);
-		if(password != null){
-			rea.addFlashAttribute("message", "비밀번호가 " + password + "로 수정되었습니다.");
+		OkCheck ok = userService.translatePassword(email);
+		if(ok.isBool()){
+			rea.addFlashAttribute("message", ok.getMessage());
 		} else {
-			rea.addFlashAttribute("message", "비밀번호 수정을 실패했습니다.");
+			rea.addFlashAttribute("message", ok.getMessage());
 		}
 		return "redirect:/";
 	}
@@ -153,10 +174,10 @@ public class UserController {
 	public String changePassword(@RequestParam String password, @RequestParam String changePassword, HttpServletRequest req){
 		log.info("execute UserController mypageView");
 		HttpSession session = req.getSession();
-		if(password == null || password.equals("")){
+		if(StringUtils.isEmpty(password)){
 			session.setAttribute("message", "페스워드를 입력해주세요");
 		}
-		if(changePassword == null || changePassword.equals("")){
+		if(StringUtils.isEmpty(changePassword)){
 			session.setAttribute("message", "수정할 페스워드를 입력해주세요");
 		}
 		int idx = (int)req.getSession().getAttribute("idx");
@@ -174,7 +195,7 @@ public class UserController {
 	public String leave(@RequestParam String password, HttpServletRequest req){
 		log.info("execute UserController leave");
 		HttpSession session = req.getSession();
-		if(password == null || password.equals("")){
+		if(StringUtils.isEmpty(password)){
 			session.setAttribute("message", "password를 입력해주세요.");
 			return "redirect:/mypage";
 		}

@@ -2,6 +2,7 @@ package kr.co.person.service.impl;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +21,14 @@ public class BoardServiceImple implements BoardService {
 	
 	@Override
 	public OkCheck save(String title, String content, int userIdx) {
-		if(title == null || title.equals("")){
+		if(StringUtils.isEmpty(title)){
 			return new OkCheck("제목을 입력해주세요", false);
 		}
-		if(content == null || content.equals("")){
+		if(StringUtils.isEmpty(content)){
 			return new OkCheck("내용을 입력해주세요", false);
+		}
+		if(userIdx == 0){
+			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
 		Date date = new Date();
 		Board board = new Board(title, content, userIdx, date, date);

@@ -1,5 +1,6 @@
 package kr.co.person.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class UserServiceImpl implements UserService {
 		String email = user.getEmail();
 		
 		String joinCheck = userRepository.userIdCheck(id);
-		if(joinCheck != null){
+		if(StringUtils.isEmpty(joinCheck)){
 			return new OkCheck("이미 가입되어있는 회원입니다.", false);
 		}
 		if(!common.isEmail(email)){
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("isEmail function success");
 		password = common.passwordEncryption(password);
-		if(password == null){
+		if(StringUtils.isEmpty(password)){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
 		log.info("passwordEncryption function success");
@@ -67,11 +68,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public OkCheck idCheck(String id) {
-		if(id.equals("") || id == null){
-			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
+		if(StringUtils.isEmpty(id)){
+			return new OkCheck("아이디를 입력해주세요.", false);
 		}
 		String idVal = userRepository.userIdCheck(id);
-		if(idVal == null){
+		if(StringUtils.isEmpty(idVal)){
 			return new OkCheck("가입 가능한 아이디입니다", true);
 		} else {
 			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
@@ -80,8 +81,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public OkCheck emailCheck(String email) {
-		if(email == null || email.equals("")){
-			return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
+		if(StringUtils.isEmpty(email)){
+			return new OkCheck("메일을 입력해주세요.", false);
 		}
 		String emailVal = userRepository.userEmialCheck(email);
 		if(emailVal != null && common.isEmail(email)){
@@ -96,7 +97,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User loginCheck(String id, String password) {
 		log.info("execute UserService loginCheck");
-		if(id == null || id.equals("") || password == null || password.equals("")){
+		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return null;
 		}
 		log.info("id & password not null");
@@ -109,27 +110,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String translatePassword(String email) {
+	public OkCheck translatePassword(String email) {
 		log.info("execute UserService findPassword");
-		if(email == null && !common.isEmail(email)){
-			return null;
+		if(StringUtils.isEmpty(email)){
+			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
 		User user = userRepository.passwordCheck(email); 
 		if(user == null){
-			return null;
+			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
 		String random = "";
 		for(int i = 0; i < 6; i++){
 			random += ((int)(Math.random() * 10));
 		}
 		String password = common.passwordEncryption(random);
-		if(password == null){
-			return null;
+		if(StringUtils.isEmpty(password)){
+			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
 		
-		return random;
+		return new OkCheck("비밀번호가 " + random + "로 수정되었습니다.", true);
 	}
 
 	@Override
@@ -143,21 +144,21 @@ public class UserServiceImpl implements UserService {
 		if(idx == 0){
 			return new OkCheck("로그인 후 이용해주세요.", false);
 		}
-		if(password == null){
+		if(StringUtils.isEmpty(password)){
 			return new OkCheck("비밀번호를 입력해 주세요", false);
 		}
-		if(changePassword == null){
+		if(StringUtils.isEmpty(changePassword)){
 			return new OkCheck("비밀번호 수정을 입력해 주세요", false);
 		}
 		User user = userRepository.findOne(idx);
 		password = common.passwordEncryption(password);
-		if(password == null){
+		if(StringUtils.isEmpty(password)){
 			return new OkCheck("비밀번호를 다시 입력해 주세요", false);
 		} else if(!password.equals(user.getPassword())){
 			return new OkCheck("아이디의 비밀번호가 맞지 않습니다.", false);
 		}
 		changePassword = common.passwordEncryption(changePassword);
-		if(changePassword == null){
+		if(StringUtils.isEmpty(changePassword)){
 			return new OkCheck("비밀번호 수정을 다시 입력해 주세요", false);
 		}
 		log.info("passwordEncryption function success");

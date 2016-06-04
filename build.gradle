@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+	compile('org.apache.commons:commons-lang3:3.4')
 	compile('org.slf4j:slf4j-api')
 	compile('ch.qos.logback:logback-core:1.1.2')
 	compile('ch.qos.logback:logback-classic')
