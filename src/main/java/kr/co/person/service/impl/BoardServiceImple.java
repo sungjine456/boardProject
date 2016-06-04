@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.domain.Board;
 import kr.co.person.domain.OkCheck;
@@ -11,6 +12,7 @@ import kr.co.person.repository.BoardRepository;
 import kr.co.person.service.BoardService;
 
 @Service
+@Transactional
 public class BoardServiceImple implements BoardService {
 
 	@Autowired

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Common;
@@ -13,6 +14,7 @@ import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 	static final Logger log = LoggerFactory.getLogger(BoardProjectApplication.class);
 	
@@ -126,7 +128,6 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
-		userRepository.save(user);
 		
 		return random;
 	}
@@ -161,7 +162,6 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(changePassword);
-		userRepository.save(user);
 		
 		return new OkCheck("비밀번호 수정이 완료되었습니다.", true);
 	}

@@ -4,7 +4,7 @@
 		<script>
 			<#assign message = Session.message!"">
 			<#if message != "">
-				alert("${Request.message}");
+				alert("${Session.message}");
 			</#if>
 		</script>
 		<title>회원페이지</title>
