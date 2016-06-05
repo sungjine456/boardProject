@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.common.Common;
 import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
 import kr.co.person.service.UserService;
@@ -24,8 +25,10 @@ import kr.co.person.service.UserService;
 @Controller
 public class UserController {
 	static final Logger log = LoggerFactory.getLogger(BoardProjectApplication.class);
+	static final String ENCRYPTION_KEY = "personProjectByJin";
 	
-	@Autowired UserService userService;
+	@Autowired private UserService userService;
+	@Autowired private Common common;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(){
@@ -100,10 +103,10 @@ public class UserController {
 			String key = cookies[i].getName();
 			String val = cookies[i].getValue();
 			if("saveId".equals(key)){
-				id = val;
+				id = common.cookieAesDecode(ENCRYPTION_KEY, val);
 			}
 			if("savePassword".equals(key)){
-				password = val;
+				password = common.cookieAesDecode(ENCRYPTION_KEY, val);;
 			}
 		}
 		User user = userService.loginCheck(id, password);
@@ -140,10 +143,10 @@ public class UserController {
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 			if(idSave != null && idSave.equals("check")){
-				Cookie cookie = new Cookie("saveId", id);
+				Cookie cookie = new Cookie("saveId", common.cookieAesEncode(ENCRYPTION_KEY, id));
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
-			    cookie = new Cookie("savePassword", password);
+			    cookie = new Cookie("savePassword", common.cookieAesEncode(ENCRYPTION_KEY, password));
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}

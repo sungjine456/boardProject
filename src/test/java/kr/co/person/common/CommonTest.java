@@ -18,9 +18,19 @@ public class CommonTest {
 	@Autowired private Common common;
     
 	@Test
-	public void isEmail() {
+	public void testIsEmail() {
 		Assert.assertTrue(common.isEmail("sungjin@naver.com"));
 		Assert.assertFalse(common.isEmail("sungjin@naver"));
 		Assert.assertFalse(common.isEmail("sungjin"));
+	}
+	
+	@Test
+	public void testAes(){
+		String key = "personProjectByJin";
+		String str = "sungjin";
+		String en = common.cookieAesEncode(key, str);
+		Assert.assertNotEquals("sungjin", en);
+		String de = common.cookieAesDecode(key, en);
+		Assert.assertEquals("sungjin", de);
 	}
 }
