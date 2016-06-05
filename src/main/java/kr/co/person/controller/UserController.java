@@ -1,7 +1,5 @@
 package kr.co.person.controller;
 
-import java.util.Date;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,9 +41,6 @@ public class UserController {
 			session.setAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		Date date = new Date();
-		user.setRegDate(date);
-		user.setUpDate(date);
 		
 		OkCheck ok = userService.join(user);
 		session.setAttribute("message", ok.getMessage());
@@ -98,6 +93,28 @@ public class UserController {
 	public String loginView(HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
 		HttpSession session = req.getSession();
+		String id = "";
+		String password = "";
+		Cookie[] cookies = req.getCookies();
+		for(int i = 0; i < cookies.length; i++){
+			String key = cookies[i].getName();
+			String val = cookies[i].getValue();
+			if("saveId".equals(key)){
+				id = val;
+			}
+			if("savePassword".equals(key)){
+				password = val;
+			}
+		}
+		User user = userService.loginCheck(id, password);
+		if(user != null){
+			session.setAttribute("loginYn", "Y");
+			session.setAttribute("idx", user.getIdx());
+			session.setAttribute("id", user.getId());
+			session.setAttribute("name", user.getName());
+			session.setAttribute("email", user.getEmail());
+			return "redirect:/board";
+		}
 		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
@@ -126,6 +143,9 @@ public class UserController {
 				Cookie cookie = new Cookie("saveId", id);
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
+			    cookie = new Cookie("savePassword", password);
+			    cookie.setMaxAge(60*60*24);
+			    res.addCookie(cookie);
 			}
 			return "redirect:/board";
 		} else {
@@ -143,6 +163,12 @@ public class UserController {
 		session.removeAttribute("name");
 		session.removeAttribute("email");
 		session.setAttribute("message", "로그아웃 하셨습니다.");
+		Cookie cookie = new Cookie("saveId", null) ;
+		cookie.setMaxAge(0) ;
+	    res.addCookie(cookie) ;
+	    cookie = new Cookie("savePassword", null) ;
+	    cookie.setMaxAge(0) ;
+	    res.addCookie(cookie) ;
 		return "redirect:/";
 	}
 	

@@ -1,5 +1,7 @@
 package kr.co.person.service.impl;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
+		Date date = new Date();
+		user.setRegDate(date);
+		user.setUpDate(date);
 		
 		User saveUser = userRepository.save(user);
 		log.info("create User success");

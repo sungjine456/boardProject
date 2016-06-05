@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<script>
-			<#assign message = Request.message!"">
+			<#assign message = Session.message!"">
 			<#if message != "">
 				alert("${message}");
 			</#if>
@@ -47,7 +47,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<input id="idSaveCheck" name="idSave" type="checkbox" value="check"> 아이디 저장
+							<input id="idSaveCheck" name="idSave" type="checkbox" value="check"> 자동 로그인
 						</td>
 						<td>
 							<a data-target="#layerpop" data-toggle="modal" style="float:right">비밀번호 재발급</button>
