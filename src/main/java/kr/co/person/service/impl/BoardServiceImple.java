@@ -34,7 +34,6 @@ public class BoardServiceImple implements BoardService {
 		Board board = new Board(title, content, userIdx, date, date);
 		boardRepository.save(board);
 		
-		return null;
+		return new OkCheck("글이 등록 되었습니다.", false);
 	}
-
 }

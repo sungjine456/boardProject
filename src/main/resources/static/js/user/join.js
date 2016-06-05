@@ -71,6 +71,11 @@ join.id.keyup(function(){
 		data : {"id" : join.id.val()},
 		success : function(data){
 			$("#idSpan").html(data);
+		},
+		error : function(x, e){
+			if(x.status == 404){
+				$(location).attr("href", "/error/404error.ftl");
+			}
 		}
 	});
 });
@@ -82,6 +87,11 @@ join.email.keyup(function(){
 		data : {"email" : join.email.val()},
 		success : function(data){
 			$("#emailSpan").html(data);
+		},
+		error : function(x, e){
+			if(x.status == 404){
+				$(location).attr("href", "/error/404error.ftl");
+			}
 		}
 	});
 });
