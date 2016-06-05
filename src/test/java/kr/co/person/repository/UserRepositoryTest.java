@@ -45,7 +45,7 @@ public class UserRepositoryTest {
 
     @Test
     public void testLoginCheck() {
-    	user = userRepository.loginCheck("sungjin", password);
+    	user = userRepository.findByIdAndPassword("sungjin", password);
     	Assert.assertEquals("홍길동", user.getName());
     	Assert.assertEquals("sungjin@naver.com", user.getEmail());
     	Assert.assertEquals("sungjin", user.getId());
@@ -54,7 +54,7 @@ public class UserRepositoryTest {
     
     @Test
     public void testFindPassword(){
-    	user = userRepository.passwordCheck("sungjin@naver.com");
+    	user = userRepository.findByEmail("sungjin@naver.com");
     	Assert.assertEquals("홍길동", user.getName());
     	Assert.assertEquals("sungjin@naver.com", user.getEmail());
     	Assert.assertEquals("sungjin", user.getId());

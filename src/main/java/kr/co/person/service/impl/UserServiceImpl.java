@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		log.info("passwordEncryption function success");
-		return userRepository.loginCheck(id, password);
+		return userRepository.findByIdAndPassword(id, password);
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(email)){
 			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
-		User user = userRepository.passwordCheck(email); 
+		User user = userRepository.findByEmail(email); 
 		if(user == null){
 			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
