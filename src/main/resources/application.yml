@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/boardProject?useUnicode=true&charaterEncoding=utf-8
+    username: boardProject
+    password: boardProject
+    driver-class-name: com.mysql.jdbc.Driver
+  freemarker:
+    cache: false
+  jpa:
+    hibernate:
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      dialect: org.hibernate.dialect.MySQL5Dialect
