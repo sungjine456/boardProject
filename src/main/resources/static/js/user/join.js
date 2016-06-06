@@ -3,10 +3,11 @@ var join = {
 	pwConfirm : $("#form #passwordConfirm"),
 	email : $("#form #email"),
 	id : $("#form #id"),
-	name : $("#form #name")
+	name : $("#form #name"),
+	joinBtn : $("#joinBtn")
 }
 
-$("#joinBtn").click(function(){
+join.joinBtn.click(function(){
 	if(join.id.val() === ""){
 		alert("아이디를 입력해주세요");
 		return false;

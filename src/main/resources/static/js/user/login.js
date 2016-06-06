@@ -1,18 +1,21 @@
 var login = {
 	id : $("#form #id"),
 	password : $("#form #password"),
-	checkBox : $("#idSaveCheck")
+	checkBox : $("#idSaveCheck"),
+	joinBtn : $("#joinBtn"),
+	translatePasswordBtn : $("#translatePasswordBtn"),
+	loginBtn : $("#loginBtn"),
 };
 
-$("#joinBtn").click(function(){
+login.joinBtn.click(function(){
 	$(location).attr("href", "/join");
 });
 
-$("#translatePasswordBtn").click(function(){
+login.translatePasswordBtn.click(function(){
 	$(location).attr("href", "/translatePassword");
 });
 
-$("#loginBtn").click(function(){
+login.loginBtn.click(function(){
 	if(login.id.val() === ""){
 		alert("아이디를 입력해주세요.");
 		return false;

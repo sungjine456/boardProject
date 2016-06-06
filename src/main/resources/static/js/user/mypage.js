@@ -1,10 +1,11 @@
 var mypage = {
 	pw : $("#form #password"),
 	changePw : $("#form #changePassword"),
-	changePwConfirm : $("#form #changePasswordConfirm")
+	changePwConfirm : $("#form #changePasswordConfirm"),
+	passwordChangeBtn : $("#passwordChangeBtn")
 }
 
-$("#passwordChangeBtn").click(function(){
+mypage.passwordChangeBtn.click(function(){
 	if(mypage.pw.val() == ""){
 		alert("비밀번호 칸을 입력해주세요.");
 		return false;
