@@ -16,14 +16,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
     	String url = req.getRequestURI();
-    	if(url.equals("/") || url.equals("/join") || url.equals("/idCheck") || url.equals("/emailCheck") || url.equals("/translatePassword")){
+    	if(url.equals("/") || url.equals("/join") || url.equals("/idCheck") || url.equals("/emailCheck") || url.equals("/translatePassword") || url.equals("/interceptorView")){
     		return true;
     	}
     	HttpSession session = req.getSession();
 		if(session.getAttribute("loginYn") == null || session.getAttribute("loginYn").equals("N")){
-			log.info("execute UserController no login");
-			session.setAttribute("message", "로그인 후 이용해주세요.");
-			res.sendRedirect("/");
+			res.sendRedirect("/interceptorView");
 			return false;
 		}
 		return true;

@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 		String email = user.getEmail();
 		
 		String joinCheck = userRepository.userIdCheck(id);
-		if(StringUtils.isEmpty(joinCheck)){
+		if(StringUtils.isNotEmpty(joinCheck)){
 			return new OkCheck("이미 가입되어있는 회원입니다.", false);
 		}
 		if(!common.isEmail(email)){
