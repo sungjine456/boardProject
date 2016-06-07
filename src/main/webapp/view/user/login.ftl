@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<script>
-			<#assign message = Session.message!"">
+			<#assign message = message!"">
 			<#if message != "">
 				alert("${message}");
 			</#if>
@@ -55,10 +55,10 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<a id="joinBtn">회원가입</button>
+							<a id="joinBtn">회원가입</a>
 						</td>
 						<td>
-							<button type="submit" id="loginBtn" class="btn btn-primary" style="float:right">로그인</button>
+							<button type="button" id="loginBtn" class="btn btn-primary" style="float:right">로그인</button>
 						</td>
 					</tr>
 				</table>
@@ -71,7 +71,7 @@
 							<h4 class="modal-title">비밀번호 재발급</h4>
 						</div>
 	 					<div class="modal-body">
-	 						<form id="form" class="form-signin" action="/translatePassword" method="post">
+	 						<form id="translateForm" class="form-signin" action="/translatePassword" method="post">
 	 							<table>
 	 								<tr>
 										<th>
@@ -83,7 +83,7 @@
 									</tr>
 									<tr>
 										<td colspan="2"> 
-											<button type="submit" class="btn btn-default" style="float:right">재발급</button>
+											<button type="button" id="translatePasswordBtn" class="btn btn-default" style="float:right">재발급</button>
 										</td>
 									</tr>
 								</table>

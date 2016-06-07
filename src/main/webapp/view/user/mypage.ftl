@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<script>
-			<#assign message = Session.message!"">
+			<#assign message = message!"">
 			<#if message != "">
-				alert("${Session.message}");
+				alert("${message}");
 			</#if>
 		</script>
 		<title>회원페이지</title>
@@ -74,7 +74,7 @@
 							<h4 class="modal-title">비밀번호 수정</h4>
 						</div>
 	 					<div class="modal-body">
-	 						<form id="form" class="form-signin" action="/changePassword" method="post">
+	 						<form id="changeForm" class="form-signin" action="/changePassword" method="post">
 	 							<table style="width:98%">
 	 								<colgroup>
 										<col width="50%"/>
@@ -106,7 +106,7 @@
 									</tr>
 									<tr>
 										<td colspan="2">
-											<button id="passwordChangeBtn" type="submit" class="btn btn-primary" style="float:right">비밀번호 수정</button>
+											<button id="passwordChangeBtn" type="button" class="btn btn-primary" style="float:right">비밀번호 수정</button>
 										<td>
 									</tr>
 								</table>
@@ -123,7 +123,7 @@
 							<h4 class="modal-title">회원탈퇴</h4>
 						</div>
 	 					<div class="modal-body">
-	 						<form id="form" class="form-signin" action="/leave" method="post">
+	 						<form id="leaveForm" class="form-signin" action="/leave" method="post">
 	 							<table>
 	 								<tr>
 										<th>
@@ -135,7 +135,7 @@
 									</tr>
 									<tr>
 										<td colspan="2"> 
-											<button type="submit" class="btn btn-danger" style="float:right">회원탈퇴</button>
+											<button id="leaveBtn" type="button" class="btn btn-danger" style="float:right">회원탈퇴</button>
 										</td>
 									</tr>
 								</table>
