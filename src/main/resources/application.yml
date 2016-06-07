@@ -4,8 +4,16 @@ spring:
     username: boardProject
     password: boardProject
     driver-class-name: com.mysql.jdbc.Driver
+    
+---
+
+spring: 
   freemarker:
     cache: false
+    
+---
+
+spring:
   jpa:
     hibernate:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
