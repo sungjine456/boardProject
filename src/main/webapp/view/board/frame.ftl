@@ -2,7 +2,11 @@
 <html>
 	<head>
 		<script>
-			<#assign include = Request.include!"main/board.ftl">
+			<#assign message = message!"">
+			<#if message != "">
+				alert("${message}");
+			</#if>
+			<#assign include = include!"main/board.ftl">
 		</script>
 		<title>Person Board Projec</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">

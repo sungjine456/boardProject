@@ -1,5 +1,5 @@
-<#if Request.bool>
-	<font style='color:blue'>${Session.message}</font>
+<#if bool>
+	<font style='color:blue'>${str}</font>
 <#else>
-	<font style='color:red'>${Session.message}</font>
+	<font style='color:red'>${str}</font>
 </#if>

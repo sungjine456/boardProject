@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<script>
-			<#assign message = Session.message!""> 
+			<#assign message = message!""> 
 			<#if message != "">
 				alert("${message}");
 			</#if>
@@ -77,7 +77,7 @@
 					</tr>
 					<tr>
 						<td colspan="3" style="padding-left: 80%">
-							<button type="submit" id="joinBtn" class="btn btn-primary">회원가입</button>
+							<button type="button" id="joinBtn" class="btn btn-primary">회원가입</button>
 						</td>
 					</tr>
 				</table>
