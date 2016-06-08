@@ -15,6 +15,8 @@
 		<div class="container">
 			<h1> 회원 가입 </h1>
 			<form id="form" action="/join" method="post">
+				<input type="hidden" id="idBool" value="false"/>
+				<input type="hidden" id="emailBool" value="false"/>
 				<table class="table table-hover">
 					<colgroup>
 						<col width="10%"/>

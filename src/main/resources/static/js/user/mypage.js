@@ -6,7 +6,7 @@ var mypage = {
 	changePwConfirm : $("#changeForm #changePasswordConfirm"),
 	leavePassword : $("#leaveForm #leavePassword"),
 	passwordChangeBtn : $("#changeForm #passwordChangeBtn"),
-	leaveBtn : $("#leaveForm #levaeBtn"),
+	leaveBtn : $("#leaveForm #leaveBtn"),
 	passwordChangeEvent : function(){
 		if(this.password.val() == ""){
 			alert("비밀번호 칸을 입력해주세요.");

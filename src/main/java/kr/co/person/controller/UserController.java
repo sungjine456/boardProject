@@ -1,5 +1,8 @@
 package kr.co.person.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.BoardProjectApplication;
@@ -61,35 +65,37 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
-	public String idCheck(@RequestParam String id, HttpServletRequest req){
+	public @ResponseBody Map<String, String> idCheck(@RequestParam String id, HttpServletRequest req){
 		log.info("execute UserController idCheck");
+		Map<String, String> map = new HashMap<String, String>();
 		if(StringUtils.isEmpty(id)){
-			req.setAttribute("str", "아이디를 다시입력해주세요.");
-			req.setAttribute("bool", false);
+			map.put("str", "아이디를 다시입력해주세요.");
+			map.put("bool", "false");
 			
-			return "common/ajaxPage";
+			return map;
 		}
 		OkCheck ok = userService.idCheck(id);
-		req.setAttribute("str", ok.getMessage());
-		req.setAttribute("bool", ok.isBool());
+		map.put("str", ok.getMessage());
+		map.put("bool", "" + ok.isBool());
 		
-		return "common/ajaxPage";
+		return map;
 	}
 	
 	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
-	public String emailCheck(@RequestParam String email, HttpServletRequest req){
+	public @ResponseBody Map<String, String> emailCheck(@RequestParam String email, HttpServletRequest req){
 		log.info("execute UserController emailCheck");
+		Map<String, String> map = new HashMap<String, String>();
 		if(StringUtils.isEmpty(email)){
-			req.setAttribute("str", "이메일을 다시입력해주세요.");
-			req.setAttribute("bool", false);
+			map.put("str", "이메일을 다시입력해주세요.");
+			map.put("bool", "false");
 			
-			return "common/ajaxPage";
+			return map;
 		}
 		OkCheck ok = userService.emailCheck(email);
-		req.setAttribute("str", ok.getMessage());
-		req.setAttribute("bool", ok.isBool());
+		map.put("str", ok.getMessage());
+		map.put("bool", "" + ok.isBool());
 		
-		return "common/ajaxPage";
+		return map;
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
