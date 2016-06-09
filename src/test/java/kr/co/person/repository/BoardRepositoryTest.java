@@ -35,8 +35,7 @@ public class BoardRepositoryTest {
 	public void saveTest() {
 		Date date = new Date();
 		board = new Board("t", "c", 1, date, date);
-		boardRepository.save(board);
-		board = boardRepository.findOne(2);
+		board = boardRepository.save(board);
 		Assert.assertEquals("t", board.getTitle());
 		Assert.assertEquals("c", board.getContent());
 	}
