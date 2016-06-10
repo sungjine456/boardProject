@@ -16,7 +16,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
     	String url = req.getRequestURI();
-    	if(url.equals("/") || url.equals("/join") || url.equals("/idCheck") || url.equals("/emailCheck") || url.equals("/translatePassword") || url.equals("/interceptorView")){
+    	if(url != null && url.equals("/") || url.matches("/[join/a-zA-Z]{3,15}") || url.equals("/translatePassword") || url.equals("/interceptorView")){
     		return true;
     	}
     	HttpSession session = req.getSession();

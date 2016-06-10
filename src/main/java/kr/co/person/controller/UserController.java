@@ -64,7 +64,7 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value="/idCheck", method=RequestMethod.POST)
+	@RequestMapping(value="/join/idCheck", method=RequestMethod.POST)
 	public @ResponseBody Map<String, String> idCheck(@RequestParam String id, HttpServletRequest req){
 		log.info("execute UserController idCheck");
 		Map<String, String> map = new HashMap<String, String>();
@@ -81,7 +81,7 @@ public class UserController {
 		return map;
 	}
 	
-	@RequestMapping(value="/emailCheck", method=RequestMethod.POST)
+	@RequestMapping(value="/join/emailCheck", method=RequestMethod.POST)
 	public @ResponseBody Map<String, String> emailCheck(@RequestParam String email, HttpServletRequest req){
 		log.info("execute UserController emailCheck");
 		Map<String, String> map = new HashMap<String, String>();

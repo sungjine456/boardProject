@@ -80,7 +80,7 @@ var join = {
 	},
 	idCheckEvent : function(){
 		$.ajax({
-			url : "/idCheck",
+			url : "/join/idCheck",
 			type : "POST",
 			data : {"id" : join.id.val()},
 			dataType : "JSON",
@@ -102,7 +102,7 @@ var join = {
 	},
 	emailCheckEvent : function(){
 		$.ajax({
-			url : "/emailCheck",
+			url : "/join/emailCheck",
 			type : "POST",
 			data : {"email" : join.email.val()},
 			dataType : "JSON",
