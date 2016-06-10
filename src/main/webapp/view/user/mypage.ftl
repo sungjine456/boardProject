@@ -32,7 +32,7 @@
 							<label>아이디 : </label>
 						</th>
 						<td>
-							${Request.id}
+							${id}
 						</td>
 					</tr>
 					<tr>
@@ -40,7 +40,7 @@
 							<label>이메일 : </label>
 						</th>
 						<td>
-							${Request.email}
+							${email}
 						</td>
 					</tr>
 					<tr>
@@ -48,7 +48,7 @@
 							<label>이름 : </label>
 						</th>
 						<td>
-							${Request.name}
+							${name}
 						</td>
 					</tr>
 					<tr>

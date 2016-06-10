@@ -61,28 +61,28 @@ var join = {
 		form.submit();
 	},
 	passwordCheckEvent : function(){
-		if(join.pw.val() !== join.pwConfirm.val()){
-			join.passwordSpan.html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
-		} else if(join.pw.val().length < 6 && join.pwConfirm.val().length < 6){
-			join.passwordSpan.html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
-		} else {
-			join.passwordSpan.html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
+		if(this.pw.val() !== this.pwConfirm.val()){
+			this.passwordSpan.html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
+		} else if(this.pw.val().length < 6 && this.pwConfirm.val().length < 6){
+			this.passwordSpan.html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
+		} else if(this.pw.val() === this.pwConfirm.val()){
+			this.passwordSpan.html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
 		}
 	},
 	passwordConfirmCheckEvent : function(){
-		if(join.pw.val() !== join.pwConfirm.val()){
-			join.passwordSpan.html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
-		} else if(join.pw.val().length < 6 && join.pwConfirm.val().length < 6){
-			join.passwordSpan.html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
-		} else {
-			join.passwordSpan.html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
+		if(this.pw.val() !== this.pwConfirm.val()){
+			this.passwordSpan.html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
+		} else if(this.pw.val().length < 6 && this.pwConfirm.val().length < 6){
+			this.passwordSpan.html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
+		} else if(this.pw.val() === this.pwConfirm.val()){
+			this.passwordSpan.html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
 		}
 	},
 	idCheckEvent : function(){
 		$.ajax({
 			url : "/join/idCheck",
 			type : "POST",
-			data : {"id" : join.id.val()},
+			data : {"id" : this.id.val()},
 			dataType : "JSON",
 			success : function(data){
 				if(data.bool === "true"){
@@ -104,7 +104,7 @@ var join = {
 		$.ajax({
 			url : "/join/emailCheck",
 			type : "POST",
-			data : {"email" : join.email.val()},
+			data : {"email" : this.email.val()},
 			dataType : "JSON",
 			success : function(data){
 				if(data.bool === "true"){
@@ -125,7 +125,7 @@ var join = {
 	init : function(){
 		this.joinBtn.click(function(){join.joinEvent();});
 		this.pw.keyup(function(){join.passwordCheckEvent();});
-		this.pwConfirm.keyup(function(){passwordConfirmCheckEvent();});
+		this.pwConfirm.keyup(function(){join.passwordConfirmCheckEvent();});
 		this.id.keyup(function(){join.idCheckEvent();});
 		this.email.keyup(function(){join.emailCheckEvent();});
 	}
