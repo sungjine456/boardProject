@@ -15,6 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Table(name = "user")
 public class User {
 	@Id
+	@Column(name = "user_idx")
 	@GeneratedValue
 	private int idx;
 	@Column(name="id", nullable=false)

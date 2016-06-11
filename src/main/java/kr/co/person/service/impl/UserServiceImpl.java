@@ -34,13 +34,14 @@ public class UserServiceImpl implements UserService {
 		String id = user.getId();
 		String password = user.getPassword();
 		String email = user.getEmail();
-		
-		String joinCheck = userRepository.findById(id).getId();
-		if(StringUtils.isNotEmpty(joinCheck)){
-			return new OkCheck("이미 가입되어있는 회원입니다.", false);
-		}
 		if(!common.isEmail(email)){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
+		}
+		User findUser = userRepository.findById(id);
+		if(findUser != null){
+			if(StringUtils.isNotEmpty(findUser.getId())){
+				return new OkCheck("이미 가입되어있는 회원입니다.", false);
+			}
 		}
 		log.info("isEmail function success");
 		password = common.passwordEncryption(password);
@@ -90,13 +91,20 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(email)){
 			return new OkCheck("메일을 입력해주세요.", false);
 		}
-		String emailVal = userRepository.findByEmail(email).getEmail();
-		if(emailVal != null && common.isEmail(email)){
-			return new OkCheck("이미 가입되어 있는 이메일입니다.", false);
-		} else if(emailVal == null && common.isEmail(email)){
-			return new OkCheck("가입 가능한 이메일입니다.", true);
+		User findUserByEmail = userRepository.findByEmail(email);
+		if(findUserByEmail != null){
+			String emailVal = findUserByEmail.getEmail();
+			if(emailVal != null && common.isEmail(email)){
+				return new OkCheck("이미 가입되어 있는 이메일입니다.", false);
+			} else {
+				return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
+			}
 		} else {
-			return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
+			if(common.isEmail(email)){
+				return new OkCheck("가입 가능한 이메일입니다.", true);
+			} else {
+				return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
+			}
 		}
 	}
 

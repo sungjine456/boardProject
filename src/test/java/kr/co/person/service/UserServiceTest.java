@@ -38,7 +38,7 @@ public class UserServiceTest {
 		String email = null;
 		Assert.assertEquals("메일을 입력해주세요.", userService.emailCheck(email).getMessage());
 		email = "";
-		Assert.assertEquals("올바른 형식의 메일을 입력해주세요.", userService.emailCheck(email).getMessage());
+		Assert.assertEquals("메일을 입력해주세요.", userService.emailCheck(email).getMessage());
 		email = "tjdwls@naver.com";
 		Assert.assertEquals("가입 가능한 이메일입니다.", userService.emailCheck(email).getMessage());
 		email = "sungjin@naver.com";
