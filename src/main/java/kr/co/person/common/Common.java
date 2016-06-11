@@ -50,18 +50,16 @@ public class Common {
  
     public String cookieAesEncode(String key, String str){
     	String iv = key.substring(0, 16);
-    	String enStr = "";
     	try{
     		Key keySpec = AES256Util(key);
 	        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
 	        c.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(iv.getBytes()));
 	 
 	        byte[] encrypted = c.doFinal(str.getBytes("UTF-8"));
-	        enStr = new String(Base64.encodeBase64(encrypted));
+	        return new String(Base64.encodeBase64(encrypted));
     	} catch(Exception e){
-    		enStr = null;
+    		return "";
     	}
-        return enStr;
     }
  
     public String cookieAesDecode(String key, String str){
@@ -76,7 +74,7 @@ public class Common {
 	        byteStr = Base64.decodeBase64(str.getBytes());
 	        return new String(c.doFinal(byteStr),"UTF-8");
     	} catch(Exception e){
-    		return null;
+    		return "";
     	}
     }
 }

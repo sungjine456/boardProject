@@ -69,15 +69,6 @@ var join = {
 			this.passwordSpan.html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
 		}
 	},
-	passwordConfirmCheckEvent : function(){
-		if(this.pw.val() !== this.pwConfirm.val()){
-			this.passwordSpan.html("<font style='color:red'>비밀번호가 일치하지 않습니다.</font>");
-		} else if(this.pw.val().length < 6 && this.pwConfirm.val().length < 6){
-			this.passwordSpan.html("<font style='color:red'>비밀번호는 6자 이상 입력해주세요.</font>");
-		} else if(this.pw.val() === this.pwConfirm.val()){
-			this.passwordSpan.html("<font style='color:blue'>비밀번호가 일치합니다.</font>");
-		}
-	},
 	idCheckEvent : function(){
 		$.ajax({
 			url : "/join/idCheck",
@@ -125,7 +116,7 @@ var join = {
 	init : function(){
 		this.joinBtn.click(function(){join.joinEvent();});
 		this.pw.keyup(function(){join.passwordCheckEvent();});
-		this.pwConfirm.keyup(function(){join.passwordConfirmCheckEvent();});
+		this.pwConfirm.keyup(function(){join.passwordCheckEvent();});
 		this.id.keyup(function(){join.idCheckEvent();});
 		this.email.keyup(function(){join.emailCheckEvent();});
 	}

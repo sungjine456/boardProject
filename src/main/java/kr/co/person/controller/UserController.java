@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Common;
 import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
@@ -28,11 +27,13 @@ import kr.co.person.service.UserService;
 
 @Controller
 public class UserController {
-	static final Logger log = LoggerFactory.getLogger(BoardProjectApplication.class);
-	static final String ENCRYPTION_KEY = "personProjectByJin";
+	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private static final String ENCRYPTION_KEY = "personProjectByJin";
 	
-	@Autowired private UserService userService;
-	@Autowired private Common common;
+	@Autowired 
+	private UserService userService;
+	@Autowired 
+	private Common common;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(){
@@ -156,10 +157,16 @@ public class UserController {
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 			if(idSave != null && idSave.equals("check")){
-				Cookie cookie = new Cookie("saveId", common.cookieAesEncode(ENCRYPTION_KEY, id));
+				String enKeyId = common.cookieAesEncode(ENCRYPTION_KEY, id);
+				String enKeyPassword = common.cookieAesEncode(ENCRYPTION_KEY, password);
+				if(StringUtils.isEmpty(enKeyId) || StringUtils.isEmpty(enKeyPassword)){
+					req.setAttribute("message", "로그인에 실패하셨습니다.");
+					return "view/user/login";
+				}
+				Cookie cookie = new Cookie("saveId", enKeyId);
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
-			    cookie = new Cookie("savePassword", common.cookieAesEncode(ENCRYPTION_KEY, password));
+			    cookie = new Cookie("savePassword", enKeyPassword);
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}

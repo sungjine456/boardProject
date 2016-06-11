@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Common;
 import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
@@ -19,10 +18,12 @@ import kr.co.person.service.UserService;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-	static final Logger log = LoggerFactory.getLogger(BoardProjectApplication.class);
+	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 	
-	@Autowired UserRepository userRepository;
-	@Autowired Common common;
+	@Autowired 
+	private UserRepository userRepository;
+	@Autowired 
+	private Common common;
 	
 	@Override
 	public OkCheck join(User user){
