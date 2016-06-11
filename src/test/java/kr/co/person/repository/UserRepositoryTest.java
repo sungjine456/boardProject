@@ -24,8 +24,8 @@ public class UserRepositoryTest {
     private String password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92personProject";
  
     @Test
-    public void testUserICheck() {
-    	String id = userRepository.userIdCheck("sungjin");
+    public void testFindById() {
+    	String id = userRepository.findById("sungjin").getId();
     	Assert.assertEquals("sungjin", id);
     }
     
@@ -36,15 +36,7 @@ public class UserRepositoryTest {
 	}
     
     @Test
-    public void testUserEmialCheck() {
-    	String email = userRepository.userEmialCheck("sungjin@naver.com");
-    	Assert.assertEquals("sungjin@naver.com", email);
-    	email = userRepository.userEmialCheck("ass@naver.com");
-    	Assert.assertNull(email);
-    }
-
-    @Test
-    public void testLoginCheck() {
+    public void testFindByIdAndPassword() {
     	user = userRepository.findByIdAndPassword("sungjin", password);
     	Assert.assertEquals("홍길동", user.getName());
     	Assert.assertEquals("sungjin@naver.com", user.getEmail());
@@ -53,12 +45,15 @@ public class UserRepositoryTest {
     }
     
     @Test
-    public void testFindPassword(){
+    public void testFindByEmail(){
     	user = userRepository.findByEmail("sungjin@naver.com");
     	Assert.assertEquals("홍길동", user.getName());
     	Assert.assertEquals("sungjin@naver.com", user.getEmail());
     	Assert.assertEquals("sungjin", user.getId());
     	Assert.assertEquals(password, user.getPassword());
+    	
+    	User user = userRepository.findByEmail("ass@naver.com");
+    	Assert.assertNull(user);
     }
     
     @Test

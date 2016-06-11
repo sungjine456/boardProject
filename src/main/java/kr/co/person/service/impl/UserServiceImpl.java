@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 		String password = user.getPassword();
 		String email = user.getEmail();
 		
-		String joinCheck = userRepository.userIdCheck(id);
+		String joinCheck = userRepository.findById(id).getId();
 		if(StringUtils.isNotEmpty(joinCheck)){
 			return new OkCheck("이미 가입되어있는 회원입니다.", false);
 		}
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(id)){
 			return new OkCheck("아이디를 입력해주세요.", false);
 		}
-		String idVal = userRepository.userIdCheck(id);
+		String idVal = userRepository.findById(id).getId();
 		if(StringUtils.isEmpty(idVal)){
 			return new OkCheck("가입 가능한 아이디입니다", true);
 		} else {
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(email)){
 			return new OkCheck("메일을 입력해주세요.", false);
 		}
-		String emailVal = userRepository.userEmialCheck(email);
+		String emailVal = userRepository.findByEmail(email).getEmail();
 		if(emailVal != null && common.isEmail(email)){
 			return new OkCheck("이미 가입되어 있는 이메일입니다.", false);
 		} else if(emailVal == null && common.isEmail(email)){
