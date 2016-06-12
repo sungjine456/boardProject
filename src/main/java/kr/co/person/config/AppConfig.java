@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -22,6 +23,7 @@ import kr.co.person.interceptor.LoginInterceptor;
 
 @Configuration
 @EnableWebMvc
+@PropertySource("classpath:key.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {
 	@Bean(name="freemarkerConfig")
 	public FreeMarkerConfigurer freemarkerConfig() {
