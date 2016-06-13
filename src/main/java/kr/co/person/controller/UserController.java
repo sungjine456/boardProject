@@ -51,6 +51,8 @@ public class UserController {
 			req.setAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
+		user.setId(common.cleanXss(user.getId()));
+		user.setName(common.cleanXss(user.getName()));
 		
 		OkCheck ok = userService.join(user);
 		req.setAttribute("message", ok.getMessage());
@@ -76,7 +78,7 @@ public class UserController {
 			
 			return map;
 		}
-		OkCheck ok = userService.idCheck(id);
+		OkCheck ok = userService.idCheck(common.cleanXss(id));
 		map.put("str", ok.getMessage());
 		map.put("bool", "" + ok.isBool());
 		
@@ -149,8 +151,8 @@ public class UserController {
 			req.setAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
-		String id = user.getId();
-		String password = user.getPassword();
+		String id = common.cleanXss(user.getId());
+		String password = common.cleanXss(user.getPassword());
 		user = userService.loginCheck(id, password);
 		if(user != null){
 			session.setAttribute("loginYn", "Y");

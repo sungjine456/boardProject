@@ -75,4 +75,20 @@ public class Common {
     		return "";
     	}
     }
+    
+    public String cleanXss(String str){
+    	str = str.replaceAll("\"","&gt;");
+        str = str.replaceAll("&", "&amp;");
+        str = str.replaceAll("<", "&lt;");
+        str = str.replaceAll(">", "&gt;");
+        str = str.replaceAll("\"", "&#34;");
+        str = str.replaceAll("\'", "&#39;");
+        str = str.replaceAll("%", "&#37;");    
+        str = str.replaceAll("../", "");
+        str = str.replaceAll("..\\\\", "");
+        str = str.replaceAll("./", "");
+        str = str.replaceAll("%2F", "");
+        
+        return str;
+    }
 }
