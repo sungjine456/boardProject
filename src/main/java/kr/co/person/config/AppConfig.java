@@ -42,11 +42,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    resolver.setSuffix(".ftl");
 	    return resolver;
 	}
-	
-	@Bean
-	public LoginInterceptor loginInterceptor() {
-		return new LoginInterceptor();
-	}
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -70,6 +65,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(loginInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
 	}
 }
