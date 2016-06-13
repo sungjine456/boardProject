@@ -26,10 +26,10 @@ public class BoardServiceImple implements BoardService {
 	public OkCheck save(String title, String content, int userIdx) {
 		log.info("execute BoardService save");
 		if(StringUtils.isEmpty(title)){
-			return new OkCheck("제목을 입력해주세요", false);
+			return new OkCheck("제목을 입력해주세요.", false);
 		}
 		if(StringUtils.isEmpty(content)){
-			return new OkCheck("내용을 입력해주세요", false);
+			return new OkCheck("내용을 입력해주세요.", false);
 		}
 		if(userIdx == 0){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
