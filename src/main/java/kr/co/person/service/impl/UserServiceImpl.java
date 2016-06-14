@@ -78,9 +78,9 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(id)){
 			return new OkCheck("아이디를 입력해주세요.", false);
 		}
-		String idVal = userRepository.findById(id).getId();
-		if(StringUtils.isEmpty(idVal)){
-			return new OkCheck("가입 가능한 아이디입니다", true);
+		User user = userRepository.findById(id);
+		if(user == null){
+			return new OkCheck("가입 가능한 아이디입니다.", true);
 		} else {
 			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
 		}

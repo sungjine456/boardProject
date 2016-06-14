@@ -32,6 +32,18 @@ public class UserServiceTest {
 		user = userService.loginCheck("sungjin", "123456");
 		Assert.assertEquals("sungjin", user.getId());
 	}
+	
+	@Test
+	public void testIdCheck() {
+		String id = null;
+		Assert.assertEquals("아이디를 입력해주세요.", userService.idCheck(id).getMessage());
+		id = "";
+		Assert.assertEquals("아이디를 입력해주세요.", userService.idCheck(id).getMessage());
+		id = "sungjin";
+		Assert.assertEquals("이미 가입되어 있는 아이디입니다.", userService.idCheck(id).getMessage());
+		id = "sungjin123";
+		Assert.assertEquals("가입 가능한 아이디입니다.", userService.idCheck(id).getMessage());
+	}
 
 	@Test
 	public void testEmailCheck() {
