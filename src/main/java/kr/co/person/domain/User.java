@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -18,17 +20,19 @@ public class User {
 	@Column(name = "user_idx")
 	@GeneratedValue
 	private int idx;
-	@Column(name="id", nullable=false)
+	@Column(name="id", nullable = false)
 	private String id;
-	@Column(name="password", nullable=false, length = 100)
+	@Column(name="password", nullable = false, length = 100)
 	private String password;
-	@Column(name="name", nullable=false)
+	@Column(name="name", nullable = false)
 	private String name;
-	@Column(name="email", nullable=false)
+	@Column(name="email", nullable = false)
 	private String email;
-	@Column(name="reg_date", nullable=false)
+	@Column(name="reg_date", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
-	@Column(name="up_date", nullable=false)
+	@Column(name="up_date", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date upDate;
 	
 	public User(){

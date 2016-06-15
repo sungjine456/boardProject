@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -25,8 +27,10 @@ public class Board {
 	@Column(name="writer", nullable=false)
 	private int writer;
 	@Column(name="regDate", nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
 	@Column(name="upDate", nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date upDate;
 	
 	public Board(){
