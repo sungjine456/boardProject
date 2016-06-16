@@ -6,6 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -17,17 +19,20 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @DynamicUpdate
 @Table(name = "auto_login")
-public class AutoLogin {
-	@Column(name="auto_login_check", nullable = false)
-	private String loginCheck;
+@IdClass(AutoLoginId.class)
+public class AutoLogin{
+	@Id
 	@Column(name="reg_ip", nullable = false)
 	private String regIp;
+	@Id
 	@Column(name="reg_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_idx")
     private User user;
+	@Column(name="auto_login_check", nullable = false)
+	private String loginCheck;
 
 	public AutoLogin() {
 	}

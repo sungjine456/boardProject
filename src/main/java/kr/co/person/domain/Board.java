@@ -20,16 +20,16 @@ public class Board {
 	@Column(name = "board_idx")
 	@GeneratedValue
 	private int idx;
-	@Column(name="title", nullable=false)
+	@Column(name="title", nullable = false)
 	private String title;
-	@Column(name="content", nullable=false)
+	@Column(name="content", nullable = false)
 	private String content;
-	@Column(name="writer", nullable=false)
+	@Column(name="writer", nullable = false)
 	private int writer;
-	@Column(name="regDate", nullable=false)
+	@Column(name="regDate", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
-	@Column(name="upDate", nullable=false)
+	@Column(name="upDate", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date upDate;
 	
