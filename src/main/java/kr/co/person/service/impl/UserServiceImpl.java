@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.common.Common;
+import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
+import kr.co.person.repository.AutoLoginRepository;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;
 
@@ -22,6 +24,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired 
 	private UserRepository userRepository;
+	@Autowired
+	private AutoLoginRepository autoLoginRepository;
 	@Autowired 
 	private Common common;
 	
@@ -180,4 +184,14 @@ public class UserServiceImpl implements UserService {
 		
 		return new OkCheck("비밀번호 수정이 완료되었습니다.", true);
 	}
+	public boolean autoLoginCheck(User user, String ip){
+		user = userRepository.findOne(user.getIdx());
+		log.info("userService autoLoginCheck" + user);
+		if(user == null){
+			return false;
+		}
+		AutoLogin autoLogin = new AutoLogin(user, "O", ip, new Date());
+		autoLoginRepository.save(autoLogin);
+		return true;
+	};
 }

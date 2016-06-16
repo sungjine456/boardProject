@@ -12,4 +12,5 @@ public interface UserService {
 	OkCheck translatePassword(String email);
 	User findUserForIdx(int idx);
 	OkCheck changePassword(int idx, String password, String changePassword);
+	boolean autoLoginCheck(User user, String ip);
 }

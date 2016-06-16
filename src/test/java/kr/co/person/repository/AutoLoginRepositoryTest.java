@@ -22,21 +22,25 @@ import kr.co.person.domain.User;
 public class AutoLoginRepositoryTest {
 
 	@Autowired private AutoLoginRepository autoLoginRepository;
+	@Autowired private UserRepository userRepository;
 	
+	private User user;
+	private Date date = new Date();
+
 	@Test
 	public void testSave() {
-		Date date = new Date();
-		User user = new User();
-		user.setIdx(1);
-		user.setEmail("sungjin@naver.com");
-		user.setId("sungjin");
-		user.setName("홍길동");
-		user.setPassword("123456");
-		user.setRegDate(date);
-		user.setUpDate(date);
+		user = userRepository.findOne(1);
 		AutoLogin autoLogin = new AutoLogin(user, "O", "192.168.0.1", date);
 		AutoLogin autoLoginSave = autoLoginRepository.save(autoLogin);
 		Assert.assertEquals("O", autoLoginSave.getLoginCheck());
 		Assert.assertEquals("192.168.0.1", autoLoginSave.getRegIp());
+	}
+	
+	@Test
+	public void testFind(){
+		user = userRepository.findOne(1);
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIpAndRegDate(1, "192.168.0.1", user.getRegDate());
+		Assert.assertEquals("192.168.0.1", autoLogin.getRegIp());
+		Assert.assertEquals("O", autoLogin.getLoginCheck());
 	}
 }

@@ -99,4 +99,20 @@ public class UserServiceTest {
 		Assert.assertEquals("이미 가입되어있는 회원입니다.", ok.getMessage());
 		Assert.assertFalse(ok.isBool());
 	}
+	
+	@Test
+	public void testAutoLogin(){
+		Date date = new Date();
+		User user = new User();
+		user.setIdx(5);
+		user.setEmail("sungjin@naver.com");
+		user.setId("sungjin");
+		user.setName("홍길동");
+		user.setPassword("123456");
+		user.setRegDate(date);
+		user.setUpDate(date);
+		Assert.assertFalse(userService.autoLoginCheck(user, "192.168.0.1"));
+		user.setIdx(1);
+		Assert.assertTrue(userService.autoLoginCheck(user, "192.168.0.1"));
+	}
 }

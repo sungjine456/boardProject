@@ -161,16 +161,14 @@ public class UserController {
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 			if(idSave != null && idSave.equals("check")){
+				String ip = req.getRemoteAddr();
+				userService.autoLoginCheck(user, ip);
 				String enKeyId = common.cookieAesEncode(ENCRYPTION_KEY, id);
-				String enKeyPassword = common.cookieAesEncode(ENCRYPTION_KEY, password);
-				if(StringUtils.isEmpty(enKeyId) || StringUtils.isEmpty(enKeyPassword)){
+				if(StringUtils.isEmpty(enKeyId)){
 					req.setAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
 				Cookie cookie = new Cookie("saveId", enKeyId);
-			    cookie.setMaxAge(60*60*24);
-			    res.addCookie(cookie);
-			    cookie = new Cookie("savePassword", enKeyPassword);
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}

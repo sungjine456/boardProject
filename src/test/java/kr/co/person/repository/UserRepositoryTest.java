@@ -55,13 +55,4 @@ public class UserRepositoryTest {
     	User user = userRepository.findByEmail("ass@naver.com");
     	Assert.assertNull(user);
     }
-    
-    @Test
-    public void testDelete(){
-    	user = userRepository.findOne(1);
-		Assert.assertEquals("sungjin", user.getId());
-		userRepository.delete(1);
-		user = userRepository.findOne(1);
-		Assert.assertNull(user);
-    }
 }
