@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLoginCheck" + user);
+		log.info("userService autoLoginCheck :  " + user);
 		if(user == null || StringUtils.isEmpty(ip)){
 			return false;
 		}
@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLoginCheck :  " + user);
+		log.info("userService autoLogin :  " + user);
 		if(user == null || StringUtils.isEmpty(ip)){
 			return false;
 		}
@@ -228,7 +228,6 @@ public class UserServiceImpl implements UserService {
 		if(autoLogin == null){
 			autoLoginRepository.save(new AutoLogin(user, "O", ip, new Date()));
 		} else {
-			autoLogin = new AutoLogin();
 			autoLogin.setLoginCheck("O");
 			autoLoginRepository.save(autoLogin);
 		}
@@ -241,7 +240,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLoginCheck" + user);
+		log.info("userService autoLogout :  " + user);
 		if(user == null || StringUtils.isEmpty(ip)){
 			return false;
 		}
@@ -249,7 +248,6 @@ public class UserServiceImpl implements UserService {
 		if(autoLogin == null){
 			return false;
 		} else {
-			autoLogin = new AutoLogin();
 			autoLogin.setLoginCheck("X");
 			autoLoginRepository.save(autoLogin);
 		}

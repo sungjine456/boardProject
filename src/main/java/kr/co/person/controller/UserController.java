@@ -125,7 +125,7 @@ public class UserController {
 			}
 		}
 		User user = userService.findUserForId(id);
-		if(user != null && userService.autoLogin(user, ip)){
+		if(user != null && userService.autoLoginCheck(user, ip)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -264,8 +264,12 @@ public class UserController {
 			rea.addFlashAttribute("message", "존재하지 않는 아이디입니다.");
 			return "redirect:/";
 		}
-		boolean bool = userService.leave(user.getIdx());
-		if(bool){
+		if(userService.leave(user.getIdx())){
+			String ip = req.getRemoteAddr();
+			if(!userService.autoLogout(user, ip)){
+				rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
+				return "redirect:/mypage";
+			}
 			session.setAttribute("loginYn", "N");
 			session.removeAttribute("idx");
 			session.removeAttribute("id");
