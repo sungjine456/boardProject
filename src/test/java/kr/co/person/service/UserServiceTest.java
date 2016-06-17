@@ -117,4 +117,21 @@ public class UserServiceTest {
 		user.setIdx(1);
 		Assert.assertTrue(userService.autoLoginCheck(user, "192.168.0.1"));
 	}
+	
+	@Test
+	public void testLeave(){
+		String garbage = "b94c56f6f1cf92d48e021c573b77fa253eca91e579e308473c0536716c8e7bd6personProject";
+		User user = userService.findUserForIdx(1);
+		Assert.assertEquals("sungjin@naver.com", user.getEmail());
+		Assert.assertEquals("sungjin", user.getId());
+		Assert.assertEquals(password, user.getPassword());
+		Assert.assertEquals("홍길동", user.getName());
+		boolean bool = userService.leave(1);
+		user = userService.findUserForIdx(1);
+		Assert.assertTrue(bool);
+		Assert.assertEquals(garbage, user.getEmail());
+		Assert.assertEquals(garbage, user.getId());
+		Assert.assertEquals(garbage, user.getPassword());
+		Assert.assertEquals(garbage, user.getName());
+	}
 }

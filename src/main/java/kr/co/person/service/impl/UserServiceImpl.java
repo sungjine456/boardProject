@@ -68,12 +68,16 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean leave(int idx){
-		try{
-			userRepository.delete(idx);
-		} catch (Exception e){
-			log.error("UserService leave function : " + e.getMessage());
+		String garbage = common.passwordEncryption("Garbage");
+		User user = userRepository.findOne(idx);
+		if(user == null){
 			return false;
 		}
+		user.setEmail(garbage);
+		user.setId(garbage);
+		user.setName(garbage);
+		user.setPassword(garbage);
+		userRepository.save(user);
 		return true;
 	}
 
