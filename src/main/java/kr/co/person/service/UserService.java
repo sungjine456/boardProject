@@ -11,6 +11,9 @@ public interface UserService {
 	boolean leave(int idx);
 	OkCheck translatePassword(String email);
 	User findUserForIdx(int idx);
+	User findUserForId(String id);
 	OkCheck changePassword(int idx, String password, String changePassword);
 	boolean autoLoginCheck(User user, String ip);
+	boolean autoLogin(User user, String ip);
+	boolean autoLogout(User user, String ip);
 }

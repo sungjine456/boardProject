@@ -113,7 +113,7 @@ public class UserController {
 		}
 		log.info("execute UserController no message");
 		String id = "";
-		String password = "";
+		String ip = req.getRemoteAddr();
 		Cookie[] cookies = req.getCookies();
 		if(cookies != null){
 			for(int i = 0; i < cookies.length; i++){
@@ -122,13 +122,10 @@ public class UserController {
 				if("saveId".equals(key)){
 					id = common.cookieAesDecode(ENCRYPTION_KEY, val);
 				}
-				if("savePassword".equals(key)){
-					password = common.cookieAesDecode(ENCRYPTION_KEY, val);;
-				}
 			}
 		}
-		User user = userService.loginCheck(id, password);
-		if(user != null){
+		User user = userService.findUserForId(id);
+		if(user != null && userService.autoLogin(user, ip)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -152,8 +149,7 @@ public class UserController {
 			return "view/user/login";
 		}
 		String id = common.cleanXss(user.getId());
-		String password = common.cleanXss(user.getPassword());
-		user = userService.loginCheck(id, password);
+		user = userService.findUserForId(id);
 		if(user != null){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
@@ -162,7 +158,10 @@ public class UserController {
 			session.setAttribute("email", user.getEmail());
 			if(idSave != null && idSave.equals("check")){
 				String ip = req.getRemoteAddr();
-				userService.autoLoginCheck(user, ip);
+				if(!userService.autoLogin(user, ip)){
+					req.setAttribute("message", "로그인에 실패하셨습니다.");
+					return "view/user/login";
+				}
 				String enKeyId = common.cookieAesEncode(ENCRYPTION_KEY, id);
 				if(StringUtils.isEmpty(enKeyId)){
 					req.setAttribute("message", "로그인에 실패하셨습니다.");
@@ -181,19 +180,26 @@ public class UserController {
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+		String url = req.getRequestURI();
 		HttpSession session = req.getSession();
+		int idx = (int)session.getAttribute("idx");
+		if(idx == 0){
+			return url;
+		}
 		session.setAttribute("loginYn", "N");
 		session.removeAttribute("idx");
 		session.removeAttribute("id");
 		session.removeAttribute("name");
 		session.removeAttribute("email");
 		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
-		Cookie cookie = new Cookie("saveId", null) ;
-		cookie.setMaxAge(0) ;
-	    res.addCookie(cookie) ;
-	    cookie = new Cookie("savePassword", null) ;
-	    cookie.setMaxAge(0) ;
-	    res.addCookie(cookie) ;
+		String ip = req.getRemoteAddr();
+		User user = userService.findUserForIdx(idx);
+		if(user == null || !userService.autoLogout(user, ip)){
+			return url;
+		}
+		Cookie cookie = new Cookie("saveId", null);
+		cookie.setMaxAge(0);
+	    res.addCookie(cookie);
 		return "redirect:/";
 	}
 	
@@ -265,12 +271,9 @@ public class UserController {
 			session.removeAttribute("id");
 			session.removeAttribute("name");
 			session.removeAttribute("email");
-			Cookie cookie = new Cookie("saveId", null) ;
-			cookie.setMaxAge(0) ;
-		    res.addCookie(cookie) ;
-		    cookie = new Cookie("savePassword", null) ;
-		    cookie.setMaxAge(0) ;
-		    res.addCookie(cookie) ;
+			Cookie cookie = new Cookie("saveId", null);
+			cookie.setMaxAge(0);
+		    res.addCookie(cookie);
 		    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
 			return "redirect:/";
 		} else {

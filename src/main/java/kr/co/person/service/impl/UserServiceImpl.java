@@ -155,6 +155,11 @@ public class UserServiceImpl implements UserService {
 	public User findUserForIdx(int idx) {
 		return userRepository.findOne(idx);
 	}
+	
+	@Override
+	public User findUserForId(String id) {
+		return userRepository.findById(id);
+	}
 
 	@Override
 	public OkCheck changePassword(int idx, String password, String changePassword) {
@@ -184,14 +189,70 @@ public class UserServiceImpl implements UserService {
 		
 		return new OkCheck("비밀번호 수정이 완료되었습니다.", true);
 	}
+	
+	@Override
 	public boolean autoLoginCheck(User user, String ip){
-		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLoginCheck" + user);
-		if(user == null){
+		if(user == null || user.getIdx() == 0){
 			return false;
 		}
-		AutoLogin autoLogin = new AutoLogin(user, "O", ip, new Date());
-		autoLoginRepository.save(autoLogin);
+		user = userRepository.findOne(user.getIdx());
+		log.info("userService autoLoginCheck" + user);
+		if(user == null || StringUtils.isEmpty(ip)){
+			return false;
+		}
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		if(autoLogin == null){
+			return false;
+		}
+		if(!autoLogin.getLoginCheck().equals("O")){
+			return false;
+		}
+		Date date = new Date();
+		if(date.getTime() - autoLogin.getRegDate().getTime() > 24 * 60 * 60 * 1000){
+			return false;
+		}
 		return true;
 	};
+	
+	@Override
+	public boolean autoLogin(User user, String ip){
+		if(user == null || user.getIdx() == 0){
+			return false;
+		}
+		user = userRepository.findOne(user.getIdx());
+		log.info("userService autoLoginCheck :  " + user);
+		if(user == null || StringUtils.isEmpty(ip)){
+			return false;
+		}
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		if(autoLogin == null){
+			autoLoginRepository.save(new AutoLogin(user, "O", ip, new Date()));
+		} else {
+			autoLogin = new AutoLogin();
+			autoLogin.setLoginCheck("O");
+			autoLoginRepository.save(autoLogin);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean autoLogout(User user, String ip) {
+		if(user == null || user.getIdx() == 0){
+			return false;
+		}
+		user = userRepository.findOne(user.getIdx());
+		log.info("userService autoLoginCheck" + user);
+		if(user == null || StringUtils.isEmpty(ip)){
+			return false;
+		}
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		if(autoLogin == null){
+			return false;
+		} else {
+			autoLogin = new AutoLogin();
+			autoLogin.setLoginCheck("X");
+			autoLoginRepository.save(autoLogin);
+		}
+		return true;
+	}
 }

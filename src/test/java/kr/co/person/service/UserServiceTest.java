@@ -101,9 +101,11 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testAutoLogin(){
+	public void testAutoLoginCheck(){
 		Date date = new Date();
 		User user = new User();
+		Assert.assertFalse(userService.autoLoginCheck(null, "192.168.0.1"));
+		Assert.assertFalse(userService.autoLoginCheck(user, ""));
 		user.setIdx(5);
 		user.setEmail("sungjin@naver.com");
 		user.setId("sungjin");

@@ -37,9 +37,9 @@ public class AutoLoginRepositoryTest {
 	}
 	
 	@Test
-	public void testFind(){
+	public void testFindByUserIdxAndRegIp(){
 		user = userRepository.findOne(1);
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIpAndRegDate(1, "192.168.0.1", user.getRegDate());
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(1, "192.168.0.1");
 		Assert.assertEquals("192.168.0.1", autoLogin.getRegIp());
 		Assert.assertEquals("O", autoLogin.getLoginCheck());
 	}
