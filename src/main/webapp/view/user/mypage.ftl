@@ -9,7 +9,7 @@
 </head>
 <body>
 	<div class="container">
-		<h1> 회원페이지 </h1>
+		<h1> 회원 페이지 </h1>
 		<form id="form" class="form-signin" action="/" method="post">
 			<table class="table table-hover">
 				<colgroup>

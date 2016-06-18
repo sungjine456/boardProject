@@ -9,8 +9,8 @@
 </head>
 <body>
 	<div class="container">
-		<h1> 회원페이지 </h1>
-		<form id="form" class="form-signin" action="/" method="post">
+		<h1> 회원 수정 페이지 </h1>
+		<form id="form" class="form-signin" action="/update" method="post">
 			<table class="table table-hover">
 				<colgroup>
 					<col width="30%"/>
@@ -45,7 +45,7 @@
 						<button data-target="#change" data-toggle="modal" type="button" class="btn btn-primary">비밀번호 수정</button>
 					</td>
 					<td>
-						<button type="button" id="update" class="btn btn-danger" style="float:right">회원 수정</button>
+						<button type="button" id="updateBtn" class="btn btn-primary" style="float:right">회원 수정</button>
 					</td>
 				</tr>
 			</table>

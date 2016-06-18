@@ -1,6 +1,6 @@
 var mypage = {
-	updateBtn : $("#updateBtn"),
-	leaveForm : $("#leaveForm"),
+	updateBtn : $("#form #updateBtn"),
+	leaveForm : $("#form #leaveForm"),
 	leavePassword : $("#leaveForm #leavePassword"),
 	leaveBtn : $("#leaveForm #leaveBtn"),
 	leaveEvent : function(){

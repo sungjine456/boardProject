@@ -235,11 +235,11 @@ public class UserController {
 		log.info("execute UserController mypageView");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", "페스워드를 입력해주세요");
-			return "redirect:/mypage";
+			return "redirect:/update";
 		}
 		if(StringUtils.isEmpty(changePassword)){
 			rea.addFlashAttribute("message", "수정할 페스워드를 입력해주세요");
-			return "redirect:/mypage";
+			return "redirect:/update";
 		}
 		int idx = (int)req.getSession().getAttribute("idx");
 		User user = userService.findUserForIdx(idx);
@@ -249,7 +249,7 @@ public class UserController {
 		
 		OkCheck ok = userService.changePassword(idx, password, changePassword);
 		rea.addFlashAttribute("message", ok.getMessage());
-		return "redirect:/mypage";
+		return "redirect:/update";
 	}
 	
 	@RequestMapping(value="/leave")
@@ -295,6 +295,7 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(HttpServletRequest req){
 		req.setAttribute("include", "/view/user/mypage.ftl");
+		req.setAttribute("message", "회원정보를 수정 하셨습니다.");
 		return "view/board/frame";
 	}
 	
