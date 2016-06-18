@@ -282,6 +282,22 @@ public class UserController {
 		return "redirect:/";
 	}
 	
+	@RequestMapping(value="/update", method=RequestMethod.GET)
+	public String updateView(HttpServletRequest req){
+		log.info("execute UserController mypageView");
+		req.setAttribute("id", req.getSession().getAttribute("id"));
+		req.setAttribute("name", req.getSession().getAttribute("name"));
+		req.setAttribute("email", req.getSession().getAttribute("email"));
+		req.setAttribute("include", "/view/user/update.ftl");
+		return "view/board/frame";
+	}
+
+	@RequestMapping(value="/update", method=RequestMethod.POST)
+	public String update(HttpServletRequest req){
+		req.setAttribute("include", "/view/user/mypage.ftl");
+		return "view/board/frame";
+	}
+	
 	@RequestMapping("/interceptorView")
 	public String interceptorView(){
 		return "common/interceptorPage";
