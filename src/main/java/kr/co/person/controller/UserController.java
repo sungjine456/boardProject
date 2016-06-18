@@ -226,7 +226,8 @@ public class UserController {
 		req.setAttribute("name", req.getSession().getAttribute("name"));
 		req.setAttribute("email", req.getSession().getAttribute("email"));
 		req.setAttribute("message", rea.getFlashAttributes().get("message"));
-		return "view/user/mypage";
+		req.setAttribute("include", "/view/user/mypage.ftl");
+		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
@@ -264,26 +265,21 @@ public class UserController {
 			rea.addFlashAttribute("message", "존재하지 않는 아이디입니다.");
 			return "redirect:/";
 		}
-		if(userService.leave(user.getIdx())){
-			String ip = req.getRemoteAddr();
-			if(!userService.autoLogout(user, ip)){
-				rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
-				return "redirect:/mypage";
-			}
-			session.setAttribute("loginYn", "N");
-			session.removeAttribute("idx");
-			session.removeAttribute("id");
-			session.removeAttribute("name");
-			session.removeAttribute("email");
-			Cookie cookie = new Cookie("saveId", null);
-			cookie.setMaxAge(0);
-		    res.addCookie(cookie);
-		    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
-			return "redirect:/";
-		} else {
-			rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
+		String ip = req.getRemoteAddr();
+	    if(!userService.leave(user.getIdx(), ip)){
+	    	rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
 			return "redirect:/mypage";
-		}
+	    }
+		session.setAttribute("loginYn", "N");
+		session.removeAttribute("idx");
+		session.removeAttribute("id");
+		session.removeAttribute("name");
+		session.removeAttribute("email");
+		Cookie cookie = new Cookie("saveId", null);
+		cookie.setMaxAge(0);
+	    res.addCookie(cookie);
+	    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
+		return "redirect:/";
 	}
 	
 	@RequestMapping("/interceptorView")

@@ -67,17 +67,24 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean leave(int idx){
+	public boolean leave(int idx, String ip){
+		log.info("userService leave");
+		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
 		if(user == null){
 			return false;
 		}
+		if(!autoLogout(user, ip)){
+			return false;
+		}
+		log.info("userService leave success before");
 		user.setEmail(garbage);
 		user.setId(garbage);
 		user.setName(garbage);
 		user.setPassword(garbage);
 		userRepository.save(user);
+		log.info("userService leave success");
 		return true;
 	}
 
@@ -200,14 +207,16 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLoginCheck :  " + user);
+		log.info("userService autoLoginCheck user :  " + user);
 		if(user == null || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		log.info("userService autoLoginCheck autoLogin :  " + autoLogin);
 		if(autoLogin == null){
 			return false;
 		}
+		log.info("userService autoLoginCheck autoLoginCheck :  " + autoLogin.getLoginCheck());
 		if(!autoLogin.getLoginCheck().equals("O")){
 			return false;
 		}
@@ -244,13 +253,14 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLogout :  " + user);
+		log.info("userService autoLogout user :  " + user);
 		if(user == null || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		log.info("userService autoLogout autoLogout :  " + autoLogin);
 		if(autoLogin == null){
-			return false;
+			return true;
 		} else {
 			autoLogin.setLoginCheck("X");
 			autoLoginRepository.save(autoLogin);

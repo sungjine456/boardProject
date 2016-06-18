@@ -115,7 +115,11 @@ public class UserServiceTest {
 		user.setUpDate(date);
 		Assert.assertFalse(userService.autoLoginCheck(user, "192.168.0.1"));
 		user.setIdx(1);
-		Assert.assertTrue(userService.autoLoginCheck(user, "192.168.0.1"));
+		/** 
+		 * 자동 로그인의 유효기간이 하루 이기 때문에 false
+		 * true로 하려면 testData를 수정한후 테스트
+		 */
+		Assert.assertFalse(userService.autoLoginCheck(user, "192.168.0.1"));
 	}
 	
 	@Test
@@ -126,7 +130,7 @@ public class UserServiceTest {
 		Assert.assertEquals("sungjin", user.getId());
 		Assert.assertEquals(password, user.getPassword());
 		Assert.assertEquals("홍길동", user.getName());
-		boolean bool = userService.leave(1);
+		boolean bool = userService.leave(1, "192.168.0.1");
 		user = userService.findUserForIdx(1);
 		Assert.assertTrue(bool);
 		Assert.assertEquals(garbage, user.getEmail());

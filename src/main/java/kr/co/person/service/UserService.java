@@ -8,7 +8,7 @@ public interface UserService {
 	OkCheck idCheck(String id);
 	OkCheck emailCheck(String email);
 	User loginCheck(String id, String password);
-	boolean leave(int idx);
+	boolean leave(int idx, String ip);
 	OkCheck translatePassword(String email);
 	User findUserForIdx(int idx);
 	User findUserForId(String id);
