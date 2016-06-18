@@ -267,4 +267,28 @@ public class UserServiceImpl implements UserService {
 		}
 		return true;
 	}
+
+	@Override
+	public boolean update(int idx, String name, String email) {
+		if(idx == 0){
+			return false;
+		}
+		if(StringUtils.isEmpty(name)){
+			return false;
+		}
+		if(StringUtils.isEmpty(email) && !common.isEmail(email)){
+			return false;
+		}
+		User user = userRepository.findOne(idx);
+		if(user == null){
+			return false;
+		}
+		user.setName(name);
+		user.setEmail(email);
+		user = userRepository.save(user);
+		if(user == null){
+			return false;
+		}
+		return true;
+	}
 }

@@ -16,4 +16,5 @@ public interface UserService {
 	boolean autoLoginCheck(User user, String ip);
 	boolean autoLogin(User user, String ip);
 	boolean autoLogout(User user, String ip);
+	boolean update(int idx, String name, String email);
 }

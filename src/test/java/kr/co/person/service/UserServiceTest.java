@@ -138,4 +138,12 @@ public class UserServiceTest {
 		Assert.assertEquals(garbage, user.getPassword());
 		Assert.assertEquals(garbage, user.getName());
 	}
+	
+	@Test
+	public void testUpdate(){
+		Assert.assertTrue(userService.update(1, "hyun", "hyun@naver.com"));
+		Assert.assertFalse(userService.update(1, "hyun", ""));
+		Assert.assertFalse(userService.update(1, "", "hyun@naver.com"));
+		Assert.assertFalse(userService.update(2, "hyun", "hyun@naver.com"));
+	}
 }

@@ -293,9 +293,29 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(HttpServletRequest req){
-		req.setAttribute("include", "/view/user/mypage.ftl");
-		req.setAttribute("message", "회원정보를 수정 하셨습니다.");
+	public String update(@RequestParam String name, @RequestParam String email, HttpServletRequest req){
+		HttpSession session = req.getSession();
+		if(StringUtils.isEmpty(name)){
+			req.setAttribute("include", "/view/user/update.ftl");
+			req.setAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+		}
+		if(StringUtils.isEmpty(email)){
+			req.setAttribute("include", "/view/user/update.ftl");
+			req.setAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+		}
+		name = common.cleanXss(name);
+		email = common.cleanXss(email);
+		int idx = (int)session.getAttribute("idx");
+		if(idx == 0){
+			req.setAttribute("include", "/view/user/update.ftl");
+			req.setAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+		}
+		if(userService.update(idx, name, email)){
+			session.setAttribute("name", name);
+			session.setAttribute("email", email);
+			req.setAttribute("include", "/view/user/mypage.ftl");
+			req.setAttribute("message", "회원정보를 수정 하셨습니다.");
+		}
 		return "view/board/frame";
 	}
 	
