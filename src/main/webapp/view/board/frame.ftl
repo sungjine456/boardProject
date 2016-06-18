@@ -6,7 +6,7 @@
 			<#if message != "">
 				alert("${message}");
 			</#if>
-			<#assign include = include!"main/board.ftl">
+			<#assign include = include!"/view/board/main/board.ftl">
 		</script>
 		<title>Person Board Projec</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">

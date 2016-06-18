@@ -8,6 +8,11 @@ var login = {
 	joinBtn : $("#form #joinBtn"),
 	translatePasswordBtn : $("#translateForm #translatePasswordBtn"),
 	loginBtn : $("#form #loginBtn"),
+	enterEvent : function(){
+		if(event.keyCode === 13){
+			this.loginEvent();
+		}
+	},
 	loginEvent : function(){
 		if(this.id.val() === ""){
 			alert("아이디를 입력해주세요.");
@@ -48,6 +53,8 @@ var login = {
 		this.joinBtn.click(function(){login.joinEvent();});
 		this.translatePasswordBtn.click(function(){login.tramslatePasswordEvent();});
 		this.checkBox.change(function(){login.checkBoxEvent();});
+		this.id.keyup(function(){login.enterEvent();});
+		this.password.keyup(function(){login.enterEvent();});
 	}
 };
 

@@ -262,7 +262,7 @@ public class UserController {
 		}
 		User user = userService.loginCheck((String)req.getSession().getAttribute("id"), password);
 		if(user == null || user.getIdx() != (int)req.getSession().getAttribute("idx")){
-			rea.addFlashAttribute("message", "존재하지 않는 아이디입니다.");
+			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
 		String ip = req.getRemoteAddr();
