@@ -1,6 +1,7 @@
 package kr.co.person.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.domain.Board;
 import kr.co.person.domain.OkCheck;
+import kr.co.person.domain.User;
 import kr.co.person.repository.BoardRepository;
+import kr.co.person.repository.UserRepository;
 import kr.co.person.service.BoardService;
 
 @Service
@@ -21,9 +24,11 @@ public class BoardServiceImple implements BoardService {
 
 	@Autowired
 	private BoardRepository boardRepository;
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Override
-	public OkCheck save(String title, String content, int userIdx) {
+	public OkCheck write(String title, String content, int userIdx) {
 		log.info("execute BoardService save");
 		if(StringUtils.isEmpty(title)){
 			return new OkCheck("제목을 입력해주세요.", false);
@@ -35,9 +40,18 @@ public class BoardServiceImple implements BoardService {
 			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
 		Date date = new Date();
-		Board board = new Board(title, content, userIdx, date, date);
+		User user = userRepository.findOne(userIdx);
+		if(user == null){
+			return new OkCheck("유효한 회원이 아닙니다.", false);
+		}
+		Board board = new Board(title, content, user, date, date);
 		boardRepository.save(board);
 		
 		return new OkCheck("글이 등록 되었습니다.", true);
+	}
+
+	@Override
+	public List<Board> findAll() {
+		return boardRepository.findAll();
 	}
 }
