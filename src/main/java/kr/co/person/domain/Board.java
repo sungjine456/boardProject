@@ -2,10 +2,14 @@ package kr.co.person.domain;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,8 +28,9 @@ public class Board {
 	private String title;
 	@Column(name="content", nullable = false)
 	private String content;
-	@Column(name="writer", nullable = false)
-	private int writer;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name="writer")
+	private User user;
 	@Column(name="regDate", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
@@ -35,10 +40,10 @@ public class Board {
 	
 	public Board(){
 	}
-	public Board(String title, String content, int writer, Date regDate, Date upDate){
+	public Board(String title, String content, User user, Date regDate, Date upDate){
 		this.title = title;
 		this.content = content;
-		this.writer = writer;
+		this.user = user;
 		this.regDate = regDate;
 		this.upDate = upDate;
 	}
@@ -61,11 +66,11 @@ public class Board {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public int getWriter() {
-		return writer;
+	public User getUser() {
+		return user;
 	}
-	public void setWriter(int writer) {
-		this.writer = writer;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	public Date getRegDate() {
 		return regDate;
