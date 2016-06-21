@@ -23,11 +23,9 @@ public class BoardRepositoryTest {
 	
 	@Autowired
 	private BoardRepository boardRepository;
-	@Autowired
-	private UserRepository userRepository;
 	private Board board;
-	private User user;
 	Date date = new Date();
+	private User user = new User("sungjin", "sungjin@naver.com", "123456", "홍길동", date, date);
 
 	@Test
 	public void testFind() {
@@ -38,11 +36,6 @@ public class BoardRepositoryTest {
 	
 	@Test
 	public void testSave() {
-		user = userRepository.findOne(1);
-		Assert.assertEquals(1, user.getIdx());
-		Assert.assertEquals("sungjin", user.getId());
-		Assert.assertEquals("sungjin@naver.com", user.getEmail());
-		Assert.assertEquals("홍길동", user.getName());
 		Board board = new Board("t", "c", user, date, date);
 		Assert.assertEquals("t", board.getTitle());
 		Board boardSave = boardRepository.save(board);
