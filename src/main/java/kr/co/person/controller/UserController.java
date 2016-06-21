@@ -131,10 +131,10 @@ public class UserController {
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
-			return "view/board/frame";
+			return "redirect:/board";
 		}
 		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
-			return "view/board/frame";
+			return "redirect:/board";
 		}
 		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/user/login";
@@ -171,7 +171,7 @@ public class UserController {
 			    cookie.setMaxAge(60*60*24);
 			    res.addCookie(cookie);
 			}
-			return "view/board/frame";
+			return "redirect:/board";
 		} else {
 			req.setAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";

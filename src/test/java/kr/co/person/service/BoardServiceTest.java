@@ -1,5 +1,7 @@
 package kr.co.person.service;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.domain.Board;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BoardProjectApplication.class)
@@ -30,5 +33,12 @@ public class BoardServiceTest {
 		Assert.assertEquals("유효한 회원이 아닙니다.", message);
 		message = boardService.write("title", "content", 1).getMessage();
 		Assert.assertEquals("글이 등록 되었습니다.", message);
+	}
+	
+	@Test
+	public void test(){
+		List<Board> boardList = boardService.findAll();
+		Assert.assertEquals(1, boardList.get(0).getIdx());
+		Assert.assertEquals(1, boardList.size());
 	}
 }

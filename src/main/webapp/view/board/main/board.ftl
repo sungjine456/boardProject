@@ -24,6 +24,28 @@
 			</tr>
 		</thead>
 		<tbody>
+		<#list boardList as board>
+			<tr>
+				<td>
+					${board_index + 1}
+				</td>
+				<td>
+					${board.title}
+				</td>
+				<td>
+					${board.content}
+				</td>
+				<td>
+					${board.user.name}
+				</td>
+			</tr>
+		<#else>
+			<tr>
+				<td colspan="4">
+					등록된 글이 없습니다.
+				</td>
+			</tr>
+		</#list>
 			<tr>
 				<td colspan="4">
 					<button type="button" id="write" class="btn btn-primary" style="margin-left:80%;">글쓰기</button>
