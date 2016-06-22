@@ -30,13 +30,13 @@
 					${board_index + 1}
 				</td>
 				<td>
-					${board.title}
-				</td>
-				<td>
-					${board.content}
+					<a href="/boardDetail">${board.title}</a>
 				</td>
 				<td>
 					${board.user.name}
+				</td>
+				<td>
+					${board.regDate?date}
 				</td>
 			</tr>
 		<#else>

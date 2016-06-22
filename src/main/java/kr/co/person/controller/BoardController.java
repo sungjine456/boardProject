@@ -39,6 +39,12 @@ public class BoardController {
 	public String boardWrite(@RequestParam String title, @RequestParam String content, HttpServletRequest req){
 		HttpSession session = req.getSession();
 		boardService.write(common.cleanXss(title), common.cleanXss(content), (int)session.getAttribute("idx"));
+		return "redirect:/board";
+	}
+	
+	@RequestMapping(value="/boardDetail")
+	public String boardDetailView(HttpServletRequest req){
+		req.setAttribute("include", "main/boardDetail.ftl");
 		return "view/board/frame";
 	}
 }

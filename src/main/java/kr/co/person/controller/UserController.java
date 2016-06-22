@@ -62,7 +62,7 @@ public class UserController {
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
-			return "view/board/frame";
+			return "redirect:/board";
 		} else {
 			return "view/user/join";
 		}
