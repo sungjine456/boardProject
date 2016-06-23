@@ -66,6 +66,16 @@ public class UserServiceTest {
 	}
 	
 	@Test
+	public void testFindUserForId(){
+		user = userService.findUserForId("");
+		Assert.assertNull(user);
+		user = userService.findUserForId("abcdabcd");
+		Assert.assertNull(user);
+		user = userService.findUserForId("sungjin");
+		Assert.assertEquals("홍길동", user.getName());
+	}
+	
+	@Test
 	public void testChangePassword(){
 		user = userService.findUserForIdx(1);
 		Assert.assertEquals(password, user.getPassword());
@@ -145,5 +155,36 @@ public class UserServiceTest {
 		Assert.assertFalse(userService.update(1, "hyun", ""));
 		Assert.assertFalse(userService.update(1, "", "hyun@naver.com"));
 		Assert.assertFalse(userService.update(2, "hyun", "hyun@naver.com"));
+	}
+	
+	@Test
+	public void testTranslatePassword(){
+		userService.translatePassword("sungjin@naver.com");
+		user = userService.findUserForIdx(1);
+		Assert.assertNotEquals(password, user.getPassword());
+	}
+	
+	@Test
+	public void testAutoLogin(){
+		Boolean bool = userService.autoLogin(user, "192.168.0.1");
+		Assert.assertFalse(bool);
+		bool = userService.autoLogin(userService.findUserForIdx(1), "");
+		Assert.assertFalse(bool);
+		bool = userService.autoLogin(userService.findUserForIdx(2), "192.168.0.1");
+		Assert.assertFalse(bool);
+		bool = userService.autoLogin(userService.findUserForIdx(1), "192.168.0.1");
+		Assert.assertTrue(bool);
+	}
+	
+	@Test
+	public void testAutoLogout(){
+		Boolean bool = userService.autoLogout(user, "192.168.0.1");
+		Assert.assertFalse(bool);
+		bool = userService.autoLogout(userService.findUserForIdx(1), "");
+		Assert.assertFalse(bool);
+		bool = userService.autoLogout(userService.findUserForIdx(2), "192.168.0.1");
+		Assert.assertFalse(bool);
+		bool = userService.autoLogout(userService.findUserForIdx(1), "192.168.0.1");
+		Assert.assertTrue(bool);
 	}
 }

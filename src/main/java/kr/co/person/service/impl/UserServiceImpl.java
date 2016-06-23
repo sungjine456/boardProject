@@ -229,12 +229,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean autoLogin(User user, String ip){
-		if(user == null || user.getIdx() == 0){
-			return false;
-		}
-		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLogin :  " + user);
-		if(user == null || StringUtils.isEmpty(ip)){
+		if(user == null || user.getIdx() == 0 || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
@@ -249,19 +244,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean autoLogout(User user, String ip) {
-		if(user == null || user.getIdx() == 0){
-			return false;
-		}
-		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLogout user :  " + user);
-		if(user == null || StringUtils.isEmpty(ip)){
+		if(user == null || user.getIdx() == 0 || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
 		log.info("userService autoLogout autoLogout :  " + autoLogin);
-		if(autoLogin == null){
-			return true;
-		} else {
+		if(autoLogin != null){
 			autoLogin.setLoginCheck("X");
 			autoLoginRepository.save(autoLogin);
 		}
