@@ -8,19 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import kr.co.person.BoardProjectApplication;
-
 public class LoginInterceptor extends HandlerInterceptorAdapter {
-	static final Logger log = LoggerFactory.getLogger(BoardProjectApplication.class);
+	static final Logger log = LoggerFactory.getLogger(LoginInterceptor.class);
     
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
+    	log.info("interceptor excute");
     	String url = req.getRequestURI();
-    	if(url != null && (url.equals("/") || url.matches("/[join/a-zA-Z]{3,15}") || url.equals("/translatePassword") || url.equals("/interceptorView"))){
+    	if(url != null && (url.equals("/") || url.matches("/join/[a-zA-Z]{3,15}") || url.equals("/translatePassword") || url.equals("/interceptorView"))){
+    		log.info("interceptor login excute");
     		return true;
     	}
     	HttpSession session = req.getSession();
+    	log.info("interceptor excute session : " + session + " : " + session.getAttribute("loginYn"));
 		if(session.getAttribute("loginYn") == null || session.getAttribute("loginYn").equals("N")){
+			log.info("interceptor no login excute");
 			res.sendRedirect("/interceptorView");
 			return false;
 		}
