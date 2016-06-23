@@ -20,7 +20,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     		return true;
     	}
     	HttpSession session = req.getSession();
-    	log.info("interceptor excute session : " + session + " : " + session.getAttribute("loginYn"));
 		if(session.getAttribute("loginYn") == null || session.getAttribute("loginYn").equals("N")){
 			log.info("interceptor no login excute");
 			res.sendRedirect("/interceptorView");

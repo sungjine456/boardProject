@@ -42,6 +42,8 @@ public class BoardController {
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
 	public String boardWrite(@RequestParam String title, @RequestParam String content, HttpServletRequest req){
 		log.info("BoardController boardWrite excute");
+		log.info("BoardController boardWrite title : " + title + ",   content : " + content);
+		log.info("BoardController boardWrite title : " + common.cleanXss(title) + ",   content : " + common.cleanXss(content));
 		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(title)){
 			req.setAttribute("message", "제목을 입력해주세요.");
