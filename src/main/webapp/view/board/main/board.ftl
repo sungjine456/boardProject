@@ -30,7 +30,7 @@
 					${board_index + 1}
 				</td>
 				<td>
-					<a href="/boardDetail">${board.title}</a>
+					<a href="/boardDetail?num=${board.idx}">${board.title}</a>
 				</td>
 				<td>
 					${board.user.name}

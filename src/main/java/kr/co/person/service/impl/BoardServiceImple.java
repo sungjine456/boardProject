@@ -54,4 +54,9 @@ public class BoardServiceImple implements BoardService {
 	public List<Board> findAll() {
 		return boardRepository.findAll();
 	}
+
+	@Override
+	public Board findOne(int idx) {
+		return boardRepository.findOne(idx);
+	}
 }

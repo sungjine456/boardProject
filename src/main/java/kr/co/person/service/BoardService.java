@@ -8,4 +8,5 @@ import kr.co.person.domain.OkCheck;
 public interface BoardService {
 	OkCheck write(String title, String content, int userIdx);
 	List<Board> findAll();
+	Board findOne(int idx);
 }

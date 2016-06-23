@@ -11,7 +11,7 @@
 					<label for="title">제목 : </label>
 				</th>
 				<td>
-					<input type="text" id="title" class="form-control" name="title"/>
+					${board.title}
 				</td>
 			</tr>
 			<tr>
@@ -19,7 +19,7 @@
 					<label for="content">내용 : </label>
 				</th>
 				<td>
-					<textarea id="content" class="form-control" name="content" rows="3"></textarea>
+					${board.content}
 				</td>
 			</tr>
 			<tr>
