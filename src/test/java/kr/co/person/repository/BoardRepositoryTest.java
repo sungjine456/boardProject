@@ -25,7 +25,7 @@ public class BoardRepositoryTest {
 	private BoardRepository boardRepository;
 	private Board board;
 	Date date = new Date();
-	private User user = new User("sungjin", "sungjin@naver.com", "123456", "홍길동", date, date);
+	private User user = new User("tes", "test@naver.com", "test", "test", date, date);
 
 	@Test
 	public void testFind() {

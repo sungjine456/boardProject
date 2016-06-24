@@ -1,6 +1,6 @@
 <div class="container">
 	<h1>글쓰기</h1>
-	<form id="form" action="/boardWrite" method="post">
+	<form id="writeForm" action="/boardWrite" method="post">
 		<table class="table table-hover">
 			<colgroup>
 				<col width="10%"/>
@@ -24,7 +24,7 @@
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 90%">
-					<button type="submit" id="write" class="btn btn-primary">글쓰기</button>
+					<button type="button" id="writeBtn" class="btn btn-primary">글쓰기</button>
 				</td>
 			</tr>
 		</table>

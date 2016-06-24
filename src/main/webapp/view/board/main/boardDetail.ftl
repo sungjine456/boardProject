@@ -24,7 +24,7 @@
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 90%">
-					<button type="submit" id="write" class="btn btn-primary">뎃글</button>
+					<button type="button" id="write" class="btn btn-primary">뎃글</button>
 				</td>
 			</tr>
 		</table>
