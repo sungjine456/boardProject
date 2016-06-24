@@ -15,7 +15,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
     	log.info("interceptor excute");
     	String url = req.getRequestURI();
-    	if(url != null && (url.equals("/") || url.matches("/join/[a-zA-Z]{3,15}") || url.equals("/translatePassword") || url.equals("/interceptorView"))){
+    	log.info("interceptor url : " + url);
+    	if(url != null && (url.equals("/") || url.matches("/join/[a-zA-Z]{3,15}") || url.equals("/translatePassword") || url.equals("/interceptorView") || url.equals("/error") || url.equals("/error404"))){
     		log.info("interceptor login excute");
     		return true;
     	}

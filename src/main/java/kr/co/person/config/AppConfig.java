@@ -3,6 +3,7 @@ package kr.co.person.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.template.utility.XmlEscape;
+import kr.co.person.common.ServerCustomization;
 import kr.co.person.interceptor.LoginInterceptor;
 
 @Configuration
@@ -41,6 +43,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	    resolver.setPrefix("/");
 	    resolver.setSuffix(".ftl");
 	    return resolver;
+	}
+	
+	@Bean
+	public ServerProperties getServerProperties(){
+		return new ServerCustomization();
 	}
 
 	@Override

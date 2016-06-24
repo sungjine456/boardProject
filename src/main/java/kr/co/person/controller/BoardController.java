@@ -27,7 +27,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String main(HttpServletRequest req, RedirectAttributes rea){
-		log.info("BoardController main excute");
+		log.info("BoardController main execute");
 		req.setAttribute("boardList", boardService.findAll());
 		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/board/frame";
@@ -41,7 +41,7 @@ public class BoardController {
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
 	public String boardWrite(@RequestParam String title, @RequestParam String content, HttpServletRequest req){
-		log.info("BoardController boardWrite excute");
+		log.info("BoardController boardWrite execute");
 		log.info("BoardController boardWrite title : " + title + ",   content : " + content);
 		log.info("BoardController boardWrite title : " + common.cleanXss(title) + ",   content : " + common.cleanXss(content));
 		HttpSession session = req.getSession();
@@ -61,7 +61,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
-		log.info("BoardController boardDetailView excute");
+		log.info("BoardController boardDetailView execute");
 		Board board = boardService.findOne(num);
 		if(board == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");

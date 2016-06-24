@@ -36,7 +36,7 @@ public class BoardServiceTest {
 	}
 	
 	@Test
-	public void test(){
+	public void testFindAll(){
 		List<Board> boardList = boardService.findAll();
 		Assert.assertEquals(1, boardList.get(0).getIdx());
 		Assert.assertEquals(1, boardList.size());

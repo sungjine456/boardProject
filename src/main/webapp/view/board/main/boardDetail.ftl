@@ -20,11 +20,12 @@
 				</th>
 				<td>
 					${board.content}
+					<button type="button" id="update" class="btn btn-primary" style="float:right">뎃글</button>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 90%">
-					<button type="button" id="write" class="btn btn-primary">뎃글</button>
+					<button type="button" id="comment" class="btn btn-primary">뎃글</button>
 				</td>
 			</tr>
 		</table>
