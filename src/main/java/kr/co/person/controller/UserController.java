@@ -103,7 +103,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(@RequestParam(value="message",required=false) String message, HttpServletRequest req){
+	public String loginView(@RequestParam(value="message",required=false) String message, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
 		HttpSession session = req.getSession();
 		if(StringUtils.isNotEmpty(message)){
@@ -136,6 +136,7 @@ public class UserController {
 		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
+		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/user/login";
 	}
 	
@@ -190,7 +191,7 @@ public class UserController {
 		session.removeAttribute("id");
 		session.removeAttribute("name");
 		session.removeAttribute("email");
-		rea.addAttribute("message", "로그아웃 하셨습니다.");
+		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
 		String ip = req.getRemoteAddr();
 		User user = userService.findUserForIdx(idx);
 		if(user == null || !userService.autoLogout(user, ip)){
@@ -206,27 +207,25 @@ public class UserController {
 	public String translatePassword(@RequestParam String email, RedirectAttributes rea){
 		log.info("execute UserController translatePassword");
 		if(StringUtils.isEmpty(email)){
-			rea.addAttribute("message", "이메일을 입력해주세요.");
+			rea.addFlashAttribute("message", "이메일을 입력해주세요.");
 			return "redirect:/";
 		}
 		OkCheck ok = userService.translatePassword(email);
 		if(ok.isBool()){
-			rea.addAttribute("message", ok.getMessage());
+			rea.addFlashAttribute("message", ok.getMessage());
 		} else {
-			rea.addAttribute("message", ok.getMessage());
+			rea.addFlashAttribute("message", ok.getMessage());
 		}
 		return "redirect:/";
 	}
 	
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
-	public String mypageView(@RequestParam(value="message",required=false) String message, HttpServletRequest req){
+	public String mypageView(HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
 		req.setAttribute("id", req.getSession().getAttribute("id"));
 		req.setAttribute("name", req.getSession().getAttribute("name"));
 		req.setAttribute("email", req.getSession().getAttribute("email"));
-		if(StringUtils.isNotEmpty(message)){
-			req.setAttribute("message", message);
-		}
+		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		req.setAttribute("include", "/view/user/mypage.ftl");
 		return "view/board/frame";
 	}
@@ -235,11 +234,11 @@ public class UserController {
 	public String changePassword(@RequestParam String password, @RequestParam String changePassword, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
 		if(StringUtils.isEmpty(password)){
-			rea.addAttribute("message", "페스워드를 입력해주세요");
+			rea.addFlashAttribute("message", "페스워드를 입력해주세요");
 			return "redirect:/update";
 		}
 		if(StringUtils.isEmpty(changePassword)){
-			rea.addAttribute("message", "수정할 페스워드를 입력해주세요");
+			rea.addFlashAttribute("message", "수정할 페스워드를 입력해주세요");
 			return "redirect:/update";
 		}
 		int idx = (int)req.getSession().getAttribute("idx");
@@ -249,7 +248,7 @@ public class UserController {
 		req.setAttribute("email", user.getEmail());
 		
 		OkCheck ok = userService.changePassword(idx, password, changePassword);
-		rea.addAttribute("message", ok.getMessage());
+		rea.addFlashAttribute("message", ok.getMessage());
 		return "redirect:/update";
 	}
 	
@@ -258,17 +257,17 @@ public class UserController {
 		log.info("execute UserController leave");
 		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(password)){
-			rea.addAttribute("message", "password를 입력해주세요.");
+			rea.addFlashAttribute("message", "password를 입력해주세요.");
 			return "redirect:/mypage";
 		}
 		User user = userService.loginCheck((String)req.getSession().getAttribute("id"), password);
 		if(user == null || user.getIdx() != (int)req.getSession().getAttribute("idx")){
-			rea.addAttribute("message", "패스워드를 다시입력해주세요.");
+			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
 		String ip = req.getRemoteAddr();
 	    if(!userService.leave(user.getIdx(), ip)){
-	    	rea.addAttribute("message", "탈퇴에 실패하셨습니다.");
+	    	rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
 			return "redirect:/mypage";
 	    }
 		session.setAttribute("loginYn", "N");
@@ -279,7 +278,7 @@ public class UserController {
 		Cookie cookie = new Cookie("saveId", null);
 		cookie.setMaxAge(0);
 	    res.addCookie(cookie);
-	    rea.addAttribute("message", "탈퇴에 성공하셨습니다.");
+	    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
 		return "redirect:/";
 	}
 	
