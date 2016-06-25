@@ -9,4 +9,5 @@ public interface BoardService {
 	OkCheck write(String title, String content, int userIdx);
 	List<Board> findAll();
 	Board findOne(int idx);
+	boolean update(int idx, String title, String content);
 }

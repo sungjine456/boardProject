@@ -14,7 +14,7 @@
 				${board.content}
 			</td>
 		</tr>
-		<button type="button" id="updateBtn" class="btn btn-primary" style="float:right">내용 수정</button>
+		<button type="button" id="boardUpdateBtn" class="btn btn-primary" style="float:right">내용 수정</button>
 	</table>
 	<br><br>
 	<form id="commentForm" action="/boardWrite" method="post">

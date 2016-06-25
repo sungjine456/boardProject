@@ -59,4 +59,28 @@ public class BoardServiceImple implements BoardService {
 	public Board findOne(int idx) {
 		return boardRepository.findOne(idx);
 	}
+
+	@Override
+	public boolean update(int idx, String title, String content) {
+		if(idx == 0){
+			return false;
+		}
+		if(StringUtils.isEmpty(title)){
+			return false;
+		}
+		if(StringUtils.isEmpty(content)){
+			return false;
+		}
+		Board board = boardRepository.findOne(idx);
+		if(board == null){
+			return false;
+		}
+		board.setContent(content);
+		board.setTitle(title);
+		board = boardRepository.save(board);
+		if(board == null){
+			return false;
+		}
+		return true;
+	}
 }

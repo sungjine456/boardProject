@@ -1,11 +1,11 @@
 var detail = {
-	updateBtn : $("#updateBtn"),
+	boardUpdateBtn : $("#boardUpdateBtn"),
 	num : $("#num"),
-	updateEvent : function(){
+	boardUpdateEvent : function(){
 		$(location).attr("href", "/boardUpdateView?num=" + this.num.val());
 	},
 	init : function(){
-		this.updateBtn.click(function(){detail.updateEvent();});
+		this.boardUpdateBtn.click(function(){detail.boardUpdateEvent();});
 	}
 }
 

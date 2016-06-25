@@ -42,4 +42,16 @@ public class BoardRepositoryTest {
 		Assert.assertEquals("t", boardSave.getTitle());
 		Assert.assertEquals("c", boardSave.getContent());
 	}
+	
+	@Test
+	public void testUpdate(){
+		board = boardRepository.findOne(1);
+		Assert.assertEquals("title", board.getTitle());
+		Assert.assertEquals("content", board.getContent());
+		board.setContent("cccc");
+		board.setTitle("tttt");
+		board = boardRepository.save(board);
+		Assert.assertEquals("tttt", board.getTitle());
+		Assert.assertEquals("cccc", board.getContent());
+	}
 }

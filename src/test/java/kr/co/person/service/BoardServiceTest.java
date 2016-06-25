@@ -41,4 +41,12 @@ public class BoardServiceTest {
 		Assert.assertEquals(1, boardList.get(0).getIdx());
 		Assert.assertEquals(1, boardList.size());
 	}
+	
+	@Test
+	public void testUpdate(){
+		Assert.assertTrue(boardService.update(1, "ttttt", "ccccc"));
+		Assert.assertFalse(boardService.update(1, "hyun", ""));
+		Assert.assertFalse(boardService.update(1, "", "hyun"));
+		Assert.assertFalse(boardService.update(5, "hyun", "hyun"));
+	}
 }

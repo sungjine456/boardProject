@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
 import kr.co.person.domain.Board;
+import kr.co.person.domain.OkCheck;
 import kr.co.person.service.BoardService;
 
 @Controller
@@ -54,7 +55,12 @@ public class BoardController {
 			req.setAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		boardService.write(common.cleanXss(title), common.cleanXss(content), (int)session.getAttribute("idx"));
+		OkCheck ok = boardService.write(common.cleanXss(title), common.cleanXss(content), (int)session.getAttribute("idx"));
+		if(!ok.isBool()){
+			req.setAttribute("message", ok.getMessage());
+			req.setAttribute("include", "main/write.ftl");
+			return "view/board/frame";
+		}
 		return "redirect:/board";
 	}
 	
@@ -76,7 +82,7 @@ public class BoardController {
 		return "view/board/frame";
 	}
 	
-	@RequestMapping(value="/boardUpdateView", method=RequestMethod.GET)
+	@RequestMapping(value="/boardUpdateView")
 	public String boardUpdateView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardUpdateView execute");
 		Board board = boardService.findOne(num);
@@ -85,11 +91,13 @@ public class BoardController {
 			return "redirect:/boardDetail";
 		}
 		req.setAttribute("include", "main/update.ftl");
+		req.setAttribute("board", board);
+		req.setAttribute("num", num);
 		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
-	public String boardUpdate(@RequestParam String title, @RequestParam String content, HttpServletRequest req, RedirectAttributes rea){
+	public String boardUpdate(@RequestParam int num, @RequestParam String title, @RequestParam String content, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
 		log.info("BoardController boardUpdate title : " + title + ",   content : " + content);
 		HttpSession session = req.getSession();
@@ -101,7 +109,11 @@ public class BoardController {
 			rea.addFlashAttribute("message", "내용을 입력해주세요.");
 			return "redirect:/boardUpdateView";
 		}
-		boardService.write(common.cleanXss(title), common.cleanXss(content), (int)session.getAttribute("idx"));
+		if(!boardService.update((int)session.getAttribute("idx"), common.cleanXss(title), common.cleanXss(content))){
+			rea.addFlashAttribute("num", num);
+			return "redirect:/boardUpdateView";
+		}
+		rea.addAttribute("num", num);
 		return "redirect:/boardDetail";
 	}
 }
