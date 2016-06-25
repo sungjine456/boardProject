@@ -100,7 +100,6 @@ public class BoardController {
 	public String boardUpdate(@RequestParam int num, @RequestParam String title, @RequestParam String content, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
 		log.info("BoardController boardUpdate title : " + title + ",   content : " + content);
-		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(title)){
 			rea.addFlashAttribute("message", "제목을 입력해주세요.");
 			return "redirect:/boardUpdateView";
@@ -109,7 +108,7 @@ public class BoardController {
 			rea.addFlashAttribute("message", "내용을 입력해주세요.");
 			return "redirect:/boardUpdateView";
 		}
-		if(!boardService.update((int)session.getAttribute("idx"), common.cleanXss(title), common.cleanXss(content))){
+		if(!boardService.update(num, common.cleanXss(title), common.cleanXss(content))){
 			rea.addFlashAttribute("message", "수정에 실패하셨습니다.");
 			rea.addAttribute("num", num);
 			return "redirect:/boardUpdateView";

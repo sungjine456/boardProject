@@ -103,12 +103,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(@RequestParam(value="message",required=false) String message, HttpServletRequest req, RedirectAttributes rea){
+	public String loginView(HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
 		HttpSession session = req.getSession();
-		if(StringUtils.isNotEmpty(message)){
+		if(rea.getFlashAttributes().get("message") != null){
 			log.info("execute UserController getMessage");
-			req.setAttribute("message", message);
+			req.setAttribute("message", rea.getFlashAttributes().get("message"));
 			return "view/user/login";
 		}
 		log.info("execute UserController no message");
@@ -136,13 +136,17 @@ public class UserController {
 		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
-		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		return "view/user/login";
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, HttpServletRequest req, HttpServletResponse res){
+	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
+		String bool = (String)req.getAttribute("false");
+		if(StringUtils.equals(bool, "false")){
+			rea.addFlashAttribute("message", req.getAttribute("message"));
+			return "redirect:/";
+		}
 		HttpSession session = req.getSession();
 		if(user == null){
 			req.setAttribute("message", "로그인에 실패하셨습니다.");

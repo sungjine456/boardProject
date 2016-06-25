@@ -14,7 +14,9 @@
 				${board.content}
 			</td>
 		</tr>
+	<#if board.user.idx == idx>
 		<button type="button" id="boardUpdateBtn" class="btn btn-primary" style="float:right">내용 수정</button>
+	</#if>
 	</table>
 	<br><br>
 	<form id="commentForm" action="/boardWrite" method="post">

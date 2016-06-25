@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class ErrorController {
-	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private static final Logger log = LoggerFactory.getLogger(ErrorController.class);
 	@RequestMapping(value="/error404", method=RequestMethod.GET)
 	public String error404(HttpServletResponse res){
 		log.info("ErrorController execute");
