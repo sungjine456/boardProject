@@ -27,10 +27,12 @@ public class BoardController {
 	private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(HttpServletRequest req, RedirectAttributes rea){
+	public String main(@RequestParam(value="message", required=false) String message, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController main execute");
 		req.setAttribute("boardList", boardService.findAll());
-		req.setAttribute("message", rea.getFlashAttributes().get("message"));
+		if(StringUtils.isNotEmpty(message)){
+			req.setAttribute("message", message);
+		}
 		return "view/board/frame";
 	}
 	
@@ -65,15 +67,14 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
+	public String boardDetailView(@RequestParam int num, @RequestParam(value="message", required=false) String message, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardDetailView execute");
 		Board board = boardService.findOne(num);
-		String message = (String)rea.getFlashAttributes().get("message");
 		if(StringUtils.isNotEmpty(message)){
 			req.setAttribute("message", message);
 		}
 		if(board == null){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		req.setAttribute("include", "main/boardDetail.ftl");
@@ -87,7 +88,7 @@ public class BoardController {
 		log.info("BoardController boardUpdateView execute");
 		Board board = boardService.findOne(num);
 		if(board == null){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
 		req.setAttribute("include", "main/update.ftl");
@@ -102,15 +103,15 @@ public class BoardController {
 		log.info("BoardController boardUpdate title : " + title + ",   content : " + content);
 		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(title)){
-			rea.addFlashAttribute("message", "제목을 입력해주세요.");
+			rea.addAttribute("message", "제목을 입력해주세요.");
 			return "redirect:/boardUpdateView";
 		}
 		if(StringUtils.isEmpty(content)){
-			rea.addFlashAttribute("message", "내용을 입력해주세요.");
+			rea.addAttribute("message", "내용을 입력해주세요.");
 			return "redirect:/boardUpdateView";
 		}
 		if(!boardService.update((int)session.getAttribute("idx"), common.cleanXss(title), common.cleanXss(content))){
-			rea.addFlashAttribute("num", num);
+			rea.addAttribute("num", num);
 			return "redirect:/boardUpdateView";
 		}
 		rea.addAttribute("num", num);
