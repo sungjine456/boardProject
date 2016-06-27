@@ -87,4 +87,10 @@ public class Common {
         
         return str;
     }
+    
+    public String enter(String content){
+    	content = content.replace("\r\n","<br/>");
+    	
+    	return content;
+    }
 }

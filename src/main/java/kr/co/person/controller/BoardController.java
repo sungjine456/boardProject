@@ -55,7 +55,7 @@ public class BoardController {
 			req.setAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		OkCheck ok = boardService.write(common.cleanXss(title), common.cleanXss(content), (int)session.getAttribute("idx"));
+		OkCheck ok = boardService.write(common.cleanXss(title), common.enter(common.cleanXss(content)), (int)session.getAttribute("idx"));
 		if(!ok.isBool()){
 			req.setAttribute("message", ok.getMessage());
 			req.setAttribute("include", "main/write.ftl");
