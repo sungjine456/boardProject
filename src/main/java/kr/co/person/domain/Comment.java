@@ -18,19 +18,20 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @DynamicUpdate
-@Table(name = "board")
-public class Board {
+@Table(name = "comment")
+public class Comment {
 	@Id
-	@Column(name = "board_idx")
+	@Column(name = "comment_idx")
 	@GeneratedValue
 	private int idx;
-	@Column(name="title", nullable = false)
-	private String title;
-	@Column(name="content", nullable = false)
-	private String content;
+	@Column(name="comment", nullable = false)
+	private String comment;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name="writer")
-	private User user;
+	private User writer;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name="board")
+	private Board board;
 	@Column(name="reg_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
@@ -38,39 +39,39 @@ public class Board {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date upDate;
 	
-	public Board(){
+	public Comment(){
 	}
-	public Board(String title, String content, User user, Date regDate, Date upDate){
-		this.title = title;
-		this.content = content;
-		this.user = user;
+	public Comment(String comment, User writer, Board board, Date regDate, Date upDate){
+		this.comment = comment;
+		this.writer = writer;
+		this.board = board;
 		this.regDate = regDate;
 		this.upDate = upDate;
 	}
-
+	
 	public int getIdx() {
 		return idx;
 	}
 	public void setIdx(int idx) {
 		this.idx = idx;
 	}
-	public String getTitle() {
-		return title;
+	public String getComment() {
+		return comment;
 	}
-	public void setTitle(String title) {
-		this.title = title;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
-	public String getContent() {
-		return content;
+	public User getWriter() {
+		return writer;
 	}
-	public void setContent(String content) {
-		this.content = content;
+	public void setWriter(User writer) {
+		this.writer = writer;
 	}
-	public User getUser() {
-		return user;
+	public Board getBoard() {
+		return board;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 	public Date getRegDate() {
 		return regDate;
