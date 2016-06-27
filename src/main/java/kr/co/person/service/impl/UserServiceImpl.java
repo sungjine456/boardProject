@@ -273,6 +273,7 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setName(name);
 		user.setEmail(email);
+		user.setUpDate(new Date());
 		user = userRepository.save(user);
 		if(user == null){
 			return false;

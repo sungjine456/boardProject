@@ -22,6 +22,7 @@ public class BoardServiceTest {
 
 	@Autowired
 	private BoardService boardService;
+	private Board board;
 	
 	@Test
 	public void testSave() {
@@ -44,9 +45,13 @@ public class BoardServiceTest {
 	
 	@Test
 	public void testUpdate(){
-		Assert.assertTrue(boardService.update(1, "ttttt", "ccccc"));
+		board = boardService.findBoardForIdx(1);
+		Assert.assertEquals(board.getRegDate(), board.getUpDate());
 		Assert.assertFalse(boardService.update(1, "hyun", ""));
 		Assert.assertFalse(boardService.update(1, "", "hyun"));
 		Assert.assertFalse(boardService.update(5, "hyun", "hyun"));
+		Assert.assertTrue(boardService.update(1, "ttttt", "ccccc"));
+		board = boardService.findBoardForIdx(1);
+		Assert.assertNotEquals(board.getRegDate(), board.getUpDate());
 	}
 }

@@ -56,7 +56,7 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public Board findOne(int idx) {
+	public Board findBoardForIdx(int idx) {
 		return boardRepository.findOne(idx);
 	}
 
@@ -77,6 +77,7 @@ public class BoardServiceImple implements BoardService {
 		}
 		board.setContent(content);
 		board.setTitle(title);
+		board.setUpDate(new Date());
 		board = boardRepository.save(board);
 		if(board == null){
 			return false;

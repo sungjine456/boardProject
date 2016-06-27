@@ -67,7 +67,7 @@ public class BoardController {
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardDetailView execute");
-		Board board = boardService.findOne(num);
+		Board board = boardService.findBoardForIdx(num);
 		String message = (String)rea.getFlashAttributes().get("message");
 		if(StringUtils.isNotEmpty(message)){
 			req.setAttribute("message", message);
@@ -85,7 +85,7 @@ public class BoardController {
 	@RequestMapping(value="/boardUpdateView")
 	public String boardUpdateView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardUpdateView execute");
-		Board board = boardService.findOne(num);
+		Board board = boardService.findBoardForIdx(num);
 		if(board == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";

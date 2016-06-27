@@ -150,10 +150,14 @@ public class UserServiceTest {
 	
 	@Test
 	public void testUpdate(){
-		Assert.assertTrue(userService.update(1, "hyun", "hyun@naver.com"));
+		user = userService.findUserForIdx(1);
+		Assert.assertEquals(user.getRegDate(), user.getUpDate());
 		Assert.assertFalse(userService.update(1, "hyun", ""));
 		Assert.assertFalse(userService.update(1, "", "hyun@naver.com"));
 		Assert.assertFalse(userService.update(2, "hyun", "hyun@naver.com"));
+		Assert.assertTrue(userService.update(1, "hyun", "hyun@naver.com"));
+		user = userService.findUserForIdx(1);
+		Assert.assertNotEquals(user.getRegDate(), user.getUpDate());
 	}
 	
 	@Test
