@@ -1,5 +1,7 @@
 package kr.co.person.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -15,14 +17,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
 import kr.co.person.domain.Board;
+import kr.co.person.domain.Comment;
 import kr.co.person.domain.OkCheck;
 import kr.co.person.service.BoardService;
+import kr.co.person.service.CommentService;
 
 @Controller
 public class BoardController {
 	private static final Logger log = LoggerFactory.getLogger(BoardController.class);
 	@Autowired
 	private BoardService boardService;
+	@Autowired
+	private CommentService commentService;
 	@Autowired
 	private Common common;
 	
@@ -75,6 +81,10 @@ public class BoardController {
 		if(board == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
+		}
+		List<Comment> comments = commentService.findAllCommentByBoard(board.getIdx());
+		if(comments.size() > 0){
+			req.setAttribute("comments", comments);
 		}
 		req.setAttribute("include", "main/boardDetail.ftl");
 		req.setAttribute("board", board);
