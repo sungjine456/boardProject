@@ -127,4 +127,9 @@ public class BoardController {
 		rea.addAttribute("num", num);
 		return "redirect:/boardDetail";
 	}
+	
+	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
+	public String writeComment(){
+		return "redirect:/boardDetail";
+	}
 }

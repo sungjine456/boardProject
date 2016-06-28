@@ -19,7 +19,7 @@
 	</#if>
 	</table>
 	<br><br>
-	<form id="commentForm" action="/boardWriteComment" method="post">
+	<form id="commentForm" action="/writeComment" method="post">
 		<table class="table" style="background-color: #f4f4f4;">
 			<colgroup>
 				<col width="10%"/>
