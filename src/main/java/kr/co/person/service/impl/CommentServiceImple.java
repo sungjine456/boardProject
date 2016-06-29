@@ -31,6 +31,7 @@ public class CommentServiceImple implements CommentService {
 	private UserRepository userRepository;
 	
 	public List<Comment> findAllCommentByBoard(int boardIdx){
+		log.info("CommentServiceImple findAllCommentByBoard execute");
 		if(boardIdx == 0){
 			return new ArrayList<Comment>();
 		}
@@ -39,6 +40,7 @@ public class CommentServiceImple implements CommentService {
 
 	@Override
 	public boolean save(String commentLine, int userIdx, int boardIdx) {
+		log.info("CommentServiceImple save execute");
 		Date date = new Date();
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);

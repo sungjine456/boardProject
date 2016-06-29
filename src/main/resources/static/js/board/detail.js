@@ -2,7 +2,7 @@ var detail = {
 	commentForm : $("#commentForm"),
 	boardUpdateBtn : $("#boardUpdateBtn"),
 	commentBtn : $("#commentForm #commentBtn"),
-	num : $("#num"),
+	num : $("#commentForm #num"),
 	comment : $("#commentForm #comment"),
 	boardUpdateEvent : function(){
 		$(location).attr("href", "/boardUpdateView?num=" + this.num.val());

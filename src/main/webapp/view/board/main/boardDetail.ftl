@@ -1,5 +1,4 @@
 <div class="container">
-	<input type="hidden" id="num" name="num" value="${num}"/>
 	<h1>${board.title}</h1>
 	<table class="table table-hover">
 		<colgroup>
@@ -20,6 +19,7 @@
 	</table>
 	<br><br>
 	<form id="commentForm" action="/writeComment" method="post">
+		<input type="hidden" id="num" name="num" value="${num}"/>
 		<table class="table" style="background-color: #f4f4f4;">
 			<colgroup>
 				<col width="10%"/>

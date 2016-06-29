@@ -129,7 +129,18 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(){
+	public String writeComment(@RequestParam int num, @RequestParam String comment, HttpServletRequest req, RedirectAttributes rea){
+		log.info("BoardController writeComment execute");
+		HttpSession session = req.getSession();
+		if(num == 0){
+			return "redirect:/";
+		}
+		if(StringUtils.isEmpty(comment)){
+			rea.addAttribute("num", num);
+			return "redirect:/boardDetail";
+		}
+		commentService.save(comment, (int)session.getAttribute("idx"), num);
+		rea.addAttribute("num", num);
 		return "redirect:/boardDetail";
 	}
 }
