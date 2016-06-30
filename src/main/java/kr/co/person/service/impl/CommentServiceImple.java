@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class CommentServiceImple implements CommentService {
 		if(userIdx == 0 || boardIdx == 0){
 			return false;
 		}
+		if(StringUtils.isEmpty(commentSentence)){
+			return false;
+		}
 		Date date = new Date();
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
@@ -51,12 +55,25 @@ public class CommentServiceImple implements CommentService {
 			return false;
 		}
 		Comment comment = new Comment(commentSentence, writer, board, date, date);
-		comment = commentRepository.save(comment);
+		commentRepository.save(comment);
 		return true;
 	}
 
 	@Override
-	public boolean update() {
-		return false;
+	public boolean update(int idx, String commentSentence) {
+		log.info("CommentServiceImple save execute");
+		if(idx == 0){
+			return false;
+		}
+		Comment comment = commentRepository.findOne(idx);
+		if(comment == null){
+			return false;
+		}
+		if(StringUtils.isEmpty(commentSentence)){
+			return false;
+		}
+		comment.setComment(commentSentence);
+		comment = commentRepository.save(comment);
+		return true;
 	}
 }

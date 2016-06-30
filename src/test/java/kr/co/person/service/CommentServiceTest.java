@@ -38,6 +38,19 @@ public class CommentServiceTest {
 		Assert.assertFalse(commentService.write("comment write test", 3, 1));
 		Assert.assertFalse(commentService.write("comment write test", 3, 3));
 		Assert.assertFalse(commentService.write("comment write test", 0, 0));
+		Assert.assertFalse(commentService.write("", 1, 1));
+		Assert.assertFalse(commentService.write(null, 1, 1));
 		Assert.assertTrue(commentService.write("comment write test", 1, 1));
+	}
+	
+	@Test
+	public void testUpdate(){
+		Assert.assertFalse(commentService.update(0, "comment update test"));
+		Assert.assertFalse(commentService.update(3, "comment update test"));
+		Assert.assertFalse(commentService.update(3, ""));
+		Assert.assertFalse(commentService.update(3, null));
+		Assert.assertTrue(commentService.update(1, "comment update test"));
+		List<Comment> comments = commentService.findAllCommentByBoard(1);
+		Assert.assertEquals("comment update test", comments.get(0).getComment());
 	}
 }

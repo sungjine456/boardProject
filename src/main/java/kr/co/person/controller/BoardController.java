@@ -139,7 +139,35 @@ public class BoardController {
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.write(common.cleanXss(comment), (int)session.getAttribute("idx"), num)){
+		if(!commentService.write(common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), num)){
+			rea.addAttribute("num", num);
+			return "redirect:/boardDetail";
+		}
+		rea.addAttribute("num", num);
+		return "redirect:/boardDetail";
+	}
+	
+	@RequestMapping(value="/updateComment", method=RequestMethod.GET)
+	public String updateCommentView(){
+		log.info("BoardController updateCommentView execute");
+		return "";
+	}
+	
+	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
+	public String updateComment(@RequestParam int num, @RequestParam int commentIdx, @RequestParam String comment, RedirectAttributes rea){
+		log.info("BoardController updateComment execute");
+		if(num == 0){
+			return "redirect:/";
+		}
+		if(commentIdx == 0){
+			rea.addAttribute("num", num);
+			return "redirect:/boardDetail";
+		}
+		if(StringUtils.isEmpty(comment)){
+			rea.addAttribute("num", num);
+			return "redirect:/boardDetail";
+		}
+		if(!commentService.update(commentIdx, common.enter(common.cleanXss(comment)))){
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}

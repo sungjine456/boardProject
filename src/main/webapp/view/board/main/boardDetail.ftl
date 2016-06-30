@@ -28,8 +28,13 @@
 <#list comments as comment>
 			<tr>
 				<td colspan="2">
-					<div>
-						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate?string["yyyy.MM.dd HH:mm"]}</span><br>
+					<input type="hidden" id="commentIdx" name="commentIdx" value="${comment.idx}"/>
+					<div style="padding-left:5%;">
+						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate?string["yyyy.MM.dd HH:mm"]}</span>
+	<#if board.user.idx == idx>
+						<a id="boardUpdateBtn" style="float:right; padding-right: 5%;">수정</a>
+	</#if>
+						<br>
 						<div style="padding-left:10px;">
 							${comment.comment}
 						</div>
