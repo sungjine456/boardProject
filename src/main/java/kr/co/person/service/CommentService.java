@@ -6,5 +6,5 @@ import kr.co.person.domain.Comment;
 
 public interface CommentService {
 	List<Comment> findAllCommentByBoard(int boardIdx);
-	boolean save(String comment, int userIdx, int boardIdx);
+	boolean write(String comment, int userIdx, int boardIdx);
 }

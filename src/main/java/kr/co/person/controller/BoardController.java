@@ -139,7 +139,10 @@ public class BoardController {
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
-		commentService.save(comment, (int)session.getAttribute("idx"), num);
+		if(!commentService.write(common.cleanXss(comment), (int)session.getAttribute("idx"), num)){
+			rea.addAttribute("num", num);
+			return "redirect:/boardDetail";
+		}
 		rea.addAttribute("num", num);
 		return "redirect:/boardDetail";
 	}

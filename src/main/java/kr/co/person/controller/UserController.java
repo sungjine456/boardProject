@@ -112,8 +112,10 @@ public class UserController {
 			return "view/user/login";
 		}
 		log.info("execute UserController no message");
+		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
+			return "redirect:/board";
+		}
 		String id = "";
-		String ip = req.getRemoteAddr();
 		Cookie[] cookies = req.getCookies();
 		if(cookies != null){
 			for(int i = 0; i < cookies.length; i++){
@@ -125,15 +127,12 @@ public class UserController {
 			}
 		}
 		User user = userService.findUserForId(id);
-		if(user != null && userService.autoLoginCheck(user, ip)){
+		if(user != null && userService.autoLoginCheck(user, req.getRemoteAddr())){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
-			return "redirect:/board";
-		}
-		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
 		return "view/user/login";

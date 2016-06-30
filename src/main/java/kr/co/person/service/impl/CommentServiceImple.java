@@ -39,13 +39,24 @@ public class CommentServiceImple implements CommentService {
 	}
 
 	@Override
-	public boolean save(String commentLine, int userIdx, int boardIdx) {
+	public boolean write(String commentSentence, int userIdx, int boardIdx) {
 		log.info("CommentServiceImple save execute");
+		if(userIdx == 0 || boardIdx == 0){
+			return false;
+		}
 		Date date = new Date();
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		Comment comment = new Comment(commentLine, writer, board, date, date);
+		if(writer == null || board == null){
+			return false;
+		}
+		Comment comment = new Comment(commentSentence, writer, board, date, date);
 		comment = commentRepository.save(comment);
+		return true;
+	}
+
+	@Override
+	public boolean update() {
 		return false;
 	}
 }
