@@ -1,6 +1,7 @@
 package kr.co.person.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,10 +38,13 @@ public class BoardRepositoryTest {
 	@Test
 	public void testSave() {
 		Board board = new Board("t", "c", user, date, date);
-		Assert.assertEquals("t", board.getTitle());
+		List<Board> boardList = (List<Board>) boardRepository.findAll();
+		Assert.assertEquals(1, boardList.size());
 		Board boardSave = boardRepository.save(board);
 		Assert.assertEquals("t", boardSave.getTitle());
 		Assert.assertEquals("c", boardSave.getContent());
+		List<Board> boardList2 = (List<Board>) boardRepository.findAll();
+		Assert.assertEquals(2, boardList2.size());
 	}
 	
 	@Test

@@ -73,6 +73,10 @@ public class BoardController {
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardDetailView execute");
+		if(num == 0){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
+		}
 		Board board = boardService.findBoardForIdx(num);
 		String message = (String)rea.getFlashAttributes().get("message");
 		if(StringUtils.isNotEmpty(message)){
@@ -95,6 +99,10 @@ public class BoardController {
 	@RequestMapping(value="/boardUpdateView")
 	public String boardUpdateView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardUpdateView execute");
+		if(num == 0){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
+		}
 		Board board = boardService.findBoardForIdx(num);
 		if(board == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
@@ -109,6 +117,15 @@ public class BoardController {
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
 	public String boardUpdate(@RequestParam int num, @RequestParam String title, @RequestParam String content, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
+		if(num == 0){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
+		}
+		Board board = boardService.findBoardForIdx(num);
+		if(board == null){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/boardDetail";
+		}
 		log.info("BoardController boardUpdate title : " + title + ",   content : " + content);
 		if(StringUtils.isEmpty(title)){
 			rea.addFlashAttribute("message", "제목을 입력해주세요.");
@@ -131,10 +148,16 @@ public class BoardController {
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
 	public String writeComment(@RequestParam int num, @RequestParam String comment, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController writeComment execute");
-		HttpSession session = req.getSession();
 		if(num == 0){
-			return "redirect:/";
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
 		}
+		Board board = boardService.findBoardForIdx(num);
+		if(board == null){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/boardDetail";
+		}
+		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(comment)){
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
@@ -147,31 +170,39 @@ public class BoardController {
 		return "redirect:/boardDetail";
 	}
 	
-	@RequestMapping(value="/updateComment", method=RequestMethod.GET)
-	public String updateCommentView(){
+	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
+	public String updateCommentView(@RequestParam int num, @RequestParam int idx, @RequestParam String comment, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController updateCommentView execute");
-		return "";
+		req.setAttribute("comment", comment);
+		req.setAttribute("num", num);
+		return "view/board/ajax/commentUpdate";
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(@RequestParam int num, @RequestParam int commentIdx, @RequestParam String comment, RedirectAttributes rea){
+	public String updateComment(@RequestParam int upnum, @RequestParam int upidx, @RequestParam String comment, RedirectAttributes rea){
 		log.info("BoardController updateComment execute");
-		if(num == 0){
-			return "redirect:/";
+		if(upnum == 0){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
 		}
-		if(commentIdx == 0){
-			rea.addAttribute("num", num);
+		Board board = boardService.findBoardForIdx(upnum);
+		if(board == null){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/boardDetail";
+		}
+		if(upidx == 0){
+			rea.addAttribute("num", upnum);
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(comment)){
-			rea.addAttribute("num", num);
+			rea.addAttribute("num", upnum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.update(commentIdx, common.enter(common.cleanXss(comment)))){
-			rea.addAttribute("num", num);
+		if(!commentService.update(upidx, common.enter(common.cleanXss(comment)))){
+			rea.addAttribute("num", upnum);
 			return "redirect:/boardDetail";
 		}
-		rea.addAttribute("num", num);
+		rea.addAttribute("num", upnum);
 		return "redirect:/boardDetail";
 	}
 }

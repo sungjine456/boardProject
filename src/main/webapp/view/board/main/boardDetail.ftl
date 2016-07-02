@@ -28,16 +28,17 @@
 <#list comments as comment>
 			<tr>
 				<td colspan="2">
-					<input type="hidden" id="commentIdx" name="commentIdx" value="${comment.idx}"/>
+					<input type="hidden" name="commentIdx" value="${comment.idx}"/>
 					<div style="padding-left:5%;">
 						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate?string["yyyy.MM.dd HH:mm"]}</span>
-	<#if board.user.idx == idx>
-						<a id="boardUpdateBtn" style="float:right; padding-right: 5%;">수정</a>
+						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
+	<#if comment.writer.idx == idx>
+							<a class="commentUpdateBtn" style="float:right; padding-right: 5%;" value="${comment.comment}" idx="${comment.idx}">수정</a>
 	</#if>
-						<br>
-						<div style="padding-left:10px;">
+							<br>
+						
 							${comment.comment}
-						</div>
+						</span>
 					</div>
 				</td>
 			</tr>
@@ -50,7 +51,7 @@
 </#list>
 			<tr>
 				<td style="padding-left: 5%; width: 90%">
-					<input type="text" id="comment" class="form-control" name="comment"/>
+					<input type="text" id="writeComment" class="form-control" name="comment"/>
 				</td>
 				<td>
 					<button type="button" id="commentBtn" class="btn btn-primary">뎃글</button>
