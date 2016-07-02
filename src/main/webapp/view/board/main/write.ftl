@@ -30,3 +30,4 @@
 		</table>
 	</form>
 </div>
+<script type="text/javascript" src="js/board/write.js"></script>
