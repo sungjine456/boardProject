@@ -4,7 +4,8 @@ var main = {
 		$(location).attr("href", "/boardWrite");
 	},
 	init : function() {
-		this.write.click(function(){main.locationBoardWrite();});
+		var self = this;
+		self.write.click(function(){self.locationBoardWrite();});
 	}
 };
 

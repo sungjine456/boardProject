@@ -34,9 +34,10 @@ var detail = {
 		});
 	},
 	init : function(){
-		this.boardUpdateBtn.click(function(){detail.boardUpdateEvent();});
-		this.commentBtn.click(function(){detail.commentEvent();});
-		this.commentUpdateBtn.click(function(){detail.commentUpdateEvent(event);});
+		var self = this;
+		self.boardUpdateBtn.click(function(){self.boardUpdateEvent();});
+		self.commentBtn.click(function(){self.commentEvent();});
+		self.commentUpdateBtn.click(function(){self.commentUpdateEvent(event);});
 	}
 }
 

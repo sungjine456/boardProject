@@ -14,8 +14,9 @@ var mypage = {
 		$(location).attr("href", "/update");
 	},
 	init : function(){
-		this.leaveBtn.click(function(){mypage.leaveEvent();});
-		this.updateBtn.click(function(){mypage.updateEvent();});
+		var self = this;
+		self.leaveBtn.click(function(){self.leaveEvent();});
+		self.updateBtn.click(function(){self.updateEvent();});
 	}
 }
 

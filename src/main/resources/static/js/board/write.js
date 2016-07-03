@@ -15,7 +15,8 @@ var write = {
 		this.writeForm.submit();
 	},
 	init : function(){
-		this.writeBtn.click(function(){write.writeEvent();});
+		var self = this;
+		self.writeBtn.click(function(){self.writeEvent();});
 	}
 }
 

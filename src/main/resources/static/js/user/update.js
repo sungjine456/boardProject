@@ -45,8 +45,9 @@ var update = {
 		this.updateForm.submit();
 	},
 	init : function(){
-		this.passwordChangeBtn.click(function(){update.passwordChangeEvent();});
-		this.updateBtn.click(function(){update.updateEvent();});
+		var self = this;
+		self.passwordChangeBtn.click(function(){self.passwordChangeEvent();});
+		self.updateBtn.click(function(){self.updateEvent();});
 	}
 }
 

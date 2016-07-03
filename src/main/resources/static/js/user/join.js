@@ -114,11 +114,12 @@ var join = {
 		});
 	},
 	init : function(){
-		this.joinBtn.click(function(){join.joinEvent();});
-		this.pw.keyup(function(){join.passwordCheckEvent();});
-		this.pwConfirm.keyup(function(){join.passwordCheckEvent();});
-		this.id.keyup(function(){join.idCheckEvent();});
-		this.email.keyup(function(){join.emailCheckEvent();});
+		var self = this;
+		self.joinBtn.click(function(){self.joinEvent();});
+		self.pw.keyup(function(){self.passwordCheckEvent();});
+		self.pwConfirm.keyup(function(){self.passwordCheckEvent();});
+		self.id.keyup(function(){self.idCheckEvent();});
+		self.email.keyup(function(){self.emailCheckEvent();});
 	}
 }
 

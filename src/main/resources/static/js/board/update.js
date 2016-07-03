@@ -15,7 +15,8 @@ var update = {
 		this.updateForm.submit();
 	},
 	init : function(){
-		this.updateBtn.click(function(){update.updateEvent();});
+		var self = this;
+		self.updateBtn.click(function(){self.updateEvent();});
 	}
 }
 
