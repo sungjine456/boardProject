@@ -87,9 +87,7 @@ public class BoardController {
 			return "redirect:/board";
 		}
 		List<Comment> comments = commentService.findAllCommentByBoard(board.getIdx());
-		if(comments.size() > 0){
-			req.setAttribute("comments", comments);
-		}
+		req.setAttribute("comments", comments);
 		req.setAttribute("include", "main/boardDetail.ftl");
 		req.setAttribute("board", board);
 		req.setAttribute("num", num);
@@ -175,6 +173,7 @@ public class BoardController {
 		log.info("BoardController updateCommentView execute");
 		req.setAttribute("comment", comment);
 		req.setAttribute("num", num);
+		req.setAttribute("idx", idx);
 		return "view/board/ajax/commentUpdate";
 	}
 	

@@ -36,7 +36,6 @@
 							<a class="commentUpdateBtn" style="float:right; padding-right: 5%;" value="${comment.comment}" idx="${comment.idx}">수정</a>
 	</#if>
 							<br>
-						
 							${comment.comment}
 						</span>
 					</div>
@@ -45,7 +44,9 @@
 <#else>
 			<tr>
 				<td colspan="2">
-					뎃글을 입력해주세요.
+					<div style="padding-left:5%;">
+						뎃글을 입력해주세요.
+					</div
 				</td>
 			</tr>
 </#list>
