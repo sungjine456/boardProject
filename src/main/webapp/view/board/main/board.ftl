@@ -24,10 +24,10 @@
 			</tr>
 		</thead>
 		<tbody>
-		<#list boardList as board>
+		<#list boardList.content as board>
 			<tr>
 				<td>
-					${board_index + 1}
+					${board.idx}
 				</td>
 				<td>
 					<a href="/boardDetail?num=${board.idx}">${board.title}</a>
@@ -51,7 +51,28 @@
 					<button type="button" id="write" class="btn btn-primary" style="margin-left:80%;">글쓰기</button>
 				</td>
 			</tr>
+			<tr>
+				<td colspan="4">
+					<div style="text-align:center;">
+		<#if boardList.number &gt; 5>
+			<a class="btn btn-default btn-sm" href="?page=${boardList.number-5}&startNum=${startNum-5}">이전</a>
+		</#if>
+		<#assign lastNum = boardList.size>
+		<#if lastNum &gt; 4>
+			lastNum = 4
+		</#if>
+		<#list startNum..lastNum+1 as i>
+			<a class="btn btn-default btn-sm" href="?page=${i-1}">${i}</a>
+		</#list>
+		<#if boardList.number &lt; 5>
+			<a class="btn btn-default btn-sm" href="?page=${boardList.number+5}&startNum=${startNum+5}">다음</a>
+		</#if>
+					</div>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>
+<script type="text/javascript">
+</script>
 <script type="text/javascript" src="js/board/main.js"></script>

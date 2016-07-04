@@ -1,12 +1,13 @@
 package kr.co.person.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +52,8 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public List<Board> findAll() {
-		return boardRepository.findAll();
+	public Page<Board> findAll(Pageable pageable) {
+		return boardRepository.findAll(pageable);
 	}
 
 	@Override

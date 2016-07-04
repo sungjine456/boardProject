@@ -1,7 +1,5 @@
 package kr.co.person.service;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,13 +32,6 @@ public class BoardServiceTest {
 		Assert.assertEquals("유효한 회원이 아닙니다.", message);
 		message = boardService.write("title", "content", 1).getMessage();
 		Assert.assertEquals("글이 등록 되었습니다.", message);
-	}
-	
-	@Test
-	public void testFindAll(){
-		List<Board> boardList = boardService.findAll();
-		Assert.assertEquals(1, boardList.get(0).getIdx());
-		Assert.assertEquals(1, boardList.size());
 	}
 	
 	@Test

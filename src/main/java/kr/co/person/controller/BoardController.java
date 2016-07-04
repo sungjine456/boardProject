@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,10 +36,14 @@ public class BoardController {
 	private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(HttpServletRequest req, RedirectAttributes rea){
+	public String main(@RequestParam(required=false) Integer startNum, HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=3) Pageable pageable){
 		log.info("BoardController main execute");
-		req.setAttribute("boardList", boardService.findAll());
+		if(startNum == null){
+			startNum = 1;
+		}
+		req.setAttribute("boardList", boardService.findAll(pageable));
 		req.setAttribute("message", rea.getFlashAttributes().get("message"));
+		req.setAttribute("startNum", startNum);
 		return "view/board/frame";
 	}
 	
