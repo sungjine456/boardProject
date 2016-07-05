@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -36,14 +37,21 @@ public class BoardController {
 	private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(@RequestParam(required=false) Integer startNum, HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=3) Pageable pageable){
+	public String main(HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=3) Pageable pageable){
 		log.info("BoardController main execute");
-		if(startNum == null){
-			startNum = 1;
+		int num = pageable.getPageNumber();
+		int startNum = num / 5 * 5 + 1;
+		int lastNum = (num / 5 + 1) * 5;
+		Page<Board> pages = boardService.findAll(pageable);
+		int lastPage = pages.getTotalPages();
+		if(lastNum > lastPage){
+			lastNum = lastPage;
 		}
-		req.setAttribute("boardList", boardService.findAll(pageable));
+		req.setAttribute("boardList", pages);
 		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		req.setAttribute("startNum", startNum);
+		req.setAttribute("lastNum", lastNum);
+		req.setAttribute("lastPage", lastPage);
 		return "view/board/frame";
 	}
 	

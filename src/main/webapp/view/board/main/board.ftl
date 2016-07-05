@@ -54,18 +54,14 @@
 			<tr>
 				<td colspan="4">
 					<div style="text-align:center;">
-		<#if boardList.number &gt; 5>
-			<a class="btn btn-default btn-sm" href="?page=${boardList.number-5}&startNum=${startNum-5}">이전</a>
+		<#if startNum &gt; 2>
+			<a class="btn btn-default btn-sm" href="?page=${startNum-2}">이전</a>
 		</#if>
-		<#assign lastNum = boardList.size>
-		<#if lastNum &gt; 4>
-			lastNum = 4
-		</#if>
-		<#list startNum..lastNum+1 as i>
+		<#list startNum..lastNum as i>
 			<a class="btn btn-default btn-sm" href="?page=${i-1}">${i}</a>
 		</#list>
-		<#if boardList.number &lt; 5>
-			<a class="btn btn-default btn-sm" href="?page=${boardList.number+5}&startNum=${startNum+5}">다음</a>
+		<#if lastNum != lastPage>
+			<a class="btn btn-default btn-sm" href="?page=${lastNum}">다음</a>
 		</#if>
 					</div>
 				</td>
