@@ -34,7 +34,7 @@
 							<label for="id">아이디 : </label>
 						</th>
 						<td colspan="2">
-							<input type="text" id="id" class="form-control" name="id"/>
+							<input type="text" id="id" class="form-control" name="id" autofocus/>
 						</td>
 					</tr>
 					<tr>

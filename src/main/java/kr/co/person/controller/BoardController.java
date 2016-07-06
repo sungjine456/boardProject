@@ -37,7 +37,7 @@ public class BoardController {
 	private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=3) Pageable pageable){
+	public String main(HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=10) Pageable pageable){
 		log.info("BoardController main execute");
 		int num = pageable.getPageNumber();
 		int startNum = num / 5 * 5 + 1;

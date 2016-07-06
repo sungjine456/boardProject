@@ -11,7 +11,7 @@
 					<label for="title">제목 : </label>
 				</th>
 				<td>
-					<input type="text" id="title" class="form-control" name="title"/>
+					<input type="text" id="title" class="form-control" name="title" autofocus/>
 				</td>
 			</tr>
 			<tr>

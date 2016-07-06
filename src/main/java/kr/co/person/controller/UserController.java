@@ -57,6 +57,7 @@ public class UserController {
 		OkCheck ok = userService.join(user);
 		req.setAttribute("message", ok.getMessage());
 		if(ok.isBool()){
+			session.setMaxInactiveInterval(24*60);
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -128,6 +129,7 @@ public class UserController {
 		}
 		User user = userService.findUserForId(id);
 		if(user != null && userService.autoLoginCheck(user, req.getRemoteAddr())){
+			session.setMaxInactiveInterval(24*60);
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -154,6 +156,7 @@ public class UserController {
 		String id = common.cleanXss(user.getId());
 		user = userService.findUserForId(id);
 		if(user != null){
+			session.setMaxInactiveInterval(24*60);
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
