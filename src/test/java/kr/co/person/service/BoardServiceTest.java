@@ -1,5 +1,7 @@
 package kr.co.person.service;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,24 +27,24 @@ public class BoardServiceTest {
 	@Test
 	public void testSave() {
 		String message = boardService.write("", "content", 1).getMessage();
-		Assert.assertEquals("제목을 입력해주세요.", message);
+		Assert.assertThat(message, is("제목을 입력해주세요."));
 		message = boardService.write("title", "", 1).getMessage();
-		Assert.assertEquals("내용을 입력해주세요.", message);
+		Assert.assertThat(message, is("내용을 입력해주세요."));
 		message = boardService.write("title", "content", 0).getMessage();
-		Assert.assertEquals("유효한 회원이 아닙니다.", message);
+		Assert.assertThat(message, is("유효한 회원이 아닙니다."));
 		message = boardService.write("title", "content", 1).getMessage();
-		Assert.assertEquals("글이 등록 되었습니다.", message);
+		Assert.assertThat(message, is("글이 등록 되었습니다."));
 	}
 	
 	@Test
 	public void testUpdate(){
 		board = boardService.findBoardForIdx(1);
-		Assert.assertEquals(board.getRegDate(), board.getUpDate());
-		Assert.assertFalse(boardService.update(1, "hyun", ""));
-		Assert.assertFalse(boardService.update(1, "", "hyun"));
-		Assert.assertFalse(boardService.update(5, "hyun", "hyun"));
-		Assert.assertTrue(boardService.update(1, "ttttt", "ccccc"));
+		Assert.assertThat(board.getRegDate(), is(board.getUpDate()));
+		Assert.assertThat(boardService.update(1, "hyun", ""), is(false));
+		Assert.assertThat(boardService.update(1, "", "hyun"), is(false));
+		Assert.assertThat(boardService.update(5, "hyun", "hyun"), is(false));
+		Assert.assertThat(boardService.update(1, "ttttt", "ccccc"), is(true));
 		board = boardService.findBoardForIdx(1);
-		Assert.assertNotEquals(board.getRegDate(), board.getUpDate());
+		Assert.assertThat(board.getRegDate(), is(not(board.getUpDate())));
 	}
 }

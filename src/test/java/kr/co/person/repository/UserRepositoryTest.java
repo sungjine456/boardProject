@@ -1,5 +1,7 @@
 package kr.co.person.repository;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,33 +28,33 @@ public class UserRepositoryTest {
     @Test
     public void testFindById() {
     	String id = userRepository.findById("sungjin").getId();
-    	Assert.assertEquals("sungjin", id);
+    	Assert.assertThat(id, is("sungjin"));
     }
     
 	@Test
 	public void testFindOne() {
 		user = userRepository.findOne(1);
-		Assert.assertEquals("sungjin", user.getId());
+		Assert.assertThat(user.getId(), is("sungjin"));
 	}
     
     @Test
     public void testFindByIdAndPassword() {
     	user = userRepository.findByIdAndPassword("sungjin", password);
-    	Assert.assertEquals("홍길동", user.getName());
-    	Assert.assertEquals("sungjin@naver.com", user.getEmail());
-    	Assert.assertEquals("sungjin", user.getId());
-    	Assert.assertEquals(password, user.getPassword());
+    	Assert.assertThat(user.getName(), is("홍길동"));
+    	Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
+    	Assert.assertThat(user.getId(), is("sungjin"));
+    	Assert.assertThat(user.getPassword(), is(password));
     }
     
     @Test
     public void testFindByEmail(){
     	user = userRepository.findByEmail("sungjin@naver.com");
-    	Assert.assertEquals("홍길동", user.getName());
-    	Assert.assertEquals("sungjin@naver.com", user.getEmail());
-    	Assert.assertEquals("sungjin", user.getId());
-    	Assert.assertEquals(password, user.getPassword());
+    	Assert.assertThat(user.getName(), is("홍길동"));
+    	Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
+    	Assert.assertThat(user.getId(), is("sungjin"));
+    	Assert.assertThat(user.getPassword(), is(password));
     	
     	User user = userRepository.findByEmail("ass@naver.com");
-    	Assert.assertNull(user);
+    	Assert.assertThat(user, is(nullValue()));
     }
 }

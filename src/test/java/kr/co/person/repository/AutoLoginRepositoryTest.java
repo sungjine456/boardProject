@@ -1,5 +1,7 @@
 package kr.co.person.repository;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import java.util.Date;
 
 import org.junit.Assert;
@@ -25,22 +27,21 @@ public class AutoLoginRepositoryTest {
 	@Autowired private UserRepository userRepository;
 	
 	private User user;
-	private Date date = new Date();
 
 	@Test
 	public void testSave() {
 		user = userRepository.findOne(1);
-		AutoLogin autoLogin = new AutoLogin(user, "O", "192.168.0.1", date);
+		AutoLogin autoLogin = new AutoLogin(user, "O", "192.168.0.1", new Date());
 		AutoLogin autoLoginSave = autoLoginRepository.save(autoLogin);
-		Assert.assertEquals("O", autoLoginSave.getLoginCheck());
-		Assert.assertEquals("192.168.0.1", autoLoginSave.getRegIp());
+		Assert.assertThat(autoLoginSave.getLoginCheck(), is("O"));
+		Assert.assertThat(autoLoginSave.getRegIp(), is("192.168.0.1"));
 	}
 	
 	@Test
 	public void testFindByUserIdxAndRegIp(){
 		user = userRepository.findOne(1);
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(1, "192.168.0.1");
-		Assert.assertEquals("192.168.0.1", autoLogin.getRegIp());
-		Assert.assertEquals("O", autoLogin.getLoginCheck());
+		Assert.assertThat(autoLogin.getLoginCheck(), is("O"));
+		Assert.assertThat(autoLogin.getRegIp(), is("192.168.0.1"));
 	}
 }

@@ -1,5 +1,7 @@
 package kr.co.person.service;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,30 +29,30 @@ public class CommentServiceTest {
 	@Test
 	public void testFindAllCommentByBoard() {
 		List<Comment> comments = commentService.findAllCommentByBoard(0);
-		Assert.assertEquals(new ArrayList<Comment>(), comments);
+		Assert.assertThat(comments, is(new ArrayList<Comment>()));
 		comments = commentService.findAllCommentByBoard(1);
-		Assert.assertEquals(1, comments.size());
+		Assert.assertThat(comments.size(), is(1));
 	}
 	
 	@Test
 	public void testWrite(){
-		Assert.assertFalse(commentService.write("comment write test", 1, 3));
-		Assert.assertFalse(commentService.write("comment write test", 3, 1));
-		Assert.assertFalse(commentService.write("comment write test", 3, 3));
-		Assert.assertFalse(commentService.write("comment write test", 0, 0));
-		Assert.assertFalse(commentService.write("", 1, 1));
-		Assert.assertFalse(commentService.write(null, 1, 1));
-		Assert.assertTrue(commentService.write("comment write test", 1, 1));
+		Assert.assertThat(commentService.write("comment write test", 1, 3), is(false));
+		Assert.assertThat(commentService.write("comment write test", 3, 1), is(false));
+		Assert.assertThat(commentService.write("comment write test", 3, 3), is(false));
+		Assert.assertThat(commentService.write("comment write test", 0, 0), is(false));
+		Assert.assertThat(commentService.write("", 1, 1), is(false));
+		Assert.assertThat(commentService.write(null, 1, 1), is(false));
+		Assert.assertThat(commentService.write("comment write test", 1, 1), is(true));
 	}
 	
 	@Test
 	public void testUpdate(){
-		Assert.assertFalse(commentService.update(0, "comment update test"));
-		Assert.assertFalse(commentService.update(3, "comment update test"));
-		Assert.assertFalse(commentService.update(3, ""));
-		Assert.assertFalse(commentService.update(3, null));
-		Assert.assertTrue(commentService.update(1, "comment update test"));
+		Assert.assertThat(commentService.update(0, "comment update test"), is(false));
+		Assert.assertThat(commentService.update(3, "comment update test"), is(false));
+		Assert.assertThat(commentService.update(3, ""), is(false));
+		Assert.assertThat(commentService.update(3, null), is(false));
+		Assert.assertThat(commentService.update(1, "comment update test"), is(true));
 		List<Comment> comments = commentService.findAllCommentByBoard(1);
-		Assert.assertEquals("comment update test", comments.get(0).getComment());
+		Assert.assertThat(comments.get(0).getComment(), is("comment update test"));
 	}
 }

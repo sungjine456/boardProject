@@ -1,5 +1,7 @@
 package kr.co.person.repository;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -33,14 +35,14 @@ public class CommnetRepositoryTest {
 	@Test
 	public void testFindOne() {
 		comment = commentRepository.findOne(1);
-		Assert.assertEquals("comment", comment.getComment());
+		Assert.assertThat(comment.getComment(), is("comment"));
 	}
 	
 	@Test
 	public void testSave(){
 		comment = new Comment("c", user, board, date, date);
 		comment = commentRepository.save(comment);
-		Assert.assertEquals("c", comment.getComment());
+		Assert.assertThat(comment.getComment(), is("c"));
 	}
 	
 	@Test
@@ -48,17 +50,17 @@ public class CommnetRepositoryTest {
 		comment = new Comment("c", user, board, date, date);
 		comment = commentRepository.save(comment);
 		List<Comment> comments = commentRepository.findAll();
-		Assert.assertEquals("comment", comments.get(0).getComment());
-		Assert.assertEquals("c", comments.get(1).getComment());
+		Assert.assertThat(comments.get(0).getComment(), is("comment"));
+		Assert.assertThat(comments.get(1).getComment(), is("c"));
 	}
 	
 	@Test
 	public void testFindAllByBoard(){
 		List<Comment> comments = commentRepository.findAllByBoardIdx(1);
-		Assert.assertEquals("comment", comments.get(0).getComment());
+		Assert.assertThat(comments.get(0).getComment(), is("comment"));
 		comment = new Comment("c", user, board, date, date);
 		comment = commentRepository.save(comment);
-		Assert.assertEquals(1, comments.size());
-		Assert.assertEquals("comment", comments.get(0).getComment());
+		Assert.assertThat(comments.size(), is(1));
+		Assert.assertThat(comments.get(0).getComment(), is("comment"));
 	}
 }

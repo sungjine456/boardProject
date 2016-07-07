@@ -1,5 +1,7 @@
 package kr.co.person.repository;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -31,31 +33,34 @@ public class BoardRepositoryTest {
 	@Test
 	public void testFind() {
 		board = boardRepository.findOne(1);
-		Assert.assertEquals("title", board.getTitle());
-		Assert.assertEquals("content", board.getContent());
+		Assert.assertThat(board.getTitle(), is("title"));
+		Assert.assertThat(board.getContent(), is("content"));
 	}
 	
 	@Test
 	public void testSave() {
 		Board board = new Board("t", "c", user, date, date);
 		List<Board> boardList = (List<Board>) boardRepository.findAll();
-		Assert.assertEquals(1, boardList.size());
+		Assert.assertThat(boardList.size(), is(1));
 		Board boardSave = boardRepository.save(board);
-		Assert.assertEquals("t", boardSave.getTitle());
-		Assert.assertEquals("c", boardSave.getContent());
+		Assert.assertThat(boardSave.getTitle(), is("t"));
+		Assert.assertThat(boardSave.getContent(), is("c"));
 		List<Board> boardList2 = (List<Board>) boardRepository.findAll();
-		Assert.assertEquals(2, boardList2.size());
+		Assert.assertThat(boardList2.size(), is(2));
 	}
 	
 	@Test
 	public void testUpdate(){
 		board = boardRepository.findOne(1);
-		Assert.assertEquals("title", board.getTitle());
-		Assert.assertEquals("content", board.getContent());
+		Assert.assertThat(board.getTitle(), is("title"));
+		Assert.assertThat(board.getContent(), is("content"));
 		board.setContent("cccc");
 		board.setTitle("tttt");
 		board = boardRepository.save(board);
-		Assert.assertEquals("tttt", board.getTitle());
-		Assert.assertEquals("cccc", board.getContent());
+		Assert.assertThat(board.getTitle(), is("tttt"));
+		Assert.assertThat(board.getContent(), is("cccc"));
+		board = boardRepository.findOne(1);
+		Assert.assertThat(board.getTitle(), is("tttt"));
+		Assert.assertThat(board.getContent(), is("cccc"));
 	}
 }

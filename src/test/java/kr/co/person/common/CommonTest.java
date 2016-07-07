@@ -1,5 +1,7 @@
 package kr.co.person.common;
 
+import static org.hamcrest.CoreMatchers.*;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +21,9 @@ public class CommonTest {
     
 	@Test
 	public void testIsEmail() {
-		Assert.assertTrue(common.isEmail("sungjin@naver.com"));
-		Assert.assertFalse(common.isEmail("sungjin@naver"));
-		Assert.assertFalse(common.isEmail("sungjin"));
+		Assert.assertThat(common.isEmail("sungjin@naver.com"), is(true));
+		Assert.assertThat(common.isEmail("sungjin@naver"), is(false));
+		Assert.assertThat(common.isEmail("sungjin"), is(false));
 	}
 	
 	@Test
@@ -29,8 +31,8 @@ public class CommonTest {
 		String key = "personProjectByJin";
 		String str = "sungjin";
 		String en = common.cookieAesEncode(key, str);
-		Assert.assertNotEquals("sungjin", en);
+		Assert.assertThat(en, is(not("sungjin")));
 		String de = common.cookieAesDecode(key, en);
-		Assert.assertEquals("sungjin", de);
+		Assert.assertThat(de, is("sungjin"));
 	}
 }
