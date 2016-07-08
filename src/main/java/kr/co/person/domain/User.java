@@ -40,11 +40,12 @@ public class User {
 	public User(){
 	}
 	
-	public User(String id, String email, String password, String name, Date regDate, Date upDate){
+	public User(String id, String email, String password, String name, String img, Date regDate, Date upDate){
 		this.id = id;
 		this.email = email;
 		this.password = password;
 		this.name = name;
+		this.img = img;
 		this.regDate = regDate;
 		this.upDate = upDate;
 	}

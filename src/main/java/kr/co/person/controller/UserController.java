@@ -66,7 +66,7 @@ public class UserController {
 		log.info("execute UserController addUser ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
 			Date date = new Date();
-			fileName = user.getId() + date.getTime() + "." + ext;
+			fileName = user.getId() + "_"  + date.getTime() + "." + ext;
 			String filePath = "D:/git/boardProject/boardProject/src/main/resources/static/img/user";
 		    File dayFile = new File(filePath);
 		    if(!dayFile.exists()){

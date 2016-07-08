@@ -28,7 +28,7 @@ public class CommnetRepositoryTest {
 	@Autowired
 	private CommentRepository commentRepository;
 	Date date = new Date();
-	private User user = new User("tes", "test@naver.com", "test", "test", date, date);
+	private User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
 	private Board board = new Board("title", "content", user, date, date);
 	private Comment comment;
 
