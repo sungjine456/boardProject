@@ -117,6 +117,12 @@ var join = {
 	},
 	imagePreviewEvent : function(e){
 		var reader = new FileReader();
+		var fileName = this.file.val();
+		var ext = fileName.slice(fileName.lastIndexOf(".") + 1).toLowerCase();
+		if(!(ext == "gif" || ext == "jpg" || ext == "jpeg" || ext == "png")){
+			alert("이미지파일 (.jpg, .jpeg, .png, .gif ) 만 업로드 가능합니다.");
+			return;
+		}
 		reader.onload = function (event) {
 			var img = new Image();
 			img.src = event.target.result;

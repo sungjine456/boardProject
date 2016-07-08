@@ -28,6 +28,8 @@ public class User {
 	private String name;
 	@Column(name="email", nullable = false)
 	private String email;
+	@Column(name="img")
+	private String img;
 	@Column(name="reg_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date regDate;
@@ -88,5 +90,11 @@ public class User {
 	}
 	public void setUpDate(Date upDate) {
 		this.upDate = upDate;
+	}
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
 	}
 }

@@ -19,7 +19,7 @@
 	<body>
 		<div class="container">
 			<h1> 회원 가입 </h1>
-			<form id="form" action="/join" method="post">
+			<form id="form" action="/join" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="idBool" value="false"/>
 				<input type="hidden" id="emailBool" value="false"/>
 				<div class="container-fluid">
@@ -95,7 +95,7 @@
 								</div>
 								<div class="col-md-9">
 									<div class="row">
-										<input type="file" id="file"/>
+										<input type="file" id="file" name="file"/>
 										<div id="preview">
 									</div>
 								</div>

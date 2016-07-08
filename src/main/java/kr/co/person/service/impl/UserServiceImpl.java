@@ -35,6 +35,8 @@ public class UserServiceImpl implements UserService {
 		if(user == null){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
+		user.setId(common.cleanXss(user.getId()));
+		user.setName(common.cleanXss(user.getName()));
 		String id = user.getId();
 		String password = user.getPassword();
 		String email = user.getEmail();

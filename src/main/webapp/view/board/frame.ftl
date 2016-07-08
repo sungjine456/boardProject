@@ -16,7 +16,7 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<div id="header" style="background-color: black">
+			<div id="header" style="background-color: black; height: 40px;">
 				<#include "top.ftl">
 			</div>
 			<div id="middle">

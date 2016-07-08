@@ -1,7 +1,11 @@
 package kr.co.person.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
@@ -29,9 +34,9 @@ import kr.co.person.service.UserService;
 @Controller
 public class UserController {
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	
 	@Value("${keyValue}")
 	private String ENCRYPTION_KEY;
-	
 	@Autowired 
 	private UserService userService;
 	@Autowired 
@@ -44,16 +49,50 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@ModelAttribute User user, HttpServletRequest req){
+	public String join(@ModelAttribute User user, @RequestParam MultipartFile file, HttpServletRequest req){
 		log.info("execute UserController addUser");
 		HttpSession session = req.getSession();
 		if(user == null){
 			req.setAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		user.setId(common.cleanXss(user.getId()));
-		user.setName(common.cleanXss(user.getName()));
+		StringTokenizer st = new StringTokenizer(file.getOriginalFilename(), ".");
+		String ext = "";
+		if(st.countTokens() == 2){
+			st.nextToken();
+			ext = st.nextToken();
+		}
+		String fileName = "";
+		log.info("execute UserController addUser ext : " + ext);
+		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
+			Date date = new Date();
+			fileName = user.getId() + date.getTime() + "." + ext;
+			String filePath = "D:/git/boardProject/boardProject/src/main/resources/static/img/user";
+		    File dayFile = new File(filePath);
+		    if(!dayFile.exists()){
+		       dayFile.mkdirs();
+		    }
+		    FileOutputStream fos = null;
+		    try{
+	            byte fileData[] = file.getBytes();
+	            fos = new FileOutputStream(filePath + "/" + fileName);
+	            fos.write(fileData);
+	        }catch(Exception e){
+	            e.printStackTrace();
+	        }finally{
+	            if(fos != null){
+	                try{
+	                    fos.close();
+	                }catch(Exception e){}
+	            }
+	        }
+		}
+		if(StringUtils.isEmpty(fileName)){
+			fileName = "default.png";
+		}
+		log.info("execute UserController addUser fileName : " + fileName);
 		
+		user.setImg("img/user/" + fileName);
 		OkCheck ok = userService.join(user);
 		req.setAttribute("message", ok.getMessage());
 		if(ok.isBool()){
@@ -63,6 +102,7 @@ public class UserController {
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
+			session.setAttribute("img", user.getImg());
 			return "redirect:/board";
 		} else {
 			return "view/user/join";
@@ -135,6 +175,7 @@ public class UserController {
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
+			session.setAttribute("img", user.getImg());
 			return "redirect:/board";
 		}
 		return "view/user/login";
@@ -162,6 +203,7 @@ public class UserController {
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
+			session.setAttribute("img", user.getImg());
 			if(idSave != null && idSave.equals("check")){
 				String ip = req.getRemoteAddr();
 				if(!userService.autoLogin(user, ip)){
