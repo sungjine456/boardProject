@@ -10,6 +10,11 @@
 		<title> 회원가입 </title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
+		<style>
+			.right {
+				text-align: right;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -17,72 +22,92 @@
 			<form id="form" action="/join" method="post">
 				<input type="hidden" id="idBool" value="false"/>
 				<input type="hidden" id="emailBool" value="false"/>
-				<table class="table table-hover">
-					<colgroup>
-						<col width="10%"/>
-						<col width="70%"/>
-						<col width="20%"/>
-					</colgroup>
-					<tr>
-						<th>
-							<label for="id">아이디 : </label>
-						</th>
-						<td>
-							<input type="text" id="id" class="form-control" name="id"/>
-						</td>
-						<td>
-							<span id="idSpan"></span>
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<label for="password">비밀번호 : </label>
-						</th>
-						<td>
-							<input type="password" id="password" class="form-control" name="password" maxlength="15"/>
-						</td>
-						<td>
-							<font>6자 이상 15자 이하로 입력하셔야 합니다.</font>
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<label for="passwordConfirm">비밀번호 확인 : </label>
-						</th>
-						<td>
-							<input type="password" id="passwordConfirm" class="form-control" maxlength="15"/>
-						</td>
-						<td>
-							<span id="passwordSpan"></span>
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<label for="name">이름 : </label>
-						</th>
-						<td>
-							<input type="text" id="name" class="form-control" name="name"/>
-						</td>
-						<td>
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<label for="email">이메일 : </label>
-						</th>
-						<td>
-							<input type="text" id="email" class="form-control" name="email"/>
-						</td>
-						<td>
-							<span id="emailSpan"></span>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3" style="padding-left: 80%">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="row">
+								<div class="col-md-4">
+									<label for="id">아이디 : </label>
+								</div>
+								<div class="col-md-8">
+									<input type="text" id="id" class="form-control" name="id"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 right">
+									<span id="idSpan"></span>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<label for="password">비밀번호 : </label>
+								</div>
+								<div class="col-md-8">
+									<input type="password" id="password" class="form-control" name="password" maxlength="15"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 right">
+									<font>6자 이상 15자 이하로 입력하셔야 합니다.</font>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<label for="passwordConfirm">비밀번호 확인 : </label>
+								</div>
+								<div class="col-md-8">
+									<input type="password" id="passwordConfirm" class="form-control" maxlength="15"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 right">
+									<span id="passwordSpan"></span>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<label for="name">이름 : </label>
+								</div>
+								<div class="col-md-8">
+									<input type="text" id="name" class="form-control" name="name"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<label for="email">이메일 : </label>
+								</div>
+								<div class="col-md-8">
+									<input type="text" id="email" class="form-control" name="email"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 right">
+									<span id="emailSpan"></span>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row">
+								<div class="col-md-3">
+									<div class="row">
+										<label for="file">이미지 : </label>
+									</div>
+								</div>
+								<div class="col-md-9">
+									<div class="row">
+										<input type="file" id="file"/>
+										<div id="preview">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12" style="padding-left: 80%">
 							<button type="button" id="joinBtn" class="btn btn-primary">회원가입</button>
-						</td>
-					</tr>
-				</table>
+						</div>
+					</div>
+				</div>
 			</form>
 		</div>
 		<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>

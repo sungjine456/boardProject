@@ -11,6 +11,8 @@ var join = {
 	passwordSpan : $("#form #passwordSpan"),
 	idSpan : $("#form #idSpan"),
 	emailSpan : $("#form #emailSpan"),
+	file : $("#file"),
+	preview : $("#preview"),
 	joinEvent : function(){
 		if(this.id.val() === ""){
 			alert("아이디를 입력해주세요");
@@ -113,6 +115,22 @@ var join = {
 			}
 		});
 	},
+	imagePreviewEvent : function(e){
+		var reader = new FileReader();
+		reader.onload = function (event) {
+			var img = new Image();
+			img.src = event.target.result;
+			if(img.width > 360){
+				img.width = 360;
+			}
+			if(img.height > 170){
+				img.height = 170;
+			}
+			preview.innerHTML = '';
+			preview.appendChild(img);
+		};
+		reader.readAsDataURL(file.files[0]);
+	},
 	init : function(){
 		var self = this;
 		self.joinBtn.click(function(){self.joinEvent();});
@@ -120,6 +138,7 @@ var join = {
 		self.pwConfirm.keyup(function(){self.passwordCheckEvent();});
 		self.id.keyup(function(){self.idCheckEvent();});
 		self.email.keyup(function(){self.emailCheckEvent();});
+		self.file.change(function(){self.imagePreviewEvent();});
 	}
 }
 
