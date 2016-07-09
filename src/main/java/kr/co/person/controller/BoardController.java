@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import kr.co.person.common.Common;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.Comment;
-import kr.co.person.domain.OkCheck;
+import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.BoardService;
 import kr.co.person.service.CommentService;
 

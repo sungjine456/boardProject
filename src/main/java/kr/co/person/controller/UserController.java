@@ -27,8 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
-import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
+import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.UserService;
 
 @Controller

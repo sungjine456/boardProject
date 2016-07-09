@@ -1,7 +1,7 @@
 package kr.co.person.service;
 
-import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
+import kr.co.person.pojo.OkCheck;
 
 public interface UserService {
 	OkCheck join(User user);

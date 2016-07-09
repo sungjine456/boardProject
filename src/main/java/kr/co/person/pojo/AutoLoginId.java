@@ -1,4 +1,4 @@
-package kr.co.person.domain;
+package kr.co.person.pojo;
 
 import java.io.Serializable;
 import java.util.Date;

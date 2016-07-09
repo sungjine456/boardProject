@@ -14,8 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
-import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
+import kr.co.person.pojo.OkCheck;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BoardProjectApplication.class)

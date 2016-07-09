@@ -16,6 +16,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import kr.co.person.pojo.AutoLoginId;
+
 @Entity
 @DynamicUpdate
 @Table(name = "auto_login")

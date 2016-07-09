@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.common.Common;
 import kr.co.person.domain.AutoLogin;
-import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
+import kr.co.person.pojo.OkCheck;
 import kr.co.person.repository.AutoLoginRepository;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;

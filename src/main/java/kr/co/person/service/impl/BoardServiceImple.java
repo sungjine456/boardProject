@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.domain.Board;
-import kr.co.person.domain.OkCheck;
 import kr.co.person.domain.User;
+import kr.co.person.pojo.OkCheck;
 import kr.co.person.repository.BoardRepository;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.BoardService;

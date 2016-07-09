@@ -1,4 +1,4 @@
-package kr.co.person.domain;
+package kr.co.person.pojo;
 
 public class OkCheck {
 	private String message;
