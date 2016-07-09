@@ -26,14 +26,10 @@ public class BoardServiceTest {
 	
 	@Test
 	public void testSave() {
-		String message = boardService.write("", "content", 1).getMessage();
-		Assert.assertThat(message, is("제목을 입력해주세요."));
-		message = boardService.write("title", "", 1).getMessage();
-		Assert.assertThat(message, is("내용을 입력해주세요."));
-		message = boardService.write("title", "content", 0).getMessage();
-		Assert.assertThat(message, is("유효한 회원이 아닙니다."));
-		message = boardService.write("title", "content", 1).getMessage();
-		Assert.assertThat(message, is("글이 등록 되었습니다."));
+		Assert.assertThat(boardService.write("", "content", 1).getMessage(), is("제목을 입력해주세요."));
+		Assert.assertThat(boardService.write("title", "", 1).getMessage(), is("내용을 입력해주세요."));
+		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is("유효한 회원이 아닙니다."));
+		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is("글이 등록 되었습니다."));
 	}
 	
 	@Test

@@ -1,6 +1,6 @@
 package kr.co.person.repository;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Date;
 import java.util.List;
@@ -28,7 +28,6 @@ public class BoardRepositoryTest {
 	private BoardRepository boardRepository;
 	private Board board;
 	Date date = new Date();
-	private User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
 
 	@Test
 	public void testFind() {
@@ -39,9 +38,12 @@ public class BoardRepositoryTest {
 	
 	@Test
 	public void testSave() {
-		Board board = new Board("t", "c", user, date, date);
 		List<Board> boardList = (List<Board>) boardRepository.findAll();
 		Assert.assertThat(boardList.size(), is(1));
+		
+		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
+		board = new Board("t", "c", user, date, date);
+		
 		Board boardSave = boardRepository.save(board);
 		Assert.assertThat(boardSave.getTitle(), is("t"));
 		Assert.assertThat(boardSave.getContent(), is("c"));
@@ -56,9 +58,7 @@ public class BoardRepositoryTest {
 		Assert.assertThat(board.getContent(), is("content"));
 		board.setContent("cccc");
 		board.setTitle("tttt");
-		board = boardRepository.save(board);
-		Assert.assertThat(board.getTitle(), is("tttt"));
-		Assert.assertThat(board.getContent(), is("cccc"));
+		boardRepository.save(board);
 		board = boardRepository.findOne(1);
 		Assert.assertThat(board.getTitle(), is("tttt"));
 		Assert.assertThat(board.getContent(), is("cccc"));

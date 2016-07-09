@@ -1,6 +1,6 @@
 package kr.co.person.repository;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Date;
 import java.util.List;
@@ -28,8 +28,6 @@ public class CommnetRepositoryTest {
 	@Autowired
 	private CommentRepository commentRepository;
 	Date date = new Date();
-	private User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
-	private Board board = new Board("title", "content", user, date, date);
 	private Comment comment;
 
 	@Test
@@ -40,27 +38,26 @@ public class CommnetRepositoryTest {
 	
 	@Test
 	public void testSave(){
-		comment = new Comment("c", user, board, date, date);
-		comment = commentRepository.save(comment);
+		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
+		Board board = new Board("title", "content", user, date, date);
+		
+		comment = commentRepository.save(new Comment("c", user, board, date, date));
 		Assert.assertThat(comment.getComment(), is("c"));
 	}
 	
 	@Test
 	public void testFindAll(){
-		comment = new Comment("c", user, board, date, date);
-		comment = commentRepository.save(comment);
 		List<Comment> comments = commentRepository.findAll();
+		Assert.assertThat(comments.size(), is(1));
 		Assert.assertThat(comments.get(0).getComment(), is("comment"));
-		Assert.assertThat(comments.get(1).getComment(), is("c"));
 	}
 	
 	@Test
 	public void testFindAllByBoard(){
 		List<Comment> comments = commentRepository.findAllByBoardIdx(1);
-		Assert.assertThat(comments.get(0).getComment(), is("comment"));
-		comment = new Comment("c", user, board, date, date);
-		comment = commentRepository.save(comment);
 		Assert.assertThat(comments.size(), is(1));
 		Assert.assertThat(comments.get(0).getComment(), is("comment"));
+		comments = commentRepository.findAllByBoardIdx(2);
+		Assert.assertThat(comments.size(), is(0));
 	}
 }

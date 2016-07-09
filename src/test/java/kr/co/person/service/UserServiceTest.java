@@ -37,34 +37,27 @@ public class UserServiceTest {
 	
 	@Test
 	public void testIdCheck() {
-		String id = null;
-		Assert.assertThat(userService.idCheck(id).getMessage(), is("아이디를 입력해주세요."));
-		id = "";
-		Assert.assertThat(userService.idCheck(id).getMessage(), is("아이디를 입력해주세요."));
-		id = "sungjin";
-		Assert.assertThat(userService.idCheck(id).getMessage(), is("이미 가입되어 있는 아이디입니다."));
-		id = "sungjin123";
-		Assert.assertThat(userService.idCheck(id).getMessage(), is("가입 가능한 아이디입니다."));
+		Assert.assertThat(userService.idCheck(null).getMessage(), is("아이디를 입력해주세요."));
+		Assert.assertThat(userService.idCheck("").getMessage(), is("아이디를 입력해주세요."));
+		Assert.assertThat(userService.idCheck("sungjin").getMessage(), is("이미 가입되어 있는 아이디입니다."));
+		Assert.assertThat(userService.idCheck("sungjin123").getMessage(), is("가입 가능한 아이디입니다."));
 	}
 
 	@Test
 	public void testEmailCheck() {
-		String email = null;
-		Assert.assertThat(userService.emailCheck(email).getMessage(), is("메일을 입력해주세요."));
-		email = "";
-		Assert.assertThat(userService.emailCheck(email).getMessage(), is("메일을 입력해주세요."));
-		email = "tjdwls@naver.com";
-		Assert.assertThat(userService.emailCheck(email).getMessage(), is("가입 가능한 이메일입니다."));
-		email = "sungjin@naver.com";
-		Assert.assertThat(userService.emailCheck(email).getMessage(), is("이미 가입되어 있는 이메일입니다."));
-		email = "sungjin";
-		Assert.assertThat(userService.emailCheck(email).getMessage(), is("올바른 형식의 메일을 입력해주세요."));
+		Assert.assertThat(userService.emailCheck(null).getMessage(), is("메일을 입력해주세요."));
+		Assert.assertThat(userService.emailCheck("").getMessage(), is("메일을 입력해주세요."));
+		Assert.assertThat(userService.emailCheck("tjdwls@naver.com").getMessage(), is("가입 가능한 이메일입니다."));
+		Assert.assertThat(userService.emailCheck("sungjin@naver.com").getMessage(), is("이미 가입되어 있는 이메일입니다."));
+		Assert.assertThat(userService.emailCheck("sungjin").getMessage(), is("올바른 형식의 메일을 입력해주세요."));
 	}
 
 	@Test
 	public void testFindUserForIdx() {
 		user = userService.findUserForIdx(1);
+		Assert.assertThat(user.getName(), is("홍길동"));
 		Assert.assertThat(user.getId(), is("sungjin"));
+		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
 	}
 	
 	@Test
@@ -75,6 +68,8 @@ public class UserServiceTest {
 		Assert.assertThat(user, is(nullValue()));
 		user = userService.findUserForId("sungjin");
 		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(user.getId(), is("sungjin"));
+		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
 	}
 	
 	@Test
@@ -141,9 +136,8 @@ public class UserServiceTest {
 		Assert.assertThat(user.getId(), is("sungjin"));
 		Assert.assertThat(user.getPassword(), is(password));
 		Assert.assertThat(user.getName(), is("홍길동"));
-		boolean bool = userService.leave(1, "192.168.0.1");
+		Assert.assertThat(userService.leave(1, "192.168.0.1"), is(true));
 		user = userService.findUserForIdx(1);
-		Assert.assertThat(bool, is(true));
 		Assert.assertThat(user.getEmail(), is(garbage));
 		Assert.assertThat(user.getId(), is(garbage));
 		Assert.assertThat(user.getPassword(), is(garbage));
@@ -164,32 +158,33 @@ public class UserServiceTest {
 	
 	@Test
 	public void testTranslatePassword(){
-		userService.translatePassword("sungjin@naver.com");
 		user = userService.findUserForIdx(1);
-		Assert.assertThat(user.getPassword(), is(not(password)));
+		userService.translatePassword("sungjin@naver.com");
+		User updateUser = userService.findUserForIdx(1);
+		Assert.assertThat(updateUser.getPassword(), is(not(user.getPassword())));
 	}
 	
 	@Test
 	public void testAutoLogin(){
-		Boolean bool = userService.autoLogin(user, "192.168.0.1");
-		Assert.assertThat(bool, is(false));
-		bool = userService.autoLogin(userService.findUserForIdx(1), "");
-		Assert.assertThat(bool, is(false));
-		bool = userService.autoLogin(userService.findUserForIdx(2), "192.168.0.1");
-		Assert.assertThat(bool, is(false));
-		bool = userService.autoLogin(userService.findUserForIdx(1), "192.168.0.1");
-		Assert.assertThat(bool, is(true));
+		Assert.assertThat(userService.autoLogin(user, "192.168.0.1"), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), ""), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2), "192.168.0.1"), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), "192.168.0.1"), is(true));
 	}
 	
 	@Test
 	public void testAutoLogout(){
-		Boolean bool = userService.autoLogout(user, "192.168.0.1");
-		Assert.assertThat(bool, is(false));
-		bool = userService.autoLogout(userService.findUserForIdx(1), "");
-		Assert.assertThat(bool, is(false));
-		bool = userService.autoLogout(userService.findUserForIdx(2), "192.168.0.1");
-		Assert.assertThat(bool, is(false));
-		bool = userService.autoLogout(userService.findUserForIdx(1), "192.168.0.1");
-		Assert.assertThat(bool, is(true));
+		Assert.assertThat(userService.autoLogout(user, "192.168.0.1"), is(false));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), ""), is(false));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2), "192.168.0.1"), is(false));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), "192.168.0.1"), is(true));
+	}
+	
+	@Test
+	public void test(){
+		Assert.assertThat(userService.passwordCheck(1, "123456"), is(true));
+		Assert.assertThat(userService.passwordCheck(2, "123456"), is(false));
+		Assert.assertThat(userService.passwordCheck(1, "654321"), is(false));
+		Assert.assertThat(userService.passwordCheck(2, "654321"), is(false));
 	}
 }
