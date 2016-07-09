@@ -268,12 +268,11 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
-	public String mypageView(HttpServletRequest req, RedirectAttributes rea){
+	public String myPageView(HttpServletRequest req){
 		log.info("execute UserController mypageView");
 		req.setAttribute("id", req.getSession().getAttribute("id"));
 		req.setAttribute("name", req.getSession().getAttribute("name"));
 		req.setAttribute("email", req.getSession().getAttribute("email"));
-		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		req.setAttribute("include", "/view/user/mypage.ftl");
 		return "view/board/frame";
 	}
@@ -330,12 +329,23 @@ public class UserController {
 		return "redirect:/";
 	}
 	
-	@RequestMapping(value="/update", method=RequestMethod.GET)
-	public String updateView(HttpServletRequest req){
+	@RequestMapping(value="/updateView", method=RequestMethod.POST)
+	public String updateView(@RequestParam String updatePassword, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
+		HttpSession session = req.getSession();
+		if(StringUtils.isEmpty(updatePassword)){
+			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
+			return "redirect:/mypage";
+		}
+		int idx = (int)session.getAttribute("idx");
+		if(!userService.passwordCheck(idx, updatePassword)){
+			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
+			return "redirect:/mypage";
+		}
 		req.setAttribute("id", req.getSession().getAttribute("id"));
 		req.setAttribute("name", req.getSession().getAttribute("name"));
 		req.setAttribute("email", req.getSession().getAttribute("email"));
+		req.setAttribute("message", rea.getFlashAttributes().get("message"));
 		req.setAttribute("include", "/view/user/update.ftl");
 		return "view/board/frame";
 	}

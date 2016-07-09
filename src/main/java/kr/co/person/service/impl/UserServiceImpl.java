@@ -282,4 +282,16 @@ public class UserServiceImpl implements UserService {
 		}
 		return true;
 	}
+
+	@Override
+	public boolean passwordCheck(int idx, String password) {
+		User user = userRepository.findOne(idx);
+		if(user == null){
+			return false;
+		}
+		if(!StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
+			return false;
+		}
+		return true;
+	}
 }
