@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,10 +38,8 @@ public class UserController {
 	
 	@Value("${keyValue}")
 	private String ENCRYPTION_KEY;
-	@Autowired 
-	private UserService userService;
-	@Autowired 
-	private Common common;
+	@Autowired private UserService userService;
+	@Autowired private Common common;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(){
@@ -49,11 +48,10 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@ModelAttribute User user, @RequestParam MultipartFile file, HttpServletRequest req){
+	public String join(@ModelAttribute User user, @RequestParam MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController addUser");
-		HttpSession session = req.getSession();
 		if(user == null){
-			req.setAttribute("message", "회원가입에 실패하셨습니다.");
+			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
 		StringTokenizer st = new StringTokenizer(file.getOriginalFilename(), ".");
@@ -95,7 +93,7 @@ public class UserController {
 		
 		user.setImg("img"+se+"user"+se+fileName);
 		OkCheck ok = userService.join(user);
-		req.setAttribute("message", ok.getMessage());
+		model.addAttribute("message", ok.getMessage());
 		if(ok.isBool()){
 			session.setMaxInactiveInterval(24*60);
 			session.setAttribute("loginYn", "Y");
@@ -111,7 +109,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join/idCheck", method=RequestMethod.POST)
-	public @ResponseBody Map<String, String> idCheck(@RequestParam String id, HttpServletRequest req){
+	public @ResponseBody Map<String, String> idCheck(@RequestParam(required=false) String id){
 		log.info("execute UserController idCheck");
 		Map<String, String> map = new HashMap<String, String>();
 		if(StringUtils.isEmpty(id)){
@@ -128,7 +126,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join/emailCheck", method=RequestMethod.POST)
-	public @ResponseBody Map<String, String> emailCheck(@RequestParam String email, HttpServletRequest req){
+	public @ResponseBody Map<String, String> emailCheck(@RequestParam(required=false) String email){
 		log.info("execute UserController emailCheck");
 		Map<String, String> map = new HashMap<String, String>();
 		if(StringUtils.isEmpty(email)){
@@ -145,12 +143,11 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(HttpServletRequest req, RedirectAttributes rea){
+	public String loginView(Model model, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
-		HttpSession session = req.getSession();
 		if(rea.getFlashAttributes().get("message") != null){
 			log.info("execute UserController getMessage");
-			req.setAttribute("message", rea.getFlashAttributes().get("message"));
+			model.addAttribute("message", rea.getFlashAttributes().get("message"));
 			return "view/user/login";
 		}
 		log.info("execute UserController no message");
@@ -183,16 +180,15 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
 		String bool = (String)req.getAttribute("false");
 		if(StringUtils.equals(bool, "false")){
 			rea.addFlashAttribute("message", req.getAttribute("message"));
 			return "redirect:/";
 		}
-		HttpSession session = req.getSession();
 		if(user == null){
-			req.setAttribute("message", "로그인에 실패하셨습니다.");
+			model.addAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
 		String id = common.cleanXss(user.getId());
@@ -208,12 +204,12 @@ public class UserController {
 			if(idSave != null && idSave.equals("check")){
 				String ip = req.getRemoteAddr();
 				if(!userService.autoLogin(user, ip)){
-					req.setAttribute("message", "로그인에 실패하셨습니다.");
+					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
 				String enKeyId = common.cookieAesEncode(ENCRYPTION_KEY, id);
 				if(StringUtils.isEmpty(enKeyId)){
-					req.setAttribute("message", "로그인에 실패하셨습니다.");
+					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
 				Cookie cookie = new Cookie("saveId", enKeyId);
@@ -222,15 +218,14 @@ public class UserController {
 			}
 			return "redirect:/board";
 		} else {
-			req.setAttribute("message", "로그인에 실패하셨습니다.");
+			model.addAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
-	public String logout(HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		String url = req.getRequestURI();
-		HttpSession session = req.getSession();
 		int idx = (int)session.getAttribute("idx");
 		if(idx == 0){
 			return url;
@@ -253,7 +248,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
-	public String translatePassword(@RequestParam String email, RedirectAttributes rea){
+	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea){
 		log.info("execute UserController translatePassword");
 		if(StringUtils.isEmpty(email)){
 			rea.addFlashAttribute("message", "이메일을 입력해주세요.");
@@ -269,17 +264,17 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
-	public String myPageView(HttpServletRequest req){
+	public String myPageView(Model model, HttpSession session){
 		log.info("execute UserController mypageView");
-		req.setAttribute("id", req.getSession().getAttribute("id"));
-		req.setAttribute("name", req.getSession().getAttribute("name"));
-		req.setAttribute("email", req.getSession().getAttribute("email"));
-		req.setAttribute("include", "/view/user/mypage.ftl");
+		model.addAttribute("id", session.getAttribute("id"));
+		model.addAttribute("name", session.getAttribute("name"));
+		model.addAttribute("email", session.getAttribute("email"));
+		model.addAttribute("include", "/view/user/mypage.ftl");
 		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
-	public String changePassword(@RequestParam String password, @RequestParam String changePassword, HttpServletRequest req, RedirectAttributes rea){
+	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", "페스워드를 입력해주세요");
@@ -289,11 +284,11 @@ public class UserController {
 			rea.addFlashAttribute("message", "수정할 페스워드를 입력해주세요");
 			return "redirect:/update";
 		}
-		int idx = (int)req.getSession().getAttribute("idx");
+		int idx = (int)session.getAttribute("idx");
 		User user = userService.findUserForIdx(idx);
-		req.setAttribute("id", user.getId());
-		req.setAttribute("name", user.getName());
-		req.setAttribute("email", user.getEmail());
+		model.addAttribute("id", user.getId());
+		model.addAttribute("name", user.getName());
+		model.addAttribute("email", user.getEmail());
 		
 		OkCheck ok = userService.changePassword(idx, password, changePassword);
 		rea.addFlashAttribute("message", ok.getMessage());
@@ -301,15 +296,14 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/leave")
-	public String leave(@RequestParam String password, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController leave");
-		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", "password를 입력해주세요.");
 			return "redirect:/mypage";
 		}
-		User user = userService.loginCheck((String)req.getSession().getAttribute("id"), password);
-		if(user == null || user.getIdx() != (int)req.getSession().getAttribute("idx")){
+		User user = userService.loginCheck((String)session.getAttribute("id"), password);
+		if(user == null || user.getIdx() != (int)session.getAttribute("idx")){
 			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
@@ -331,9 +325,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/updateView", method=RequestMethod.POST)
-	public String updateView(@RequestParam String updatePassword, HttpServletRequest req, RedirectAttributes rea){
+	public String updateView(@RequestParam(required=false) String updatePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
-		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(updatePassword)){
 			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
 			return "redirect:/mypage";
@@ -343,37 +336,36 @@ public class UserController {
 			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
 			return "redirect:/mypage";
 		}
-		req.setAttribute("id", req.getSession().getAttribute("id"));
-		req.setAttribute("name", req.getSession().getAttribute("name"));
-		req.setAttribute("email", req.getSession().getAttribute("email"));
-		req.setAttribute("message", rea.getFlashAttributes().get("message"));
-		req.setAttribute("include", "/view/user/update.ftl");
+		model.addAttribute("id", session.getAttribute("id"));
+		model.addAttribute("name", session.getAttribute("name"));
+		model.addAttribute("email", session.getAttribute("email"));
+		model.addAttribute("message", rea.getFlashAttributes().get("message"));
+		model.addAttribute("include", "/view/user/update.ftl");
 		return "view/board/frame";
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam String name, @RequestParam String email, HttpServletRequest req){
-		HttpSession session = req.getSession();
+	public String update(@RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
 		if(StringUtils.isEmpty(name)){
-			req.setAttribute("include", "/view/user/update.ftl");
-			req.setAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 		}
 		if(StringUtils.isEmpty(email)){
-			req.setAttribute("include", "/view/user/update.ftl");
-			req.setAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 		}
 		name = common.cleanXss(name);
 		email = common.cleanXss(email);
 		int idx = (int)session.getAttribute("idx");
 		if(idx == 0){
-			req.setAttribute("include", "/view/user/update.ftl");
-			req.setAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 		}
 		if(userService.update(idx, name, email)){
 			session.setAttribute("name", name);
 			session.setAttribute("email", email);
-			req.setAttribute("include", "/view/user/mypage.ftl");
-			req.setAttribute("message", "회원정보를 수정 하셨습니다.");
+			model.addAttribute("include", "/view/user/mypage.ftl");
+			model.addAttribute("message", "회원정보를 수정 하셨습니다.");
 		}
 		return "view/board/frame";
 	}

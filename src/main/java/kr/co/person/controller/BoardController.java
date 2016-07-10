@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,15 +30,13 @@ import kr.co.person.service.CommentService;
 @Controller
 public class BoardController {
 	private static final Logger log = LoggerFactory.getLogger(BoardController.class);
-	@Autowired
-	private BoardService boardService;
-	@Autowired
-	private CommentService commentService;
-	@Autowired
-	private Common common;
+	
+	@Autowired private BoardService boardService;
+	@Autowired private CommentService commentService;
+	@Autowired private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=10) Pageable pageable){
+	public String main(Model model, HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=10) Pageable pageable){
 		log.info("BoardController main execute");
 		int num = pageable.getPageNumber();
 		int startNum = num / 5 * 5 + 1;
@@ -47,72 +46,71 @@ public class BoardController {
 		if(lastNum > lastPage){
 			lastNum = lastPage;
 		}
-		req.setAttribute("boardList", pages);
-		req.setAttribute("message", rea.getFlashAttributes().get("message"));
-		req.setAttribute("startNum", startNum);
-		req.setAttribute("lastNum", lastNum);
-		req.setAttribute("lastPage", lastPage);
+		model.addAttribute("boardList", pages);
+		model.addAttribute("message", rea.getFlashAttributes().get("message"));
+		model.addAttribute("startNum", startNum);
+		model.addAttribute("lastNum", lastNum);
+		model.addAttribute("lastPage", lastPage);
 		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/boardWrite", method=RequestMethod.GET)
-	public String boardWriteView(HttpServletRequest req){
-		req.setAttribute("include", "main/write.ftl");
+	public String boardWriteView(Model model){
+		model.addAttribute("include", "main/write.ftl");
 		return "view/board/frame";
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(@RequestParam String title, @RequestParam String content, HttpServletRequest req){
+	public String boardWrite(@RequestParam(required=false) String title, @RequestParam(required=false) String content, Model model, HttpSession session){
 		log.info("BoardController boardWrite execute");
 		log.info("BoardController boardWrite title : " + title + ",   content : " + content);
-		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(title)){
-			req.setAttribute("message", "제목을 입력해주세요.");
-			req.setAttribute("include", "main/write.ftl");
+			model.addAttribute("message", "제목을 입력해주세요.");
+			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(content)){
-			req.setAttribute("message", "내용을 입력해주세요.");
-			req.setAttribute("include", "main/write.ftl");
+			model.addAttribute("message", "내용을 입력해주세요.");
+			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
 		OkCheck ok = boardService.write(common.cleanXss(title), common.enter(common.cleanXss(content)), (int)session.getAttribute("idx"));
 		if(!ok.isBool()){
-			req.setAttribute("message", ok.getMessage());
-			req.setAttribute("include", "main/write.ftl");
+			model.addAttribute("message", ok.getMessage());
+			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
 		return "redirect:/board";
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
+	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
 		log.info("BoardController boardDetailView execute");
-		if(num == 0){
+		if(num == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
 		String message = (String)rea.getFlashAttributes().get("message");
 		if(StringUtils.isNotEmpty(message)){
-			req.setAttribute("message", message);
+			model.addAttribute("message", message);
 		}
 		if(board == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		List<Comment> comments = commentService.findAllCommentByBoard(board.getIdx());
-		req.setAttribute("comments", comments);
-		req.setAttribute("include", "main/boardDetail.ftl");
-		req.setAttribute("board", board);
-		req.setAttribute("num", num);
+		model.addAttribute("comments", comments);
+		model.addAttribute("include", "main/boardDetail.ftl");
+		model.addAttribute("board", board);
+		model.addAttribute("num", num);
 		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/boardUpdateView")
-	public String boardUpdateView(@RequestParam int num, HttpServletRequest req, RedirectAttributes rea){
+	public String boardUpdateView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
 		log.info("BoardController boardUpdateView execute");
-		if(num == 0){
+		if(num == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
@@ -121,16 +119,16 @@ public class BoardController {
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
-		req.setAttribute("include", "main/update.ftl");
-		req.setAttribute("board", board);
-		req.setAttribute("num", num);
+		model.addAttribute("include", "main/update.ftl");
+		model.addAttribute("board", board);
+		model.addAttribute("num", num);
 		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
-	public String boardUpdate(@RequestParam int num, @RequestParam String title, @RequestParam String content, HttpServletRequest req, RedirectAttributes rea){
+	public String boardUpdate(@RequestParam(required=false) Integer num, @RequestParam(required=false) String title, @RequestParam(required=false) String content, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
-		if(num == 0){
+		if(num == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
@@ -159,9 +157,9 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@RequestParam int num, @RequestParam String comment, HttpServletRequest req, RedirectAttributes rea){
+	public String writeComment(@RequestParam(required=false) Integer num, @RequestParam(required=false) String comment, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController writeComment execute");
-		if(num == 0){
+		if(num == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
@@ -170,7 +168,6 @@ public class BoardController {
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
-		HttpSession session = req.getSession();
 		if(StringUtils.isEmpty(comment)){
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
@@ -184,18 +181,18 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
-	public String updateCommentView(@RequestParam int num, @RequestParam int idx, @RequestParam String comment, HttpServletRequest req, RedirectAttributes rea){
+	public String updateCommentView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer idx, @RequestParam(required=false) String comment, Model model){
 		log.info("BoardController updateCommentView execute");
-		req.setAttribute("comment", comment);
-		req.setAttribute("num", num);
-		req.setAttribute("idx", idx);
+		model.addAttribute("comment", comment);
+		model.addAttribute("num", num);
+		model.addAttribute("idx", idx);
 		return "view/board/ajax/commentUpdate";
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(@RequestParam int upnum, @RequestParam int upidx, @RequestParam String comment, RedirectAttributes rea){
+	public String updateComment(@RequestParam(required=false) Integer upnum, @RequestParam(required=false) Integer upidx, @RequestParam(required=false) String comment, RedirectAttributes rea){
 		log.info("BoardController updateComment execute");
-		if(upnum == 0){
+		if(upnum == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
@@ -204,7 +201,7 @@ public class BoardController {
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
-		if(upidx == 0){
+		if(upidx == null){
 			rea.addAttribute("num", upnum);
 			return "redirect:/boardDetail";
 		}
