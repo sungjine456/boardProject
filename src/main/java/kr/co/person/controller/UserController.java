@@ -63,11 +63,12 @@ public class UserController {
 			ext = st.nextToken();
 		}
 		String fileName = "";
+		String se = File.separator;
 		log.info("execute UserController addUser ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
 			Date date = new Date();
 			fileName = user.getId() + "_"  + date.getTime() + "." + ext;
-			String filePath = "D:/git/boardProject/boardProject/src/main/resources/static/img/user";
+			String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
 		    File dayFile = new File(filePath);
 		    if(!dayFile.exists()){
 		       dayFile.mkdirs();
@@ -75,7 +76,7 @@ public class UserController {
 		    FileOutputStream fos = null;
 		    try{
 	            byte fileData[] = file.getBytes();
-	            fos = new FileOutputStream(filePath + "/" + fileName);
+	            fos = new FileOutputStream(filePath + se + fileName);
 	            fos.write(fileData);
 	        }catch(Exception e){
 	            e.printStackTrace();
@@ -92,7 +93,7 @@ public class UserController {
 		}
 		log.info("execute UserController addUser fileName : " + fileName);
 		
-		user.setImg("img/user/" + fileName);
+		user.setImg("img"+se+"user"+se+fileName);
 		OkCheck ok = userService.join(user);
 		req.setAttribute("message", ok.getMessage());
 		if(ok.isBool()){
