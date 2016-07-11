@@ -1,5 +1,6 @@
 <div style="float:right; padding-right: 5%;">
 	<a id="commentUpdateBtn">수정</a>
+	<span>&nbsp;/&nbsp;</span>
 	<a href="/boardDetail?num=${num!0}">취소</a>
 </div>
 <form id="commentUpdateForm" action="/updateComment" method="post">

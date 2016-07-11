@@ -38,6 +38,7 @@ public class BoardController {
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String main(Model model, HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=10) Pageable pageable){
 		log.info("BoardController main execute");
+		log.info("BoardController main execute message  :  " + rea.getFlashAttributes().get("message"));
 		int num = pageable.getPageNumber();
 		int startNum = num / 5 * 5 + 1;
 		int lastNum = (num / 5 + 1) * 5;
@@ -199,7 +200,7 @@ public class BoardController {
 		Board board = boardService.findBoardForIdx(upnum);
 		if(board == null){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
-			return "redirect:/boardDetail";
+			return "redirect:/board";
 		}
 		if(upidx == null){
 			rea.addAttribute("num", upnum);
@@ -214,6 +215,47 @@ public class BoardController {
 			return "redirect:/boardDetail";
 		}
 		rea.addAttribute("num", upnum);
+		return "redirect:/boardDetail";
+	}
+	
+	@RequestMapping(value="replyView", method=RequestMethod.POST)
+	public String commentReplyView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer idx, Model model){
+		log.info("BoardController commentReplyView execute");
+		model.addAttribute("num", num);
+		model.addAttribute("idx", idx);
+		return "view/board/ajax/commentReply";
+	}
+	
+	@RequestMapping(value="writeReply", method=RequestMethod.POST)
+	public String commentReplyWrite(@RequestParam(required=false) Integer bnum, @RequestParam(required=false) Integer cidx, @RequestParam(required=false) String comment, HttpSession session, RedirectAttributes rea){
+		log.info("BoardController commentReplyWrite execute");
+		if(bnum == null){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
+		}
+		log.info("BoardController commentReplyWrite execute 1");
+		Board board = boardService.findBoardForIdx(bnum);
+		if(board == null){
+			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			return "redirect:/board";
+		}
+		log.info("BoardController commentReplyWrite execute 2");
+		if(cidx == null){
+			rea.addFlashAttribute("message", "seq가 없습니다.");
+			rea.addAttribute("num", bnum);
+			return "redirect:/boardDetail";
+		}
+		if(StringUtils.isEmpty(comment)){
+			rea.addFlashAttribute("message", "comment가 없습니다.");
+			rea.addAttribute("num", bnum);
+			return "redirect:/boardDetail";
+		}
+		if(!commentService.replyWrite(cidx, common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), bnum)){
+			rea.addFlashAttribute("message", "답글작성에 실패했습니다.");
+			rea.addAttribute("num", bnum);
+			return "redirect:/boardDetail";
+		}
+		rea.addAttribute("num", bnum);
 		return "redirect:/boardDetail";
 	}
 }

@@ -17,7 +17,7 @@
 		<button type="button" id="boardUpdateBtn" class="btn btn-primary" style="float:right">내용 수정</button>
 	</#if>
 	</table>
-	<br><br>
+	<hr style="border:1px dashed #ddd"><br>
 	<form id="commentForm" action="/writeComment" method="post">
 		<input type="hidden" id="num" name="num" value="${num}"/>
 		<table class="table" style="background-color: #f4f4f4;">
@@ -25,6 +25,14 @@
 				<col width="10%"/>
 				<col width="90%"/>
 			</colgroup>
+			<tr>
+				<td style="padding-left: 5%; width: 90%">
+					<input type="text" id="writeComment" class="form-control" name="comment"/>
+				</td>
+				<td>
+					<button type="button" id="commentBtn" class="btn btn-primary">댓글</button>
+				</td>
+			</tr>
 <#list comments as comment>
 			<tr>
 				<td colspan="2">
@@ -34,11 +42,18 @@
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
 	<#if comment.writer.idx == idx>
 							<a class="commentUpdateBtn" style="float:right; padding-right: 5%;" value="${comment.comment}" idx="${comment.idx}">수정</a>
+							<span style="float:right;">&nbsp;/&nbsp;</span>
+							<a class="commentReplyBtn" style="float:right;" idx="${comment.idx}">답글</a>
 	</#if>
 							<br>
 							${comment.comment}
 						</span>
 					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<span id="replySpan${comment.idx}">
 				</td>
 			</tr>
 <#else>
@@ -50,14 +65,6 @@
 				</td>
 			</tr>
 </#list>
-			<tr>
-				<td style="padding-left: 5%; width: 90%">
-					<input type="text" id="writeComment" class="form-control" name="comment"/>
-				</td>
-				<td>
-					<button type="button" id="commentBtn" class="btn btn-primary">뎃글</button>
-				</td>
-			</tr>
 		</table>
 	</form>
 </div>

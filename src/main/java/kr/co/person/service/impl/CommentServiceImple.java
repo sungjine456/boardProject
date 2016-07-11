@@ -41,7 +41,7 @@ public class CommentServiceImple implements CommentService {
 
 	@Override
 	public boolean write(String commentSentence, int userIdx, int boardIdx) {
-		log.info("CommentServiceImple save execute");
+		log.info("CommentServiceImple write execute");
 		if(userIdx == 0 || boardIdx == 0){
 			return false;
 		}
@@ -54,14 +54,14 @@ public class CommentServiceImple implements CommentService {
 		if(writer == null || board == null){
 			return false;
 		}
-		Comment comment = new Comment(commentSentence, writer, board, date, date);
-		commentRepository.save(comment);
+		Comment saveComment = new Comment(commentSentence, 0, 0, 0, writer, board, date, date);
+		commentRepository.save(saveComment);
 		return true;
 	}
 
 	@Override
 	public boolean update(int idx, String commentSentence) {
-		log.info("CommentServiceImple save execute");
+		log.info("CommentServiceImple update execute");
 		if(idx == 0){
 			return false;
 		}
@@ -73,7 +73,41 @@ public class CommentServiceImple implements CommentService {
 			return false;
 		}
 		comment.setComment(commentSentence);
+		comment.setUpDate(new Date());
 		comment = commentRepository.save(comment);
+		return true;
+	}
+
+	@Override
+	public boolean replyWrite(int idx, String commentSentence, int userIdx, int boardIdx) {
+		log.info("CommentServiceImple replyWrite execute");
+		if(idx == 0){
+			return false;
+		}
+		Comment comment = commentRepository.findOne(idx);
+		if(comment == null){
+			return false;
+		}
+		if(userIdx == 0 || boardIdx == 0){
+			return false;
+		}
+		if(StringUtils.isEmpty(commentSentence)){
+			return false;
+		}
+		int group = 0;
+		Date date = new Date();
+		User writer = userRepository.findOne(userIdx);
+		Board board = boardRepository.findOne(boardIdx);
+		if(comment.getCircle() == 0){
+			group = comment.getIdx();
+		} else {
+			group = comment.getCircle();
+		}
+		if(writer == null || board == null){
+			return false;
+		}
+		Comment reply = new Comment(commentSentence, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date);
+		commentRepository.save(reply);
 		return true;
 	}
 }
