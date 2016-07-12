@@ -1,6 +1,8 @@
 var update = {
 	email : $("#form #email"),
 	name : $("#form #name"),
+	file : $("#ufile"),
+	preview : $("#preview"),
 	password : $("#changeForm #password"),
 	changePassword : $("#changeForm #changePassword"),
 	changePasswordConfirm : $("#changeForm #changePasswordConfirm"),
@@ -44,10 +46,35 @@ var update = {
 		}
 		this.updateForm.submit();
 	},
+	imagePreviewEvent : function(e){
+		var fileName = this.file.val();
+		var ext = fileName.slice(fileName.lastIndexOf(".") + 1).toLowerCase();
+		if(!fileName == "" && !(ext == "gif" || ext == "jpg" || ext == "jpeg" || ext == "png")){
+			update.file.val("");
+			preview.innerHTML = '';
+			alert("이미지파일 (.jpg, .jpeg, .png, .gif ) 만 업로드 가능합니다.");
+			return;
+		}
+		var reader = new FileReader();
+		reader.onload = function (event) {
+			var img = new Image();
+			img.src = event.target.result;
+			if(img.width > 200){
+				img.width = 200;
+			}
+			if(img.height > 200){
+				img.height = 200;
+			}
+			preview.innerHTML = '';
+			preview.appendChild(img);
+		};
+		reader.readAsDataURL(ufile.files[0]);
+	},
 	init : function(){
 		var self = this;
 		self.passwordChangeBtn.click(function(){self.passwordChangeEvent();});
 		self.updateBtn.click(function(){self.updateEvent();});
+		self.file.change(function(){self.imagePreviewEvent();});
 	}
 }
 

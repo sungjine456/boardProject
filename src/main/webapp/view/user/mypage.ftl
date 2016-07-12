@@ -37,6 +37,14 @@
 			</td>
 		</tr>
 		<tr>
+		</tr>
+			<td>
+				<label>이미지 : </label>
+			</td>
+			<td>
+				<img src="${img}" width="200" height="250"/>
+			</td>
+		<tr>
 			<td>
 				<button data-target="#update" data-toggle="modal" type="button" class="btn btn-primary">회원 수정</button>
 			</td>

@@ -37,6 +37,17 @@
 					<input type="text" id="name" class="form-control" name="name" value="${name}"/>
 				</td>
 			</tr>
+			</tr>
+				<td>
+					<label>이미지 : </label>
+				</td>
+				<td>
+					<div id="preview">
+						<img src="${img}" width="200px" height="200px"/>
+					</div>
+					<input type="file" id="ufile" name="ufile">
+				</td>
+			<tr>
 			<tr>
 				<td>
 					<button data-target="#change" data-toggle="modal" type="button" class="btn btn-primary">비밀번호 수정</button>

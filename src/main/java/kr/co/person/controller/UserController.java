@@ -48,7 +48,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@ModelAttribute User user, @RequestParam MultipartFile file, Model model, HttpSession session){
+	public String join(@ModelAttribute User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController addUser");
 		if(user == null){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
@@ -345,7 +345,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
+	public String update(@RequestParam(required=false) MultipartFile file, @RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
 		if(StringUtils.isEmpty(name)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
