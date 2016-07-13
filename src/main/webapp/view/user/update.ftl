@@ -7,7 +7,7 @@
 </style>
 <div class="container">
 	<h1> 회원 수정 페이지 </h1>
-	<form id="form" class="form-signin" action="/update" method="post">
+	<form id="form" action="/update" method="post" enctype="multipart/form-data">
 		<table class="table table-hover">
 			<colgroup>
 				<col width="30%"/>
@@ -45,7 +45,7 @@
 					<div id="preview">
 						<img src="${img}" width="200px" height="200px"/>
 					</div>
-					<input type="file" id="ufile" name="ufile">
+					<input type="file" id="ufile" name="ufile"/>
 				</td>
 			<tr>
 			<tr>

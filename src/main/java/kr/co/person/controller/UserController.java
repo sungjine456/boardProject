@@ -54,6 +54,10 @@ public class UserController {
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
+		if(file == null){
+			model.addAttribute("message", "회원가입에 실패하셨습니다.");
+			return "view/user/join";
+		}
 		StringTokenizer st = new StringTokenizer(file.getOriginalFilename(), ".");
 		String ext = "";
 		if(st.countTokens() == 2){
@@ -292,7 +296,7 @@ public class UserController {
 		
 		OkCheck ok = userService.changePassword(idx, password, changePassword);
 		rea.addFlashAttribute("message", ok.getMessage());
-		return "redirect:/update";
+		return "redirect:/mypage";
 	}
 	
 	@RequestMapping(value="/leave")
@@ -345,7 +349,44 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) MultipartFile file, @RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
+	public String update(@RequestParam(required=false) MultipartFile ufile, @RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
+		if(ufile == null){
+			model.addAttribute("message", "회원가입에 실패하셨습니다.");
+			return "view/user/join";
+		}
+		StringTokenizer st = new StringTokenizer(ufile.getOriginalFilename(), ".");
+		String ext = "";
+		if(st.countTokens() == 2){
+			st.nextToken();
+			ext = st.nextToken();
+		}
+		String fileName = "";
+		String id = (String)session.getAttribute("id");
+		String se = File.separator;
+		log.info("execute UserController update ext : " + ext);
+		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
+			Date date = new Date();
+			fileName = id + "_"  + date.getTime() + "." + ext;
+			String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
+		    File dayFile = new File(filePath);
+		    if(!dayFile.exists()){
+		       dayFile.mkdirs();
+		    }
+		    FileOutputStream fos = null;
+		    try{
+	            byte fileData[] = ufile.getBytes();
+	            fos = new FileOutputStream(filePath + se + fileName);
+	            fos.write(fileData);
+	        }catch(Exception e){
+	            e.printStackTrace();
+	        }finally{
+	            if(fos != null){
+	                try{
+	                    fos.close();
+	                }catch(Exception e){}
+	            }
+	        }
+		}
 		if(StringUtils.isEmpty(name)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
@@ -361,9 +402,10 @@ public class UserController {
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 		}
-		if(userService.update(idx, name, email)){
+		if(userService.update(idx, name, email, fileName)){
 			session.setAttribute("name", name);
 			session.setAttribute("email", email);
+			session.setAttribute("img", "img"+se+"user"+fileName);
 			model.addAttribute("include", "/view/user/mypage.ftl");
 			model.addAttribute("message", "회원정보를 수정 하셨습니다.");
 		}

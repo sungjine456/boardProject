@@ -148,10 +148,10 @@ public class UserServiceTest {
 	public void testUpdate(){
 		user = userService.findUserForIdx(1);
 		Assert.assertEquals(user.getRegDate(), user.getUpDate());
-		Assert.assertThat(userService.update(1, "hyun", ""), is(false));
-		Assert.assertThat(userService.update(1, "", "hyun@naver.com"), is(false));
-		Assert.assertThat(userService.update(2, "hyun", "hyun@naver.com"), is(false));
-		Assert.assertThat(userService.update(1, "hyun", "hyun@naver.com"), is(true));
+		Assert.assertThat(userService.update(1, "hyun", "", ""), is(false));
+		Assert.assertThat(userService.update(1, "", "hyun@naver.com", ""), is(false));
+		Assert.assertThat(userService.update(2, "hyun", "hyun@naver.com", ""), is(false));
+		Assert.assertThat(userService.update(1, "hyun", "hyun@naver.com", ""), is(true));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getUpDate(), is(not(user.getRegDate())));
 	}

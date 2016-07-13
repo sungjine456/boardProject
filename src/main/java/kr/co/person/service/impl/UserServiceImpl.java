@@ -1,5 +1,6 @@
 package kr.co.person.service.impl;
 
+import java.io.File;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -259,7 +260,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean update(int idx, String name, String email) {
+	public boolean update(int idx, String name, String email, String fileName) {
+		String se = File.separator;
 		if(idx == 0){
 			return false;
 		}
@@ -269,12 +271,17 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(email) && !common.isEmail(email)){
 			return false;
 		}
+		log.info("execute UserService update fileName : " + fileName);
 		User user = userRepository.findOne(idx);
 		if(user == null){
 			return false;
 		}
+		if(StringUtils.isEmpty(fileName)){
+			fileName = "default.png";
+		} 
 		user.setName(name);
 		user.setEmail(email);
+		user.setImg("img"+se+"user"+se+fileName);
 		user.setUpDate(new Date());
 		user = userRepository.save(user);
 		if(user == null){
