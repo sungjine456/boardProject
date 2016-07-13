@@ -3,9 +3,9 @@
 	<table class="table" style="margin-top:10px;">
 		<colgroup>
 			<col width="10%"/>
-			<col width="70%"/>
+			<col width="60%"/>
 			<col width="10%"/>
-			<col width="10%"/>
+			<col width="20%"/>
 		</colgroup>
 		<thead>
 			<tr>
@@ -36,7 +36,7 @@
 					${board.user.name}
 				</td>
 				<td>
-					${board.regDate?date}
+					${board.regDate?string["yyyy.MM.dd HH:mm"]}
 				</td>
 			</tr>
 		<#else>
@@ -55,13 +55,13 @@
 				<td colspan="4">
 					<div style="text-align:center;">
 		<#if startNum &gt; 2>
-			<a class="btn btn-default btn-sm" href="?page=${startNum-2}">이전</a>
+			<a class="btn btn-default btn-sm" href="?num=${startNum-1}">이전</a>
 		</#if>
 		<#list startNum..lastNum as i>
-			<a class="btn btn-default btn-sm" href="?page=${i-1}">${i}</a>
+			<a class="btn btn-default btn-sm" href="?num=${i}">${i}</a>
 		</#list>
 		<#if lastNum != lastPage>
-			<a class="btn btn-default btn-sm" href="?page=${lastNum}">다음</a>
+			<a class="btn btn-default btn-sm" href="?num=${lastNum+1}">다음</a>
 		</#if>
 					</div>
 				</td>

@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,10 +36,16 @@ public class BoardController {
 	@Autowired private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(Model model, HttpServletRequest req, RedirectAttributes rea, @PageableDefault(sort={"idx"},direction=Direction.DESC,size=10) Pageable pageable){
+	public String main(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController main execute");
+		log.info("BoardController main execute num : " + num);
 		log.info("BoardController main execute message  :  " + rea.getFlashAttributes().get("message"));
-		int num = pageable.getPageNumber();
+		if(num == null || num == 0){
+			num = 0;
+		} else {
+			num -= 1;
+		}
+		Pageable pageable = new PageRequest(num, 10, Direction.DESC, "idx");
 		int startNum = num / 5 * 5 + 1;
 		int lastNum = (num / 5 + 1) * 5;
 		Page<Board> pages = boardService.findAll(pageable);
