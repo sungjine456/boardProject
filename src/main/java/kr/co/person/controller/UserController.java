@@ -350,11 +350,13 @@ public class UserController {
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(@RequestParam(required=false) MultipartFile ufile, @RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
+		log.info("execute UserController update");
 		if(ufile == null){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
 		StringTokenizer st = new StringTokenizer(ufile.getOriginalFilename(), ".");
+		log.info("execute UserController update file orgFileName : " + ufile.getOriginalFilename());
 		String ext = "";
 		if(st.countTokens() == 2){
 			st.nextToken();
@@ -402,12 +404,21 @@ public class UserController {
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 		}
-		if(userService.update(idx, name, email, fileName)){
-			session.setAttribute("name", name);
-			session.setAttribute("email", email);
-			session.setAttribute("img", "img"+se+"user"+fileName);
-			model.addAttribute("include", "/view/user/mypage.ftl");
-			model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+		if(!ext.equals("")){
+			if(userService.update(idx, name, email, fileName)){
+				session.setAttribute("name", name);
+				session.setAttribute("email", email);
+				session.setAttribute("img", "img"+se+"user"+se+fileName);
+				model.addAttribute("include", "/view/user/mypage.ftl");
+				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+			}
+		} else {
+			if(userService.update(idx, name, email)){
+				session.setAttribute("name", name);
+				session.setAttribute("email", email);
+				model.addAttribute("include", "/view/user/mypage.ftl");
+				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+			}
 		}
 		return "view/board/frame";
 	}
