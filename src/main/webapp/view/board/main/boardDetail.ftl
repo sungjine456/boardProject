@@ -38,13 +38,21 @@
 				<td colspan="2">
 					<input type="hidden" name="commentIdx" value="${comment.idx}"/>
 					<div style="padding-left:5%;">
+<#if comment.circle != 0>
+	<#list 1..comment.depth as i>
+		&nbsp;&nbsp;
+		<#if i == comment.depth>
+			└ RE :
+		</#if>
+	</#list>
+</#if>
 						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate?string["yyyy.MM.dd HH:mm"]}</span>
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
-	<#if comment.writer.idx == idx>
+		<#if comment.writer.idx == idx>
 							<a class="commentUpdateBtn" style="float:right; padding-right: 5%;" value="${comment.comment}" idx="${comment.idx}">수정</a>
 							<span style="float:right;">&nbsp;/&nbsp;</span>
 							<a class="commentReplyBtn" style="float:right;" idx="${comment.idx}">답글</a>
-	</#if>
+		</#if>
 							<br>
 							${comment.comment}
 						</span>
@@ -61,7 +69,7 @@
 				<td colspan="2">
 					<div style="padding-left:5%;">
 						뎃글을 입력해주세요.
-					</div
+					</div>
 				</td>
 			</tr>
 </#list>

@@ -28,6 +28,8 @@ public class Comment {
 	private String comment;
 	@Column(name="circle", nullable = false)
 	private int circle;
+	@Column(name="parent", nullable = false)
+	private int parent;
 	@Column(name="level", nullable = false)
 	private int level;
 	@Column(name="depth", nullable = false)
@@ -47,9 +49,10 @@ public class Comment {
 	
 	public Comment(){
 	}
-	public Comment(String comment, int circle, int level, int depth, User writer, Board board, Date regDate, Date upDate){
+	public Comment(String comment, int circle, int parent, int level, int depth, User writer, Board board, Date regDate, Date upDate){
 		this.comment = comment;
 		this.circle = circle;
+		this.parent = parent;
 		this.level = level;
 		this.depth = depth;
 		this.writer = writer;
@@ -75,6 +78,12 @@ public class Comment {
 	}
 	public void setCircle(int circle) {
 		this.circle = circle;
+	}
+	public int getParent() {
+		return parent;
+	}
+	public void setParent(int parent) {
+		this.parent = parent;
 	}
 	public int getLevel() {
 		return level;

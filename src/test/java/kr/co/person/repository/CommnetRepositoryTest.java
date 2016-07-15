@@ -41,7 +41,7 @@ public class CommnetRepositoryTest {
 		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
 		Board board = new Board("title", "content", user, date, date);
 		
-		comment = commentRepository.save(new Comment("c", 0, 0, 0, user, board, date, date));
+		comment = commentRepository.save(new Comment("c", 0, 0, 0, 0, user, board, date, date));
 		Assert.assertThat(comment.getComment(), is("c"));
 	}
 	

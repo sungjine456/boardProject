@@ -36,7 +36,30 @@ public class CommentServiceImple implements CommentService {
 		if(boardIdx == 0){
 			return new ArrayList<Comment>();
 		}
-		return commentRepository.findAllByBoardIdx(boardIdx);
+		List<Comment> commentList0 = commentRepository.findAllByBoardIdx(boardIdx);
+		List<Comment> commentList1 = new ArrayList<Comment>();
+		List<Comment> commentList2 = new ArrayList<Comment>();
+		List<Comment> commentList3 = new ArrayList<Comment>();
+		int size0 = commentList0.size();
+		for(int i = 0; i < size0; i++){
+			if(commentList0.get(i).getCircle() == 0){
+				commentList1.add(commentList0.get(i));
+			} else {
+				commentList2.add(commentList0.get(i));
+				
+			}
+		}
+		int size1 = commentList1.size();
+		int size2 = commentList2.size();
+		for(int i = 0; i < size1; i++){
+			commentList3.add(commentList1.get(i));
+			for(int j = 0; j < size2; j++){
+				if(commentList1.get(i).getIdx() == commentList2.get(j).getCircle()){
+					commentList3.add(commentList2.get(j));
+				}
+			}
+		}
+		return commentList3;
 	}
 
 	@Override
@@ -54,7 +77,7 @@ public class CommentServiceImple implements CommentService {
 		if(writer == null || board == null){
 			return false;
 		}
-		Comment saveComment = new Comment(commentSentence, 0, 0, 0, writer, board, date, date);
+		Comment saveComment = new Comment(commentSentence, 0, 0, 0, 0, writer, board, date, date);
 		commentRepository.save(saveComment);
 		return true;
 	}
@@ -106,7 +129,7 @@ public class CommentServiceImple implements CommentService {
 		if(writer == null || board == null){
 			return false;
 		}
-		Comment reply = new Comment(commentSentence, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date);
+		Comment reply = new Comment(commentSentence, idx, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date);
 		commentRepository.save(reply);
 		return true;
 	}
