@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -58,11 +57,10 @@ public class UserController {
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		StringTokenizer st = new StringTokenizer(file.getOriginalFilename(), ".");
+		String[] strArray = file.getOriginalFilename().split("\\.");
 		String ext = "";
-		if(st.countTokens() == 2){
-			st.nextToken();
-			ext = st.nextToken();
+		if(strArray.length == 2){
+			ext = strArray[1];
 		}
 		String fileName = "";
 		String se = File.separator;
@@ -347,12 +345,10 @@ public class UserController {
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		StringTokenizer st = new StringTokenizer(ufile.getOriginalFilename(), ".");
-		log.info("execute UserController update file orgFileName : " + ufile.getOriginalFilename());
+		String[] strArray = ufile.getOriginalFilename().split("\\.");
 		String ext = "";
-		if(st.countTokens() == 2){
-			st.nextToken();
-			ext = st.nextToken();
+		if(strArray.length == 2){
+			ext = strArray[1];
 		}
 		String fileName = "";
 		String id = (String)session.getAttribute("id");
