@@ -75,19 +75,11 @@ public class UserController {
 		    if(!dayFile.exists()){
 		       dayFile.mkdirs();
 		    }
-		    FileOutputStream fos = null;
-		    try{
+		    try(FileOutputStream fos = new FileOutputStream(filePath + se + fileName)){
 	            byte fileData[] = file.getBytes();
-	            fos = new FileOutputStream(filePath + se + fileName);
 	            fos.write(fileData);
 	        }catch(Exception e){
 	            e.printStackTrace();
-	        }finally{
-	            if(fos != null){
-	                try{
-	                    fos.close();
-	                }catch(Exception e){}
-	            }
 	        }
 		}
 		if(StringUtils.isEmpty(fileName)){
@@ -374,19 +366,11 @@ public class UserController {
 		    if(!dayFile.exists()){
 		       dayFile.mkdirs();
 		    }
-		    FileOutputStream fos = null;
-		    try{
+		    try(FileOutputStream fos = new FileOutputStream(filePath + se + fileName)){
 	            byte fileData[] = ufile.getBytes();
-	            fos = new FileOutputStream(filePath + se + fileName);
 	            fos.write(fileData);
 	        }catch(Exception e){
 	            e.printStackTrace();
-	        }finally{
-	            if(fos != null){
-	                try{
-	                    fos.close();
-	                }catch(Exception e){}
-	            }
 	        }
 		}
 		if(StringUtils.isEmpty(name)){
