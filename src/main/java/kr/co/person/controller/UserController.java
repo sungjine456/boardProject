@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
+import kr.co.person.common.IsValid;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.UserService;
@@ -49,11 +50,11 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(@ModelAttribute User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController addUser");
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		if(file == null){
+		if(IsValid.isNotValid(file)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
@@ -74,8 +75,7 @@ public class UserController {
 		       dayFile.mkdirs();
 		    }
 		    try(FileOutputStream fos = new FileOutputStream(filePath + se + fileName)){
-	            byte fileData[] = file.getBytes();
-	            fos.write(fileData);
+	            fos.write(file.getBytes());
 	        }catch(Exception e){
 	            e.printStackTrace();
 	        }
@@ -89,7 +89,6 @@ public class UserController {
 		OkCheck ok = userService.join(user);
 		model.addAttribute("message", ok.getMessage());
 		if(ok.isBool()){
-			session.setMaxInactiveInterval(24*60);
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -139,18 +138,18 @@ public class UserController {
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String loginView(Model model, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController loginView");
-		if(rea.getFlashAttributes().get("message") != null){
+		if(IsValid.isValid(rea.getFlashAttributes().get("message"))){
 			log.info("execute UserController getMessage");
 			model.addAttribute("message", rea.getFlashAttributes().get("message"));
 			return "view/user/login";
 		}
 		log.info("execute UserController no message");
-		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
+		if(IsValid.isValid(session.getAttribute("loginYn")) && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
 		String id = "";
 		Cookie[] cookies = req.getCookies();
-		if(cookies != null){
+		if(IsValid.isValid(cookies)){
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
@@ -160,8 +159,7 @@ public class UserController {
 			}
 		}
 		User user = userService.findUserForId(id);
-		if(user != null && userService.autoLoginCheck(user, req.getRemoteAddr())){
-			session.setMaxInactiveInterval(24*60);
+		if(IsValid.isValid(user) && userService.autoLoginCheck(user, req.getRemoteAddr())){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -181,21 +179,20 @@ public class UserController {
 			rea.addFlashAttribute("message", req.getAttribute("message"));
 			return "redirect:/";
 		}
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			model.addAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
 		String id = common.cleanXss(user.getId());
 		user = userService.findUserForId(id);
-		if(user != null){
-			session.setMaxInactiveInterval(24*60);
+		if(IsValid.isValid(user)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 			session.setAttribute("img", user.getImg());
-			if(idSave != null && idSave.equals("check")){
+			if(IsValid.isValid(idSave) && idSave.equals("check")){
 				String ip = req.getRemoteAddr();
 				if(!userService.autoLogin(user, ip)){
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
@@ -221,9 +218,6 @@ public class UserController {
 	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		String url = req.getRequestURI();
 		int idx = (int)session.getAttribute("idx");
-		if(idx == 0){
-			return url;
-		}
 		session.setAttribute("loginYn", "N");
 		session.removeAttribute("idx");
 		session.removeAttribute("id");
@@ -232,7 +226,7 @@ public class UserController {
 		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
 		String ip = req.getRemoteAddr();
 		User user = userService.findUserForIdx(idx);
-		if(user == null || !userService.autoLogout(user, ip)){
+		if(IsValid.isNotValid(user) || !userService.autoLogout(user, ip)){
 			return url;
 		}
 		Cookie cookie = new Cookie("saveId", null);
@@ -297,7 +291,7 @@ public class UserController {
 			return "redirect:/mypage";
 		}
 		User user = userService.loginCheck((String)session.getAttribute("id"), password);
-		if(user == null || user.getIdx() != (int)session.getAttribute("idx")){
+		if(IsValid.isNotValid(user) || user.getIdx() != (int)session.getAttribute("idx")){
 			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
@@ -341,7 +335,7 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(@RequestParam(required=false) MultipartFile ufile, @RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
 		log.info("execute UserController update");
-		if(ufile == null){
+		if(IsValid.isNotValid(ufile)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
@@ -363,8 +357,7 @@ public class UserController {
 		       dayFile.mkdirs();
 		    }
 		    try(FileOutputStream fos = new FileOutputStream(filePath + se + fileName)){
-	            byte fileData[] = ufile.getBytes();
-	            fos.write(fileData);
+	            fos.write(ufile.getBytes());
 	        }catch(Exception e){
 	            e.printStackTrace();
 	        }
@@ -380,7 +373,7 @@ public class UserController {
 		name = common.cleanXss(name);
 		email = common.cleanXss(email);
 		int idx = (int)session.getAttribute("idx");
-		if(idx == 0){
+		if(IsValid.isNotValid(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 		}

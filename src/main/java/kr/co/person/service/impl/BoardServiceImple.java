@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.person.common.IsValid;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
@@ -37,12 +38,12 @@ public class BoardServiceImple implements BoardService {
 		if(StringUtils.isEmpty(content)){
 			return new OkCheck("내용을 입력해주세요.", false);
 		}
-		if(userIdx == 0){
+		if(IsValid.isNotValid(userIdx)){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
 		Date date = new Date();
 		User user = userRepository.findOne(userIdx);
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
 		Board board = new Board(title, content, user, date, date);
@@ -63,7 +64,7 @@ public class BoardServiceImple implements BoardService {
 
 	@Override
 	public boolean update(int idx, String title, String content) {
-		if(idx == 0){
+		if(IsValid.isNotValid(idx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(title)){
@@ -73,16 +74,13 @@ public class BoardServiceImple implements BoardService {
 			return false;
 		}
 		Board board = boardRepository.findOne(idx);
-		if(board == null){
+		if(IsValid.isNotValid(board)){
 			return false;
 		}
 		board.setContent(content);
 		board.setTitle(title);
 		board.setUpDate(new Date());
-		board = boardRepository.save(board);
-		if(board == null){
-			return false;
-		}
+		boardRepository.save(board);
 		return true;
 	}
 }

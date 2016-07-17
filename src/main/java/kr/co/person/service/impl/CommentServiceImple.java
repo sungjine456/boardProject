@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.person.common.IsValid;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.Comment;
 import kr.co.person.domain.User;
@@ -24,16 +25,13 @@ import kr.co.person.service.CommentService;
 public class CommentServiceImple implements CommentService {
 	private static final Logger log = LoggerFactory.getLogger(CommentServiceImple.class);
 
-	@Autowired
-	private CommentRepository commentRepository;
-	@Autowired
-	private BoardRepository boardRepository;
-	@Autowired
-	private UserRepository userRepository;
+	@Autowired private CommentRepository commentRepository;
+	@Autowired private BoardRepository boardRepository;
+	@Autowired private UserRepository userRepository;
 	
 	public List<Comment> findAllCommentByBoard(int boardIdx){
 		log.info("CommentServiceImple findAllCommentByBoard execute");
-		if(boardIdx == 0){
+		if(IsValid.isNotValid(boardIdx)){
 			return new ArrayList<Comment>();
 		}
 		List<Comment> commentList0 = commentRepository.findAllByBoardIdx(boardIdx);
@@ -65,31 +63,30 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean write(String commentSentence, int userIdx, int boardIdx) {
 		log.info("CommentServiceImple write execute");
-		if(userIdx == 0 || boardIdx == 0){
+		if(IsValid.isNotValid(userIdx, boardIdx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(commentSentence)){
 			return false;
 		}
-		Date date = new Date();
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(writer == null || board == null){
+		if(IsValid.isNotValid(writer, board)){
 			return false;
 		}
-		Comment saveComment = new Comment(commentSentence, 0, 0, 0, 0, writer, board, date, date);
-		commentRepository.save(saveComment);
+		Date date = new Date();
+		commentRepository.save(new Comment(commentSentence, 0, 0, 0, 0, writer, board, date, date));
 		return true;
 	}
 
 	@Override
 	public boolean update(int idx, String commentSentence) {
 		log.info("CommentServiceImple update execute");
-		if(idx == 0){
+		if(IsValid.isNotValid(idx)){
 			return false;
 		}
 		Comment comment = commentRepository.findOne(idx);
-		if(comment == null){
+		if(IsValid.isNotValid(comment)){
 			return false;
 		}
 		if(StringUtils.isEmpty(commentSentence)){
@@ -97,40 +94,33 @@ public class CommentServiceImple implements CommentService {
 		}
 		comment.setComment(commentSentence);
 		comment.setUpDate(new Date());
-		comment = commentRepository.save(comment);
+		commentRepository.save(comment);
 		return true;
 	}
 
 	@Override
 	public boolean replyWrite(int idx, String commentSentence, int userIdx, int boardIdx) {
 		log.info("CommentServiceImple replyWrite execute");
-		if(idx == 0){
-			return false;
-		}
-		Comment comment = commentRepository.findOne(idx);
-		if(comment == null){
-			return false;
-		}
-		if(userIdx == 0 || boardIdx == 0){
+		if(IsValid.isNotValid(idx, userIdx, boardIdx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(commentSentence)){
 			return false;
 		}
-		int group = 0;
-		Date date = new Date();
+		Comment comment = commentRepository.findOne(idx);
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(comment.getCircle() == 0){
+		if(IsValid.isNotValid(comment, writer, board)){
+			return false;
+		}
+		int group = 0;
+		if(IsValid.isNotValid(comment.getCircle())){
 			group = comment.getIdx();
 		} else {
 			group = comment.getCircle();
 		}
-		if(writer == null || board == null){
-			return false;
-		}
-		Comment reply = new Comment(commentSentence, idx, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date);
-		commentRepository.save(reply);
+		Date date = new Date();
+		commentRepository.save(new Comment(commentSentence, idx, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date));
 		return true;
 	}
 }

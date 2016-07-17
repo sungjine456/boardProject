@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.common.Common;
+import kr.co.person.common.IsValid;
 import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserService create");
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
 		user.setId(common.cleanXss(user.getId()));
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
 		User findUser = userRepository.findById(id);
-		if(findUser != null){
+		if(IsValid.isValid(findUser)){
 			if(StringUtils.isNotEmpty(findUser.getId())){
 				return new OkCheck("이미 가입되어있는 회원입니다.", false);
 			}
@@ -61,11 +62,8 @@ public class UserServiceImpl implements UserService {
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
-		User saveUser = userRepository.save(user);
 		log.info("create User success");
-		if(saveUser == null){
-			return new OkCheck("회원가입에 실패하셨습니다.", false);
-		}
+		userRepository.save(user);
 		return new OkCheck("회원가입에 성공하셨습니다.", true);
 	}
 	
@@ -75,7 +73,7 @@ public class UserServiceImpl implements UserService {
 		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return false;
 		}
 		if(!autoLogout(user, ip)){
@@ -97,7 +95,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck("아이디를 입력해주세요.", false);
 		}
 		User user = userRepository.findById(id);
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return new OkCheck("가입 가능한 아이디입니다.", true);
 		} else {
 			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
@@ -110,7 +108,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck("메일을 입력해주세요.", false);
 		}
 		User findUserByEmail = userRepository.findByEmail(email);
-		if(findUserByEmail != null){
+		if(IsValid.isValid(findUserByEmail)){
 			String emailVal = findUserByEmail.getEmail();
 			if(emailVal != null && common.isEmail(email)){
 				return new OkCheck("이미 가입되어 있는 이메일입니다.", false);
@@ -134,7 +132,7 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("id & password not null");
 		password = common.passwordEncryption(password);
-		if(password == null){
+		if(StringUtils.isEmpty(password)){
 			return null;
 		}
 		log.info("passwordEncryption function success");
@@ -148,7 +146,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
 		User user = userRepository.findByEmail(email); 
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
 		String random = "";
@@ -178,7 +176,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck changePassword(int idx, String password, String changePassword) {
 		log.info("execute UserService changePassword");
-		if(idx == 0){
+		if(IsValid.isNotValid(idx)){
 			return new OkCheck("로그인 후 이용해주세요.", false);
 		}
 		if(StringUtils.isEmpty(password)){
@@ -206,17 +204,17 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean autoLoginCheck(User user, String ip){
-		if(user == null || user.getIdx() == 0){
+		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx())){
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
 		log.info("userService autoLoginCheck user :  " + user);
-		if(user == null || StringUtils.isEmpty(ip)){
+		if(IsValid.isNotValid(user) || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
 		log.info("userService autoLoginCheck autoLogin :  " + autoLogin);
-		if(autoLogin == null){
+		if(IsValid.isNotValid(autoLogin)){
 			return false;
 		}
 		log.info("userService autoLoginCheck autoLoginCheck :  " + autoLogin.getLoginCheck());
@@ -232,11 +230,11 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean autoLogin(User user, String ip){
-		if(user == null || user.getIdx() == 0 || StringUtils.isEmpty(ip)){
+		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx()) || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
-		if(autoLogin == null){
+		if(IsValid.isNotValid(autoLogin)){
 			autoLoginRepository.save(new AutoLogin(user, "O", ip, new Date()));
 		} else {
 			autoLogin.setLoginCheck("O");
@@ -247,12 +245,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean autoLogout(User user, String ip) {
-		if(user == null || user.getIdx() == 0 || StringUtils.isEmpty(ip)){
+		log.info("execute userService autoLogout");
+		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx()) || StringUtils.isEmpty(ip)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
-		log.info("userService autoLogout autoLogout :  " + autoLogin);
-		if(autoLogin != null){
+		if(IsValid.isValid(autoLogin)){
 			autoLogin.setLoginCheck("X");
 			autoLoginRepository.save(autoLogin);
 		}
@@ -262,7 +260,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean update(int idx, String name, String email, String fileName) {
 		String se = File.separator;
-		if(idx == 0){
+		if(IsValid.isNotValid(idx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(name)){
@@ -273,7 +271,7 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("execute UserService update fileName : " + fileName);
 		User user = userRepository.findOne(idx);
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return false;
 		}
 		if(StringUtils.isEmpty(fileName)){
@@ -293,7 +291,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean update(int idx, String name, String email) {
 		log.info("execute UserService update");
-		if(idx == 0){
+		if(IsValid.isNotValid(idx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(name)){
@@ -303,23 +301,20 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		User user = userRepository.findOne(idx);
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return false;
 		}
 		user.setName(name);
 		user.setEmail(email);
 		user.setUpDate(new Date());
-		user = userRepository.save(user);
-		if(user == null){
-			return false;
-		}
+		userRepository.save(user);
 		return true;
 	}
 
 	@Override
 	public boolean passwordCheck(int idx, String password) {
 		User user = userRepository.findOne(idx);
-		if(user == null){
+		if(IsValid.isNotValid(user)){
 			return false;
 		}
 		if(!StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
