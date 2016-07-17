@@ -17,3 +17,10 @@ spring:
   jpa:
     hibernate:
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+
+---
+
+spring:
+  view:
+    prefix: /
+    suffix: .ftl
