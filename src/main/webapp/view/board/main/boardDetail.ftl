@@ -46,13 +46,15 @@
 		</#if>
 	</#list>
 </#if>
-						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate?string["yyyy.MM.dd HH:mm"]}</span>
+						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate.toString("yyyy.MM.dd HH:mm")}</span>
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
+						<div style="float:right; padding-right: 5%;">
 		<#if comment.writer.idx == idx>
-							<a class="commentUpdateBtn" style="float:right; padding-right: 5%;" value="${comment.comment}" idx="${comment.idx}">수정</a>
-							<span style="float:right;">&nbsp;/&nbsp;</span>
-							<a class="commentReplyBtn" style="float:right;" idx="${comment.idx}">답글</a>
+							<a class="commentUpdateBtn" value="${comment.comment}" idx="${comment.idx}">수정</a>
+							<span>&nbsp;/&nbsp;</span>
 		</#if>
+							<a class="commentReplyBtn" idx="${comment.idx}">답글</a>
+						</div>
 							<br>
 							${comment.comment}
 						</span>

@@ -36,7 +36,7 @@
 					${board.user.name}
 				</td>
 				<td>
-					${board.regDate?string["yyyy.MM.dd HH:mm"]}
+					${board.regDate.toString("yyyy.MM.dd HH:mm")}
 				</td>
 			</tr>
 		<#else>
