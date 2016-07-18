@@ -1,7 +1,5 @@
 package kr.co.person.domain;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,10 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 @Entity
 @DynamicUpdate
@@ -32,15 +30,15 @@ public class Board {
 	@JoinColumn(name="writer")
 	private User user;
 	@Column(name="reg_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date regDate;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime regDate;
 	@Column(name="up_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date upDate;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime upDate;
 	
 	public Board(){
 	}
-	public Board(String title, String content, User user, Date regDate, Date upDate){
+	public Board(String title, String content, User user, DateTime regDate, DateTime upDate){
 		this.title = title;
 		this.content = content;
 		this.user = user;
@@ -72,16 +70,16 @@ public class Board {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	public Date getRegDate() {
+	public DateTime getRegDate() {
 		return regDate;
 	}
-	public void setRegDate(Date regDate) {
+	public void setRegDate(DateTime regDate) {
 		this.regDate = regDate;
 	}
-	public Date getUpDate() {
+	public DateTime getUpDate() {
 		return upDate;
 	}
-	public void setUpDate(Date upDate) {
+	public void setUpDate(DateTime upDate) {
 		this.upDate = upDate;
 	}
 }

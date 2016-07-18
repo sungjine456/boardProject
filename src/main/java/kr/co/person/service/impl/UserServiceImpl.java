@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
-		Date date = new Date();
+		DateTime date = new DateTime();
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
@@ -280,7 +281,7 @@ public class UserServiceImpl implements UserService {
 		user.setName(name);
 		user.setEmail(email);
 		user.setImg("img"+se+"user"+se+fileName);
-		user.setUpDate(new Date());
+		user.setUpDate(new DateTime());
 		user = userRepository.save(user);
 		if(user == null){
 			return false;
@@ -306,7 +307,7 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setName(name);
 		user.setEmail(email);
-		user.setUpDate(new Date());
+		user.setUpDate(new DateTime());
 		userRepository.save(user);
 		return true;
 	}

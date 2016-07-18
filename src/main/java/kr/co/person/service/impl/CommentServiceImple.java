@@ -1,10 +1,10 @@
 package kr.co.person.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValid(writer, board)){
 			return false;
 		}
-		Date date = new Date();
+		DateTime date = new DateTime();
 		commentRepository.save(new Comment(commentSentence, 0, 0, 0, 0, writer, board, date, date));
 		return true;
 	}
@@ -93,7 +93,7 @@ public class CommentServiceImple implements CommentService {
 			return false;
 		}
 		comment.setComment(commentSentence);
-		comment.setUpDate(new Date());
+		comment.setUpDate(new DateTime());
 		commentRepository.save(comment);
 		return true;
 	}
@@ -119,7 +119,7 @@ public class CommentServiceImple implements CommentService {
 		} else {
 			group = comment.getCircle();
 		}
-		Date date = new Date();
+		DateTime date = new DateTime();
 		commentRepository.save(new Comment(commentSentence, idx, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date));
 		return true;
 	}

@@ -1,9 +1,10 @@
 package kr.co.person.service;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 
-import java.util.Date;
-
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ public class UserServiceTest {
 	private User user;
 	// 비밀번호 123456을 암호화한 형태
     private String password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92personProject";
+    private DateTime date = new DateTime();
 
 	@Test
 	public void testLoginCheck(){
@@ -86,7 +88,6 @@ public class UserServiceTest {
 	@Test
 	public void testJoin(){
 		user = new User();
-		Date date = new Date();
 		user.setEmail("sungjin1@naver.com");
 		user.setId("sungjin1");
 		user.setName("홍길동");
@@ -108,7 +109,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAutoLoginCheck(){
-		Date date = new Date();
 		User user = new User();
 		Assert.assertThat(userService.autoLoginCheck(null, "192.168.0.1"), is(false));
 		Assert.assertThat(userService.autoLoginCheck(user, ""), is(false));

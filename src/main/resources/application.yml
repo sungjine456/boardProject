@@ -24,3 +24,12 @@ spring:
   view:
     prefix: /
     suffix: .ftl
+    
+---
+
+spring:
+  jpa:
+    properties:
+      jadira:
+        usertype:
+          autoRegisterUserTypes: true

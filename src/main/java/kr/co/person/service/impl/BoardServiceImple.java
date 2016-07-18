@@ -1,8 +1,7 @@
 package kr.co.person.service.impl;
 
-import java.util.Date;
-
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,8 @@ import kr.co.person.service.BoardService;
 public class BoardServiceImple implements BoardService {
 	private static final Logger log = LoggerFactory.getLogger(BoardServiceImple.class);
 
-	@Autowired
-	private BoardRepository boardRepository;
-	@Autowired
-	private UserRepository userRepository;
+	@Autowired private BoardRepository boardRepository;
+	@Autowired private UserRepository userRepository;
 	
 	@Override
 	public OkCheck write(String title, String content, int userIdx) {
@@ -41,7 +38,7 @@ public class BoardServiceImple implements BoardService {
 		if(IsValid.isNotValid(userIdx)){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
-		Date date = new Date();
+		DateTime date = new DateTime();
 		User user = userRepository.findOne(userIdx);
 		if(IsValid.isNotValid(user)){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
@@ -79,7 +76,7 @@ public class BoardServiceImple implements BoardService {
 		}
 		board.setContent(content);
 		board.setTitle(title);
-		board.setUpDate(new Date());
+		board.setUpDate(new DateTime());
 		boardRepository.save(board);
 		return true;
 	}
