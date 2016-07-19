@@ -4,8 +4,8 @@
 	<a href="/boardDetail?num=${num!0}">취소</a>
 </div>
 <form id="commentUpdateForm" action="/updateComment" method="post">
-	<input type="hidden" name="upnum" value="${num!0}">
-	<input type="hidden" name="upidx" value="${idx!0}">
+	<input type="hidden" name="num" value="${num!0}">
+	<input type="hidden" name="idx" value="${idx!0}">
 	<br/>
 	<input type="text" id="updateComment" class="form-control" name="comment" value="${comment!""}" autofocus/>
 </form>

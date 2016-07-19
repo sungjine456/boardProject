@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.Comment;
+import kr.co.person.pojo.CommentNum;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.BoardService;
 import kr.co.person.service.CommentService;
@@ -69,8 +71,15 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(@RequestParam(required=false) String title, @RequestParam(required=false) String content, Model model, HttpSession session){
+	public String boardWrite(@ModelAttribute Board board, Model model, HttpSession session){
 		log.info("BoardController boardWrite execute");
+		if(IsValid.isNotValid(board)){
+			model.addAttribute("message", "잘못된 내용입니다.");
+			model.addAttribute("include", "main/write.ftl");
+			return "view/board/frame";
+		}
+		String title = board.getTitle();
+		String content = board.getContent();
 		log.info("BoardController boardWrite title : " + title + ",   content : " + content);
 		if(StringUtils.isEmpty(title)){
 			model.addAttribute("message", "제목을 입력해주세요.");
@@ -93,7 +102,8 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
-		log.info("BoardController boardDetailView execute");
+		log.info("BoardController boardDetailView execute message : " + rea.getFlashAttributes().get("message"));
+		log.info("BoardController boardDetailView execute message : " + rea.getFlashAttributes());
 		if(IsValid.isNotValid(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
@@ -134,14 +144,21 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
-	public String boardUpdate(@RequestParam(required=false) Integer num, @RequestParam(required=false) String title, @RequestParam(required=false) String content, RedirectAttributes rea){
+	public String boardUpdate(@ModelAttribute Board board, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
+		if(IsValid.isNotValid(board)){
+			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			return "redirect:/boardDetail";
+		}
+		int num = board.getIdx();
+		String title = board.getTitle();
+		String content = board.getContent();
 		if(IsValid.isNotValid(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValid(board)){
+		Board findBoard = boardService.findBoardForIdx(num);
+		if(IsValid.isNotValid(findBoard)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
@@ -165,8 +182,15 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@RequestParam(required=false) Integer num, @RequestParam(required=false) String comment, HttpSession session, RedirectAttributes rea){
+	public String writeComment(@ModelAttribute CommentNum CommentNum, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController writeComment execute");
+		if(IsValid.isNotValid(CommentNum)){
+			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			return "redirect:/boardDetail";
+		}
+		int num = CommentNum.getNum();
+		String commentSentence = CommentNum.getComment();
+		log.info("BoardController writeComment execute num : " + num + ", comment : " + commentSentence);
 		if(IsValid.isNotValid(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
@@ -176,11 +200,11 @@ public class BoardController {
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
-		if(StringUtils.isEmpty(comment)){
+		if(StringUtils.isEmpty(commentSentence)){
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.write(common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), num)){
+		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), num)){
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
@@ -189,53 +213,67 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
-	public String updateCommentView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer idx, @RequestParam(required=false) String comment, Model model){
+	public String updateCommentView(@ModelAttribute CommentNum commentNum, Model model){
 		log.info("BoardController updateCommentView execute");
-		model.addAttribute("comment", comment);
-		model.addAttribute("num", num);
-		model.addAttribute("idx", idx);
+		model.addAttribute("comment", commentNum.getComment());
+		model.addAttribute("num", commentNum.getNum());
+		model.addAttribute("idx", commentNum.getIdx());
 		return "view/board/ajax/commentUpdate";
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(@RequestParam(required=false) Integer upnum, @RequestParam(required=false) Integer upidx, @RequestParam(required=false) String comment, RedirectAttributes rea){
+	public String updateComment(@ModelAttribute CommentNum commentNum, RedirectAttributes rea){
 		log.info("BoardController updateComment execute");
-		if(IsValid.isNotValid(upnum)){
+		if(IsValid.isNotValid(commentNum)){
+			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			return "redirect:/board";
+		}
+		int num = commentNum.getNum();
+		int idx = commentNum.getIdx();
+		String comment = commentNum.getComment();
+		if(IsValid.isNotValid(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(upnum);
+		Board board = boardService.findBoardForIdx(num);
 		if(IsValid.isNotValid(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValid(upidx)){
-			rea.addAttribute("num", upnum);
+		if(IsValid.isNotValid(idx)){
+			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(comment)){
-			rea.addAttribute("num", upnum);
+			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.update(upidx, common.enter(common.cleanXss(comment)))){
-			rea.addAttribute("num", upnum);
+		if(!commentService.update(idx, common.enter(common.cleanXss(comment)))){
+			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
-		rea.addAttribute("num", upnum);
+		rea.addAttribute("num", num);
 		return "redirect:/boardDetail";
 	}
 	
 	@RequestMapping(value="replyView", method=RequestMethod.POST)
-	public String commentReplyView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer idx, Model model){
+	public String commentReplyView(@ModelAttribute CommentNum commentNum, Model model){
 		log.info("BoardController commentReplyView execute");
-		model.addAttribute("num", num);
-		model.addAttribute("idx", idx);
+		model.addAttribute("num", commentNum.getNum());
+		model.addAttribute("idx", commentNum.getIdx());
 		return "view/board/ajax/commentReply";
 	}
 	
 	@RequestMapping(value="writeReply", method=RequestMethod.POST)
-	public String commentReplyWrite(@RequestParam(required=false) Integer bnum, @RequestParam(required=false) Integer cidx, @RequestParam(required=false) String comment, HttpSession session, RedirectAttributes rea){
+	public String commentReplyWrite(@ModelAttribute CommentNum commentNum, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController commentReplyWrite execute");
+		if(IsValid.isNotValid(commentNum)){
+			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			return "redirect:/board";
+		}
+		int bnum = commentNum.getNum();
+		int idx = commentNum.getIdx();
+		String comment = commentNum.getComment();
 		if(IsValid.isNotValid(bnum)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
@@ -247,7 +285,7 @@ public class BoardController {
 			return "redirect:/board";
 		}
 		log.info("BoardController commentReplyWrite execute 2");
-		if(IsValid.isNotValid(cidx)){
+		if(IsValid.isNotValid(idx)){
 			rea.addFlashAttribute("message", "seq가 없습니다.");
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";
@@ -257,7 +295,7 @@ public class BoardController {
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.replyWrite(cidx, common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), bnum)){
+		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), bnum)){
 			rea.addFlashAttribute("message", "답글작성에 실패했습니다.");
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";

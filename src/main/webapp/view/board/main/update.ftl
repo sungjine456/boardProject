@@ -1,7 +1,7 @@
 <div class="container">
 	<h1>글 수정</h1>
 	<form id="updateForm" action="/boardUpdate" method="post">
-		<input type="hidden" name="num" value="${num}"/>
+		<input type="hidden" name="idx" value="${num}"/>
 		<table class="table table-hover">
 			<colgroup>
 				<col width="10%"/>

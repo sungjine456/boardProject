@@ -3,7 +3,7 @@
 </div>
 <form id="commentReplyForm" action="/writeReply" method="post">
 	<input type="hidden" name="bnum" value="${num!0}">
-	<input type="hidden" name="cidx" value="${idx!0}">
+	<input type="hidden" name="idx" value="${idx!0}">
 	<br/>
 	<table style="background-color: #f4f4f4; width:98%;">
 		<tr>
