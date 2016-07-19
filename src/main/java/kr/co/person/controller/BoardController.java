@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,7 +70,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(@ModelAttribute Board board, Model model, HttpSession session){
+	public String boardWrite(Board board, Model model, HttpSession session){
 		log.info("BoardController boardWrite execute");
 		if(IsValid.isNotValid(board)){
 			model.addAttribute("message", "잘못된 내용입니다.");
@@ -144,7 +143,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
-	public String boardUpdate(@ModelAttribute Board board, RedirectAttributes rea){
+	public String boardUpdate(Board board, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
 		if(IsValid.isNotValid(board)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
@@ -182,7 +181,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@ModelAttribute CommentNum CommentNum, HttpSession session, RedirectAttributes rea){
+	public String writeComment(CommentNum CommentNum, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController writeComment execute");
 		if(IsValid.isNotValid(CommentNum)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
@@ -213,7 +212,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
-	public String updateCommentView(@ModelAttribute CommentNum commentNum, Model model){
+	public String updateCommentView(CommentNum commentNum, Model model){
 		log.info("BoardController updateCommentView execute");
 		model.addAttribute("comment", commentNum.getComment());
 		model.addAttribute("num", commentNum.getNum());
@@ -222,7 +221,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(@ModelAttribute CommentNum commentNum, RedirectAttributes rea){
+	public String updateComment(CommentNum commentNum, RedirectAttributes rea){
 		log.info("BoardController updateComment execute");
 		if(IsValid.isNotValid(commentNum)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
@@ -257,7 +256,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="replyView", method=RequestMethod.POST)
-	public String commentReplyView(@ModelAttribute CommentNum commentNum, Model model){
+	public String commentReplyView(CommentNum commentNum, Model model){
 		log.info("BoardController commentReplyView execute");
 		model.addAttribute("num", commentNum.getNum());
 		model.addAttribute("idx", commentNum.getIdx());
@@ -265,7 +264,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="writeReply", method=RequestMethod.POST)
-	public String commentReplyWrite(@ModelAttribute CommentNum commentNum, HttpSession session, RedirectAttributes rea){
+	public String commentReplyWrite(CommentNum commentNum, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController commentReplyWrite execute");
 		if(IsValid.isNotValid(commentNum)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
@@ -273,12 +272,12 @@ public class BoardController {
 		}
 		int bnum = commentNum.getNum();
 		int idx = commentNum.getIdx();
+		log.info("BoardController commentReplyWrite execute bnum : " + bnum + ", idx : " + idx);
 		String comment = commentNum.getComment();
 		if(IsValid.isNotValid(bnum)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		log.info("BoardController commentReplyWrite execute 1");
 		Board board = boardService.findBoardForIdx(bnum);
 		if(IsValid.isNotValid(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
