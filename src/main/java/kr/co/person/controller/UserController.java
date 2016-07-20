@@ -136,14 +136,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(Model model, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
+	public String loginView(Model model, HttpSession session, HttpServletRequest req){
 		log.info("execute UserController loginView");
-		if(IsValid.isValid(rea.getFlashAttributes().get("message"))){
-			log.info("execute UserController getMessage");
-			model.addAttribute("message", rea.getFlashAttributes().get("message"));
-			return "view/user/login";
-		}
-		log.info("execute UserController no message");
 		if(IsValid.isValid(session.getAttribute("loginYn")) && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
@@ -172,13 +166,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletRequest req, HttpServletResponse res){
 		log.info("execute UserController login");
-		String bool = (String)req.getAttribute("false");
-		if(StringUtils.equals(bool, "false")){
-			rea.addFlashAttribute("message", req.getAttribute("message"));
-			return "redirect:/";
-		}
 		if(IsValid.isNotValid(user)){
 			model.addAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
@@ -327,7 +316,6 @@ public class UserController {
 		model.addAttribute("id", session.getAttribute("id"));
 		model.addAttribute("name", session.getAttribute("name"));
 		model.addAttribute("email", session.getAttribute("email"));
-		model.addAttribute("message", rea.getFlashAttributes().get("message"));
 		model.addAttribute("include", "/view/user/update.ftl");
 		return "view/board/frame";
 	}

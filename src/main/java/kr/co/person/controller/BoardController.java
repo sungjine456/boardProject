@@ -41,7 +41,6 @@ public class BoardController {
 	public String main(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, RedirectAttributes rea){
 		log.info("BoardController main execute");
 		log.info("BoardController main execute num : " + num);
-		log.info("BoardController main execute message  :  " + rea.getFlashAttributes().get("message"));
 		if(IsValid.isNotValid(num)){
 			num = 0;
 		} else {
@@ -56,7 +55,6 @@ public class BoardController {
 			lastNum = lastPage;
 		}
 		model.addAttribute("boardList", pages);
-		model.addAttribute("message", rea.getFlashAttributes().get("message"));
 		model.addAttribute("startNum", startNum);
 		model.addAttribute("lastNum", lastNum);
 		model.addAttribute("lastPage", lastPage);
@@ -101,17 +99,11 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
-		log.info("BoardController boardDetailView execute message : " + rea.getFlashAttributes().get("message"));
-		log.info("BoardController boardDetailView execute message : " + rea.getFlashAttributes());
 		if(IsValid.isNotValid(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
-		String message = (String)rea.getFlashAttributes().get("message");
-		if(StringUtils.isNotEmpty(message)){
-			model.addAttribute("message", message);
-		}
 		if(IsValid.isNotValid(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
