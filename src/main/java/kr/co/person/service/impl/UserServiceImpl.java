@@ -1,7 +1,6 @@
 package kr.co.person.service.impl;
 
 import java.io.File;
-import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -69,7 +68,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean leave(int idx, String ip){
+	public boolean leave(int idx){
 		log.info("userService leave");
 		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
@@ -77,7 +76,7 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValid(user)){
 			return false;
 		}
-		if(!autoLogout(user, ip)){
+		if(!autoLogout(user)){
 			return false;
 		}
 		log.info("userService leave success before");
@@ -204,16 +203,16 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean autoLoginCheck(User user, String ip){
+	public boolean autoLoginCheck(User user){
+		log.info("userService autoLoginCheck");
 		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx())){
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		log.info("userService autoLoginCheck user :  " + user);
-		if(IsValid.isNotValid(user) || StringUtils.isEmpty(ip)){
+		if(IsValid.isNotValid(user)){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(user.getIdx());
 		log.info("userService autoLoginCheck autoLogin :  " + autoLogin);
 		if(IsValid.isNotValid(autoLogin)){
 			return false;
@@ -222,21 +221,21 @@ public class UserServiceImpl implements UserService {
 		if(!autoLogin.getLoginCheck().equals("O")){
 			return false;
 		}
-		Date date = new Date();
-		if(date.getTime() - autoLogin.getRegDate().getTime() > 24 * 60 * 60 * 1000){
+		DateTime date = new DateTime();
+		if(date.getMillis() - autoLogin.getRegDate().getMillis() > 24 * 60 * 60 * 1000){
 			return false;
 		}
 		return true;
 	};
 	
 	@Override
-	public boolean autoLogin(User user, String ip){
-		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx()) || StringUtils.isEmpty(ip)){
+	public boolean autoLogin(User user){
+		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx())){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(user.getIdx());
 		if(IsValid.isNotValid(autoLogin)){
-			autoLoginRepository.save(new AutoLogin(user, "O", ip, new Date()));
+			autoLoginRepository.save(new AutoLogin(user, "O", new DateTime()));
 		} else {
 			autoLogin.setLoginCheck("O");
 			autoLoginRepository.save(autoLogin);
@@ -245,12 +244,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean autoLogout(User user, String ip) {
+	public boolean autoLogout(User user) {
 		log.info("execute userService autoLogout");
-		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx()) || StringUtils.isEmpty(ip)){
+		if(IsValid.isNotValid(user) || IsValid.isNotValid(user.getIdx())){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndRegIp(user.getIdx(), ip);
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(user.getIdx());
 		if(IsValid.isValid(autoLogin)){
 			autoLogin.setLoginCheck("X");
 			autoLoginRepository.save(autoLogin);

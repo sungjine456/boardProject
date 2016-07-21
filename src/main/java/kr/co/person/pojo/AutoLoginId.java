@@ -1,7 +1,8 @@
 package kr.co.person.pojo;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public class AutoLoginId implements Serializable {
 	/**
@@ -11,22 +12,22 @@ public class AutoLoginId implements Serializable {
 	 * JAVA에서는 SerialVersionUID를 선언해주는 것을 권장하기 위해 Warning이 발생한다.
 	 */
 	private static final long serialVersionUID = -3221335607180479314L;
-	private String regIp;
-	private Date regDate;
+	private String loginCheck;
+	private DateTime regDate;
 
 	public AutoLoginId(){
 	}
 
-	public String getRegIp() {
-		return regIp;
+	public String getLoginCheck() {
+		return loginCheck;
 	}
-	public void setRegIp(String regIp) {
-		this.regIp = regIp;
+	public void setLoginCheck(String loginCheck) {
+		this.loginCheck = loginCheck;
 	}
-	public Date getRegDate() {
+	public DateTime getRegDate() {
 		return regDate;
 	}
-	public void setRegDate(Date regDate) {
+	public void setRegDate(DateTime regDate) {
 		this.regDate = regDate;
 	}
 }

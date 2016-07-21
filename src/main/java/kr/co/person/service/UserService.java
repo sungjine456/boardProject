@@ -8,14 +8,14 @@ public interface UserService {
 	OkCheck idCheck(String id);
 	OkCheck emailCheck(String email);
 	User loginCheck(String id, String password);
-	boolean leave(int idx, String ip);
+	boolean leave(int idx);
 	OkCheck translatePassword(String email);
 	User findUserForIdx(int idx);
 	User findUserForId(String id);
 	OkCheck changePassword(int idx, String password, String changePassword);
-	boolean autoLoginCheck(User user, String ip);
-	boolean autoLogin(User user, String ip);
-	boolean autoLogout(User user, String ip);
+	boolean autoLoginCheck(User user);
+	boolean autoLogin(User user);
+	boolean autoLogout(User user);
 	boolean update(int idx, String name, String email, String fileName);
 	boolean update(int idx, String name, String email);
 	boolean passwordCheck(int idx, String password);

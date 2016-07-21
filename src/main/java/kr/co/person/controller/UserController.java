@@ -36,8 +36,7 @@ import kr.co.person.service.UserService;
 public class UserController {
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	
-	@Value("${keyValue}")
-	private String ENCRYPTION_KEY;
+	@Value("${keyValue}") private String ENCRYPTION_KEY;
 	@Autowired private UserService userService;
 	@Autowired private Common common;
 	
@@ -153,7 +152,7 @@ public class UserController {
 			}
 		}
 		User user = userService.findUserForId(id);
-		if(IsValid.isValid(user) && userService.autoLoginCheck(user, req.getRemoteAddr())){
+		if(IsValid.isValid(user) && userService.autoLoginCheck(user)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -166,7 +165,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletRequest req, HttpServletResponse res){
+	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
 		log.info("execute UserController login");
 		if(IsValid.isNotValid(user)){
 			model.addAttribute("message", "로그인에 실패하셨습니다.");
@@ -182,8 +181,7 @@ public class UserController {
 			session.setAttribute("email", user.getEmail());
 			session.setAttribute("img", user.getImg());
 			if(IsValid.isValid(idSave) && idSave.equals("check")){
-				String ip = req.getRemoteAddr();
-				if(!userService.autoLogin(user, ip)){
+				if(!userService.autoLogin(user)){
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
@@ -213,9 +211,8 @@ public class UserController {
 		session.removeAttribute("name");
 		session.removeAttribute("email");
 		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
-		String ip = req.getRemoteAddr();
 		User user = userService.findUserForIdx(idx);
-		if(IsValid.isNotValid(user) || !userService.autoLogout(user, ip)){
+		if(IsValid.isNotValid(user) || !userService.autoLogout(user)){
 			return url;
 		}
 		Cookie cookie = new Cookie("saveId", null);
@@ -273,7 +270,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/leave")
-	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", "password를 입력해주세요.");
@@ -284,8 +281,7 @@ public class UserController {
 			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
-		String ip = req.getRemoteAddr();
-	    if(!userService.leave(user.getIdx(), ip)){
+	    if(!userService.leave(user.getIdx())){
 	    	rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
 			return "redirect:/mypage";
 	    }

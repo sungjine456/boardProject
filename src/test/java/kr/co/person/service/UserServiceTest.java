@@ -110,8 +110,7 @@ public class UserServiceTest {
 	@Test
 	public void testAutoLoginCheck(){
 		User user = new User();
-		Assert.assertThat(userService.autoLoginCheck(null, "192.168.0.1"), is(false));
-		Assert.assertThat(userService.autoLoginCheck(user, ""), is(false));
+		Assert.assertThat(userService.autoLoginCheck(null), is(false));
 		user.setIdx(5);
 		user.setEmail("sungjin@naver.com");
 		user.setId("sungjin");
@@ -119,13 +118,13 @@ public class UserServiceTest {
 		user.setPassword(password);
 		user.setRegDate(date);
 		user.setUpDate(date);
-		Assert.assertThat(userService.autoLoginCheck(user, "192.168.0.1"), is(false));
+		Assert.assertThat(userService.autoLoginCheck(user), is(false));
 		user.setIdx(1);
 		/** 
 		 * 자동 로그인의 유효기간이 하루 이기 때문에 false
 		 * true로 하려면 testData를 수정한후 테스트
 		 */
-		Assert.assertThat(userService.autoLoginCheck(user, "192.168.0.1"), is(false));
+		Assert.assertThat(userService.autoLoginCheck(user), is(false));
 	}
 	
 	@Test
@@ -136,7 +135,7 @@ public class UserServiceTest {
 		Assert.assertThat(user.getId(), is("sungjin"));
 		Assert.assertThat(user.getPassword(), is(password));
 		Assert.assertThat(user.getName(), is("홍길동"));
-		Assert.assertThat(userService.leave(1, "192.168.0.1"), is(true));
+		Assert.assertThat(userService.leave(1), is(true));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getEmail(), is(garbage));
 		Assert.assertThat(user.getId(), is(garbage));
@@ -166,18 +165,19 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAutoLogin(){
-		Assert.assertThat(userService.autoLogin(user, "192.168.0.1"), is(false));
-		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), ""), is(false));
-		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2), "192.168.0.1"), is(false));
-		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), "192.168.0.1"), is(true));
+		Assert.assertThat(userService.autoLogin(null), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2)), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1)), is(true));
 	}
 	
 	@Test
 	public void testAutoLogout(){
-		Assert.assertThat(userService.autoLogout(user, "192.168.0.1"), is(false));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), ""), is(false));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2), "192.168.0.1"), is(false));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), "192.168.0.1"), is(true));
+		Assert.assertThat(userService.autoLogout(null), is(false));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2)), is(false));
+		User user = userService.findUserForIdx(1);
+		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
+		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(userService.autoLogout(user), is(true));
 	}
 	
 	@Test

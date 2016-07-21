@@ -1,7 +1,5 @@
 package kr.co.person.domain;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,38 +9,34 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import kr.co.person.pojo.AutoLoginId;
 
 @Entity
 @DynamicUpdate
-@Table(name = "auto_login")
+@Table(name="auto_login")
 @IdClass(AutoLoginId.class)
 public class AutoLogin{
 	@Id
-	@Column(name="reg_ip", nullable = false)
-	private String regIp;
+	@Column(name="auto_login_check", nullable = false)
+	private String loginCheck;
 	@Id
 	@Column(name="reg_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date regDate;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime regDate;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_idx")
     private User user;
-	@Column(name="auto_login_check", nullable = false)
-	private String loginCheck;
 
 	public AutoLogin() {
 	}
-	
-	public AutoLogin(User user, String loginCheck, String regIp, Date regDate) {
+	public AutoLogin(User user, String loginCheck, DateTime regDate) {
 		this.user = user;
 		this.loginCheck = loginCheck;
-		this.regIp = regIp;
 		this.regDate = regDate;
 	}
 	
@@ -52,16 +46,10 @@ public class AutoLogin{
 	public void setLoginCheck(String loginCheck) {
 		this.loginCheck = loginCheck;
 	}
-	public String getRegIp() {
-		return regIp;
-	}
-	public void setRegIp(String regIp) {
-		this.regIp = regIp;
-	}
-	public Date getRegDate() {
+	public DateTime getRegDate() {
 		return regDate;
 	}
-	public void setRegDate(Date regDate) {
+	public void setRegDate(DateTime regDate) {
 		this.regDate = regDate;
 	}
 	public User getUser() {
