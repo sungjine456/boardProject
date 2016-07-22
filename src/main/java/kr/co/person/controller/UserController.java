@@ -1,7 +1,6 @@
 package kr.co.person.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,9 +72,9 @@ public class UserController {
 		    if(!dayFile.exists()){
 		       dayFile.mkdirs();
 		    }
-		    try(FileOutputStream fos = new FileOutputStream(filePath + se + fileName)){
-	            fos.write(file.getBytes());
-	        }catch(Exception e){
+		    try {
+	            file.transferTo(new File(filePath+se+fileName));
+	        } catch(Exception e) {
 	            e.printStackTrace();
 	        }
 		}
@@ -317,7 +316,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) MultipartFile ufile, @RequestParam(required=false) String name, @RequestParam(required=false) String email, Model model, HttpSession session){
+	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
 		log.info("execute UserController update");
 		if(IsValid.isNotValid(ufile)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
@@ -340,19 +339,28 @@ public class UserController {
 		    if(!dayFile.exists()){
 		       dayFile.mkdirs();
 		    }
-		    try(FileOutputStream fos = new FileOutputStream(filePath + se + fileName)){
-	            fos.write(ufile.getBytes());
-	        }catch(Exception e){
+		    try {
+		    	ufile.transferTo(new File(filePath+se+fileName));
+	        } catch(Exception e) {
 	            e.printStackTrace();
 	        }
 		}
+		if(IsValid.isNotValid(user)){
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			return "view/board/frame";
+		}
+		String name = user.getName();
+		String email = user.getEmail();
 		if(StringUtils.isEmpty(name)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(email)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			return "view/board/frame";
 		}
 		name = common.cleanXss(name);
 		email = common.cleanXss(email);
@@ -360,6 +368,7 @@ public class UserController {
 		if(IsValid.isNotValid(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			return "view/board/frame";
 		}
 		if(!ext.equals("")){
 			if(userService.update(idx, name, email, fileName)){
@@ -368,6 +377,9 @@ public class UserController {
 				session.setAttribute("img", "img"+se+"user"+se+fileName);
 				model.addAttribute("include", "/view/user/mypage.ftl");
 				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+			} else {
+				model.addAttribute("include", "/view/user/update.ftl");
+				model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 			}
 		} else {
 			if(userService.update(idx, name, email)){
@@ -375,6 +387,9 @@ public class UserController {
 				session.setAttribute("email", email);
 				model.addAttribute("include", "/view/user/mypage.ftl");
 				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+			} else {
+				model.addAttribute("include", "/view/user/update.ftl");
+				model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 			}
 		}
 		return "view/board/frame";
