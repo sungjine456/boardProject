@@ -113,12 +113,7 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValidObjects(comment, writer, board)){
 			return false;
 		}
-		int group = 0;
-		if(IsValid.isNotValidInts(comment.getCircle())){
-			group = comment.getIdx();
-		} else {
-			group = comment.getCircle();
-		}
+		int group = (IsValid.isNotValidInts(comment.getCircle()))?comment.getIdx():comment.getCircle();
 		DateTime date = new DateTime();
 		commentRepository.save(new Comment(commentSentence, idx, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date));
 		return true;

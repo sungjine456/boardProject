@@ -95,11 +95,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck("아이디를 입력해주세요.", false);
 		}
 		User user = userRepository.findById(id);
-		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck("가입 가능한 아이디입니다.", true);
-		} else {
-			return new OkCheck("이미 가입되어 있는 아이디입니다.", false);
-		}
+		return (IsValid.isNotValidObjects(user))?new OkCheck("가입 가능한 아이디입니다.", true):new OkCheck("이미 가입되어 있는 아이디입니다.", false);
 	}
 
 	@Override
@@ -110,17 +106,9 @@ public class UserServiceImpl implements UserService {
 		User findUserByEmail = userRepository.findByEmail(email);
 		if(IsValid.isValidObjects(findUserByEmail)){
 			String emailVal = findUserByEmail.getEmail();
-			if(emailVal != null && common.isEmail(email)){
-				return new OkCheck("이미 가입되어 있는 이메일입니다.", false);
-			} else {
-				return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
-			}
+			return (emailVal != null && common.isEmail(email))?new OkCheck("이미 가입되어 있는 이메일입니다.", false):new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
 		} else {
-			if(common.isEmail(email)){
-				return new OkCheck("가입 가능한 이메일입니다.", true);
-			} else {
-				return new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
-			}
+			return (common.isEmail(email))?new OkCheck("가입 가능한 이메일입니다.", true):new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
 		}
 	}
 
