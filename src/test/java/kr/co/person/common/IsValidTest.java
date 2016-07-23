@@ -17,106 +17,72 @@ import kr.co.person.BoardProjectApplication;
 public class IsValidTest {
 
 	@Test
-	public void testIsValidInt() {
-		Assert.assertThat(IsValid.isValid(0), is(false));
-		Assert.assertThat(IsValid.isValid(1), is(true));
+	public void testIsValidInts() {
+		Assert.assertThat(IsValid.isValidInts(0), is(false));
+		Assert.assertThat(IsValid.isValidInts(1), is(true));
+		Assert.assertThat(IsValid.isValidInts(0, 0), is(false));
+		Assert.assertThat(IsValid.isValidInts(1, 0), is(false));
+		Assert.assertThat(IsValid.isValidInts(0, 1), is(false));
+		Assert.assertThat(IsValid.isValidInts(1, 1), is(true));
+		Assert.assertThat(IsValid.isValidInts(0, 0, 0), is(false));
+		Assert.assertThat(IsValid.isValidInts(0, 0, 1), is(false));
+		Assert.assertThat(IsValid.isValidInts(0, 1, 0), is(false));
+		Assert.assertThat(IsValid.isValidInts(1, 0, 0), is(false));
+		Assert.assertThat(IsValid.isValidInts(0, 1, 1), is(false));
+		Assert.assertThat(IsValid.isValidInts(1, 0, 1), is(false));
+		Assert.assertThat(IsValid.isValidInts(1, 1, 0), is(false));
+		Assert.assertThat(IsValid.isValidInts(1, 1, 1), is(true));
+	}
+	
+	@Test
+	public void testIsNotValidInts() {
+		Assert.assertThat(IsValid.isNotValidInts(0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1), is(false));
+		Assert.assertThat(IsValid.isNotValidInts(0, 0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1, 0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(0, 1), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1, 1), is(false));
+		Assert.assertThat(IsValid.isNotValidInts(0, 0, 0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(0, 0, 1), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(0, 1, 0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1, 0, 0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(0, 1, 1), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1, 0, 1), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1, 1, 0), is(true));
+		Assert.assertThat(IsValid.isNotValidInts(1, 1, 1), is(false));
 	}
 
 	@Test
-	public void testIsValidIntInt() {
-		Assert.assertThat(IsValid.isValid(0, 0), is(false));
-		Assert.assertThat(IsValid.isValid(1, 0), is(false));
-		Assert.assertThat(IsValid.isValid(0, 1), is(false));
-		Assert.assertThat(IsValid.isValid(1, 1), is(true));
+	public void testIsValidObjects() {
+		Assert.assertThat(IsValid.isValidObjects(new Object()), is(true));
+		Assert.assertThat(IsValid.isValidObjects(null, null), is(false));
+		Assert.assertThat(IsValid.isValidObjects(new Object(), null), is(false));
+		Assert.assertThat(IsValid.isValidObjects(null, new Object()), is(false));
+		Assert.assertThat(IsValid.isValidObjects(new Object(), new Object()), is(true));
+		Assert.assertThat(IsValid.isValidObjects(null, null, null), is(false));
+		Assert.assertThat(IsValid.isValidObjects(null, null, new Object()), is(false));
+		Assert.assertThat(IsValid.isValidObjects(null, new Object(), null), is(false));
+		Assert.assertThat(IsValid.isValidObjects(new Object(), null, null), is(false));
+		Assert.assertThat(IsValid.isValidObjects(null, new Object(), new Object()), is(false));
+		Assert.assertThat(IsValid.isValidObjects(new Object(), null, new Object()), is(false));
+		Assert.assertThat(IsValid.isValidObjects(new Object(), new Object(), null), is(false));
+		Assert.assertThat(IsValid.isValidObjects(new Object(), new Object(), new Object()), is(true));
 	}
 	
 	@Test
-	public void testIsValidIntIntInt() {
-		Assert.assertThat(IsValid.isValid(0, 0, 0), is(false));
-		Assert.assertThat(IsValid.isValid(0, 0, 1), is(false));
-		Assert.assertThat(IsValid.isValid(0, 1, 0), is(false));
-		Assert.assertThat(IsValid.isValid(1, 0, 0), is(false));
-		Assert.assertThat(IsValid.isValid(0, 1, 1), is(false));
-		Assert.assertThat(IsValid.isValid(1, 0, 1), is(false));
-		Assert.assertThat(IsValid.isValid(1, 1, 0), is(false));
-		Assert.assertThat(IsValid.isValid(1, 1, 1), is(true));
-	}
-	
-	@Test
-	public void testIsNotValidInt() {
-		Assert.assertThat(IsValid.isNotValid(0), is(true));
-		Assert.assertThat(IsValid.isNotValid(1), is(false));
-	}
-
-	@Test
-	public void testIsNotValidIntInt() {
-		Assert.assertThat(IsValid.isNotValid(0, 0), is(true));
-		Assert.assertThat(IsValid.isNotValid(1, 0), is(true));
-		Assert.assertThat(IsValid.isNotValid(0, 1), is(true));
-		Assert.assertThat(IsValid.isNotValid(1, 1), is(false));
-	}
-	
-	@Test
-	public void testIsNotValidIntIntInt() {
-		Assert.assertThat(IsValid.isNotValid(0, 0, 0), is(true));
-		Assert.assertThat(IsValid.isNotValid(0, 0, 1), is(true));
-		Assert.assertThat(IsValid.isNotValid(0, 1, 0), is(true));
-		Assert.assertThat(IsValid.isNotValid(1, 0, 0), is(true));
-		Assert.assertThat(IsValid.isNotValid(0, 1, 1), is(true));
-		Assert.assertThat(IsValid.isNotValid(1, 0, 1), is(true));
-		Assert.assertThat(IsValid.isNotValid(1, 1, 0), is(true));
-		Assert.assertThat(IsValid.isNotValid(1, 1, 1), is(false));
-	}
-	
-	@Test
-	public void testIsValidObject() {
-		Assert.assertThat(IsValid.isValid(null), is(false));
-		Assert.assertThat(IsValid.isValid(new Object()), is(true));
-	}
-
-	@Test
-	public void testIsValidObjectObject() {
-		Assert.assertThat(IsValid.isValid(null, null), is(false));
-		Assert.assertThat(IsValid.isValid(new Object(), null), is(false));
-		Assert.assertThat(IsValid.isValid(null, new Object()), is(false));
-		Assert.assertThat(IsValid.isValid(new Object(), new Object()), is(true));
-	}
-	
-	@Test
-	public void testIsValidObjectObjectObject() {
-		Assert.assertThat(IsValid.isValid(null, null, null), is(false));
-		Assert.assertThat(IsValid.isValid(null, null, new Object()), is(false));
-		Assert.assertThat(IsValid.isValid(null, new Object(), null), is(false));
-		Assert.assertThat(IsValid.isValid(new Object(), null, null), is(false));
-		Assert.assertThat(IsValid.isValid(null, new Object(), new Object()), is(false));
-		Assert.assertThat(IsValid.isValid(new Object(), null, new Object()), is(false));
-		Assert.assertThat(IsValid.isValid(new Object(), new Object(), null), is(false));
-		Assert.assertThat(IsValid.isValid(new Object(), new Object(), new Object()), is(true));
-	}
-	
-	@Test
-	public void testIsNotValidObject() {
-		Assert.assertThat(IsValid.isNotValid(null), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object()), is(false));
-	}
-
-	@Test
-	public void testIsNotValidObjectObject() {
-		Assert.assertThat(IsValid.isNotValid(null, null), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object(), null), is(true));
-		Assert.assertThat(IsValid.isNotValid(null, new Object()), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object(), new Object()), is(false));
-	}
-	
-	@Test
-	public void testIsNotValidObjectObjectObject() {
-		Assert.assertThat(IsValid.isNotValid(null, null, null), is(true));
-		Assert.assertThat(IsValid.isNotValid(null, null, new Object()), is(true));
-		Assert.assertThat(IsValid.isNotValid(null, new Object(), null), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object(), null, null), is(true));
-		Assert.assertThat(IsValid.isNotValid(null, new Object(), new Object()), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object(), null, new Object()), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object(), new Object(), null), is(true));
-		Assert.assertThat(IsValid.isNotValid(new Object(), new Object(), new Object()), is(false));
+	public void testIsNotValidObjects() {
+		Assert.assertThat(IsValid.isNotValidObjects(new Object()), is(false));
+		Assert.assertThat(IsValid.isNotValidObjects(null, null), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(new Object(), null), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(null, new Object()), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(new Object(), new Object()), is(false));
+		Assert.assertThat(IsValid.isNotValidObjects(null, null, null), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(null, null, new Object()), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(null, new Object(), null), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(new Object(), null, null), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(null, new Object(), new Object()), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(new Object(), null, new Object()), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(new Object(), new Object(), null), is(true));
+		Assert.assertThat(IsValid.isNotValidObjects(new Object(), new Object(), new Object()), is(false));
 	}
 }

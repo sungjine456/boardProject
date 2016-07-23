@@ -166,18 +166,17 @@ public class UserServiceTest {
 	@Test
 	public void testAutoLogin(){
 		Assert.assertThat(userService.autoLogin(null), is(false));
-		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2)), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(3)), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2)), is(true));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1)), is(true));
 	}
 	
 	@Test
 	public void testAutoLogout(){
 		Assert.assertThat(userService.autoLogout(null), is(false));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2)), is(false));
-		User user = userService.findUserForIdx(1);
-		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
-		Assert.assertThat(user.getName(), is("홍길동"));
-		Assert.assertThat(userService.autoLogout(user), is(true));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(3)), is(false));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2)), is(true));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1)), is(true));
 	}
 	
 	@Test

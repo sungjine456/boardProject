@@ -31,7 +31,7 @@ public class CommentServiceImple implements CommentService {
 	
 	public List<Comment> findAllCommentByBoard(int boardIdx){
 		log.info("CommentServiceImple findAllCommentByBoard execute");
-		if(IsValid.isNotValid(boardIdx)){
+		if(IsValid.isNotValidInts(boardIdx)){
 			return new ArrayList<Comment>();
 		}
 		List<Comment> commentList0 = commentRepository.findAllByBoardIdx(boardIdx);
@@ -63,7 +63,7 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean write(String commentSentence, int userIdx, int boardIdx) {
 		log.info("CommentServiceImple write execute");
-		if(IsValid.isNotValid(userIdx, boardIdx)){
+		if(IsValid.isNotValidInts(userIdx, boardIdx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(commentSentence)){
@@ -71,7 +71,7 @@ public class CommentServiceImple implements CommentService {
 		}
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(IsValid.isNotValid(writer, board)){
+		if(IsValid.isNotValidObjects(writer, board)){
 			return false;
 		}
 		DateTime date = new DateTime();
@@ -82,11 +82,11 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean update(int idx, String commentSentence) {
 		log.info("CommentServiceImple update execute");
-		if(IsValid.isNotValid(idx)){
+		if(IsValid.isNotValidInts(idx)){
 			return false;
 		}
 		Comment comment = commentRepository.findOne(idx);
-		if(IsValid.isNotValid(comment)){
+		if(IsValid.isNotValidObjects(comment)){
 			return false;
 		}
 		if(StringUtils.isEmpty(commentSentence)){
@@ -101,7 +101,7 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean replyWrite(int idx, String commentSentence, int userIdx, int boardIdx) {
 		log.info("CommentServiceImple replyWrite execute");
-		if(IsValid.isNotValid(idx, userIdx, boardIdx)){
+		if(IsValid.isNotValidInts(idx, userIdx, boardIdx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(commentSentence)){
@@ -110,11 +110,11 @@ public class CommentServiceImple implements CommentService {
 		Comment comment = commentRepository.findOne(idx);
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(IsValid.isNotValid(comment, writer, board)){
+		if(IsValid.isNotValidObjects(comment, writer, board)){
 			return false;
 		}
 		int group = 0;
-		if(IsValid.isNotValid(comment.getCircle())){
+		if(IsValid.isNotValidInts(comment.getCircle())){
 			group = comment.getIdx();
 		} else {
 			group = comment.getCircle();

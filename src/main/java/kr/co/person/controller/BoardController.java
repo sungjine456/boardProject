@@ -38,10 +38,10 @@ public class BoardController {
 	@Autowired private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, RedirectAttributes rea){
+	public String main(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req){
 		log.info("BoardController main execute");
 		log.info("BoardController main execute num : " + num);
-		if(IsValid.isNotValid(num)){
+		if(IsValid.isNotValidInts(num)){
 			num = 0;
 		} else {
 			num -= 1;
@@ -70,7 +70,7 @@ public class BoardController {
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
 	public String boardWrite(Board board, Model model, HttpSession session){
 		log.info("BoardController boardWrite execute");
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			model.addAttribute("message", "잘못된 내용입니다.");
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
@@ -99,12 +99,12 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
-		if(IsValid.isNotValid(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
@@ -119,12 +119,12 @@ public class BoardController {
 	@RequestMapping(value="/boardUpdateView")
 	public String boardUpdateView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
 		log.info("BoardController boardUpdateView execute");
-		if(IsValid.isNotValid(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
@@ -137,19 +137,19 @@ public class BoardController {
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
 	public String boardUpdate(Board board, RedirectAttributes rea){
 		log.info("BoardController boardUpdate execute");
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
 			return "redirect:/boardDetail";
 		}
 		int num = board.getIdx();
 		String title = board.getTitle();
 		String content = board.getContent();
-		if(IsValid.isNotValid(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board findBoard = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValid(findBoard)){
+		if(IsValid.isNotValidObjects(findBoard)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
@@ -175,27 +175,29 @@ public class BoardController {
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
 	public String writeComment(CommentNum CommentNum, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController writeComment execute");
-		if(IsValid.isNotValid(CommentNum)){
+		if(IsValid.isNotValidObjects(CommentNum)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
 			return "redirect:/boardDetail";
 		}
 		int num = CommentNum.getNum();
 		String commentSentence = CommentNum.getComment();
 		log.info("BoardController writeComment execute num : " + num + ", comment : " + commentSentence);
-		if(IsValid.isNotValid(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(commentSentence)){
+			rea.addFlashAttribute("message", "댓글을 다시 작성해주세요.");
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
 		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), num)){
+			rea.addFlashAttribute("message", "댓글을 다시 작성해주세요.");
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
@@ -215,23 +217,23 @@ public class BoardController {
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
 	public String updateComment(CommentNum commentNum, RedirectAttributes rea){
 		log.info("BoardController updateComment execute");
-		if(IsValid.isNotValid(commentNum)){
+		if(IsValid.isNotValidObjects(commentNum)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
 			return "redirect:/board";
 		}
 		int num = commentNum.getNum();
 		int idx = commentNum.getIdx();
 		String comment = commentNum.getComment();
-		if(IsValid.isNotValid(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValid(idx)){
+		if(IsValid.isNotValidInts(idx)){
 			rea.addAttribute("num", num);
 			return "redirect:/boardDetail";
 		}
@@ -258,7 +260,7 @@ public class BoardController {
 	@RequestMapping(value="writeReply", method=RequestMethod.POST)
 	public String commentReplyWrite(CommentNum commentNum, HttpSession session, RedirectAttributes rea){
 		log.info("BoardController commentReplyWrite execute");
-		if(IsValid.isNotValid(commentNum)){
+		if(IsValid.isNotValidObjects(commentNum)){
 			rea.addFlashAttribute("message", "잘못된 내용입니다.");
 			return "redirect:/board";
 		}
@@ -266,17 +268,17 @@ public class BoardController {
 		int idx = commentNum.getIdx();
 		log.info("BoardController commentReplyWrite execute bnum : " + bnum + ", idx : " + idx);
 		String comment = commentNum.getComment();
-		if(IsValid.isNotValid(bnum)){
+		if(IsValid.isNotValidInts(bnum)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(bnum);
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
 		log.info("BoardController commentReplyWrite execute 2");
-		if(IsValid.isNotValid(idx)){
+		if(IsValid.isNotValidInts(idx)){
 			rea.addFlashAttribute("message", "seq가 없습니다.");
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";

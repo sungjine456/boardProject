@@ -4,87 +4,55 @@ public class IsValid {
 	public IsValid(){
 	}
 	
-	public static boolean isValid(int a){
-		if(a == 0){
-    		return false;
-    	}
+	public static boolean isValidInts(int... ints){
+		if(ints != null){
+			for(int i : ints) {
+		    	if(i == 0){
+		    		return false;
+		    	}
+			}
+		} else {
+			return false;
+		}
     	return true;
 	}
 	
-	public static boolean isValid(int a, int b){
-		if(a == 0 || b == 0){
-    		return false;
+	public static boolean isNotValidInts(int... ints){
+		if(ints != null){
+    		for(int i : ints) {
+		    	if(i == 0){
+		    		return true;
+		    	}
+			}
+    	} else {
+    		return true;
     	}
-    	return true;
+    	return false;
 	}
 	
-	public static boolean isValid(int a, int b, int c){
-    	if(a == 0 || b == 0 || c == 0){
-    		return false;
-    	}
-    	return true;
-    }
-	
-	public static boolean isNotValid(int a){
-		if(a != 0){
-    		return false;
-    	}
-    	return true;
-	}
-	
-	public static boolean isNotValid(int a, int b){
-		if(a != 0 && b != 0){
-    		return false;
-    	}
-    	return true;
-	}
-	
-	public static boolean isNotValid(int a, int b, int c){
-    	if(a != 0 && b != 0 && c != 0){
-    		return false;
-    	}
-    	return true;
-    }
-	
-	public static boolean isValid(Object a){
-    	if(a == null){
-    		return false;
-    	}
-    	return true;
-    }
-	
-	public static boolean isValid(Object a, Object b){
-    	if(a == null || b == null){
-    		return false;
-    	}
+	public static boolean isValidObjects(Object... objects){
+		if(objects != null){
+			for(Object object : objects) {
+		    	if(object == null){
+		    		return false;
+		    	}
+			}
+		} else {
+			return false;
+		}
     	return true;
     }
     
-    public static boolean isValid(Object a, Object b, Object c){
-    	if(a == null || b == null || c == null){
-    		return false;
+    public static boolean isNotValidObjects(Object... objects){
+    	if(objects != null){
+    		for(Object object : objects) {
+		    	if(object == null){
+		    		return true;
+		    	}
+			}
+    	} else {
+    		return true;
     	}
-    	return true;
-    }
-    
-    public static boolean isNotValid(Object a){
-    	if(a != null){
-    		return false;
-    	}
-    	return true;
-    }
-	
-	public static boolean isNotValid(Object a, Object b){
-    	if(a != null && b != null){
-    		return false;
-    	}
-    	return true;
-    }
-    
-    public static boolean isNotValid(Object a, Object b, Object c){
-    	if(a != null && b != null && c != null){
-    		return false;
-    	}
-    	return true;
+    	return false;
     }
 }

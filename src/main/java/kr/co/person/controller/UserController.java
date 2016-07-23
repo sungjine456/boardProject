@@ -48,11 +48,11 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(@ModelAttribute User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController addUser");
-		if(IsValid.isNotValid(user)){
+		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		if(IsValid.isNotValid(file)){
+		if(IsValid.isNotValidObjects(file)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
@@ -136,22 +136,20 @@ public class UserController {
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String loginView(Model model, HttpSession session, HttpServletRequest req){
 		log.info("execute UserController loginView");
-		if(IsValid.isValid(session.getAttribute("loginYn")) && session.getAttribute("loginYn").equals("Y")){
+		if(IsValid.isValidObjects(session.getAttribute("loginYn")) && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
 		}
 		String id = "";
 		Cookie[] cookies = req.getCookies();
-		if(IsValid.isValid(cookies)){
-			for(int i = 0; i < cookies.length; i++){
-				String key = cookies[i].getName();
-				String val = cookies[i].getValue();
-				if("saveId".equals(key)){
-					id = common.cookieAesDecode(ENCRYPTION_KEY, val);
-				}
+		for(int i = 0; i < cookies.length; i++){
+			String key = cookies[i].getName();
+			String val = cookies[i].getValue();
+			if("saveId".equals(key)){
+				id = common.cookieAesDecode(ENCRYPTION_KEY, val);
 			}
 		}
 		User user = userService.findUserForId(id);
-		if(IsValid.isValid(user) && userService.autoLoginCheck(user)){
+		if(IsValid.isValidObjects(user) && userService.autoLoginCheck(user)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -166,20 +164,20 @@ public class UserController {
 	@RequestMapping(value="/", method=RequestMethod.POST)
 	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
 		log.info("execute UserController login");
-		if(IsValid.isNotValid(user)){
+		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", "로그인에 실패하셨습니다.");
 			return "view/user/login";
 		}
 		String id = common.cleanXss(user.getId());
 		user = userService.findUserForId(id);
-		if(IsValid.isValid(user)){
+		if(IsValid.isValidObjects(user)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
 			session.setAttribute("name", user.getName());
 			session.setAttribute("email", user.getEmail());
 			session.setAttribute("img", user.getImg());
-			if(IsValid.isValid(idSave) && idSave.equals("check")){
+			if(IsValid.isValidObjects(idSave) && idSave.equals("check")){
 				if(!userService.autoLogin(user)){
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
@@ -211,7 +209,7 @@ public class UserController {
 		session.removeAttribute("email");
 		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
 		User user = userService.findUserForIdx(idx);
-		if(IsValid.isNotValid(user) || !userService.autoLogout(user)){
+		if(IsValid.isNotValidObjects(user) || !userService.autoLogout(user)){
 			return url;
 		}
 		Cookie cookie = new Cookie("saveId", null);
@@ -276,7 +274,7 @@ public class UserController {
 			return "redirect:/mypage";
 		}
 		User user = userService.loginCheck((String)session.getAttribute("id"), password);
-		if(IsValid.isNotValid(user) || user.getIdx() != (int)session.getAttribute("idx")){
+		if(IsValid.isNotValidObjects(user) || user.getIdx() != (int)session.getAttribute("idx")){
 			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
@@ -318,7 +316,7 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
 		log.info("execute UserController update");
-		if(IsValid.isNotValid(ufile)){
+		if(IsValid.isNotValidObjects(ufile)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
@@ -345,7 +343,7 @@ public class UserController {
 	            e.printStackTrace();
 	        }
 		}
-		if(IsValid.isNotValid(user)){
+		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 			return "view/board/frame";
@@ -365,7 +363,7 @@ public class UserController {
 		name = common.cleanXss(name);
 		email = common.cleanXss(email);
 		int idx = (int)session.getAttribute("idx");
-		if(IsValid.isNotValid(idx)){
+		if(IsValid.isNotValidInts(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 			return "view/board/frame";

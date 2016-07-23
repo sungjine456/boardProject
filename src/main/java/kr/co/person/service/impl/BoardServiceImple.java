@@ -35,12 +35,12 @@ public class BoardServiceImple implements BoardService {
 		if(StringUtils.isEmpty(content)){
 			return new OkCheck("내용을 입력해주세요.", false);
 		}
-		if(IsValid.isNotValid(userIdx)){
+		if(IsValid.isNotValidInts(userIdx)){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
 		DateTime date = new DateTime();
 		User user = userRepository.findOne(userIdx);
-		if(IsValid.isNotValid(user)){
+		if(IsValid.isNotValidObjects(user)){
 			return new OkCheck("유효한 회원이 아닙니다.", false);
 		}
 		Board board = new Board(title, content, user, date, date);
@@ -61,7 +61,7 @@ public class BoardServiceImple implements BoardService {
 
 	@Override
 	public boolean update(int idx, String title, String content) {
-		if(IsValid.isNotValid(idx)){
+		if(IsValid.isNotValidInts(idx)){
 			return false;
 		}
 		if(StringUtils.isEmpty(title)){
@@ -71,7 +71,7 @@ public class BoardServiceImple implements BoardService {
 			return false;
 		}
 		Board board = boardRepository.findOne(idx);
-		if(IsValid.isNotValid(board)){
+		if(IsValid.isNotValidObjects(board)){
 			return false;
 		}
 		board.setContent(content);
