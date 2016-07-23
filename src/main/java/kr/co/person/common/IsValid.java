@@ -55,4 +55,28 @@ public class IsValid {
     	}
     	return false;
     }
+    
+    public static boolean isValidArrays(Object[]... objects){
+    	if(objects != null){
+    		for(Object[] object : objects){
+		    	if(object == null || object.length == 0){
+		    		return false;
+		    	}
+    		}
+    	}
+    	return true;
+    }
+
+    public static boolean isNotValidArrays(Object[]... objects){
+    	if(objects != null){
+    		for(Object[] object : objects){
+    			if(object == null || object.length == 0){
+    				return true;
+    			}
+    		}
+    	} else {
+    		return true;
+    	}
+    	return false;
+    }
 }

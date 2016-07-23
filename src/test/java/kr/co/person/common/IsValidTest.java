@@ -85,4 +85,49 @@ public class IsValidTest {
 		Assert.assertThat(IsValid.isNotValidObjects(new Object(), new Object(), null), is(true));
 		Assert.assertThat(IsValid.isNotValidObjects(new Object(), new Object(), new Object()), is(false));
 	}
+	
+	@Test
+	public void testIsValidArrays() {
+		Assert.assertThat(IsValid.isValidArrays(new Object[0]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1]), is(true));
+		Assert.assertThat(IsValid.isValidArrays(null, null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[0], null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, new Object[0]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1], null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, new Object[1]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[0], new Object[0]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1], new Object[1]), is(true));
+		Assert.assertThat(IsValid.isValidArrays(null, null, null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, null, new Object[0]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, new Object[0], null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[0], null, null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, null, new Object[1]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, new Object[1], null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1], null, null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(null, new Object[1], new Object[1]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1], null, new Object[1]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1], new Object[1], null), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[0], new Object[0], new Object[0]), is(false));
+		Assert.assertThat(IsValid.isValidArrays(new Object[1], new Object[1], new Object[1]), is(true));
+	}
+	
+	@Test
+	public void testIsNotValidArrays() {
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1]), is(false));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[0]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(null, null), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], null), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(null, new Object[1]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[0], new Object[0]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], new Object[1]), is(false));
+		Assert.assertThat(IsValid.isNotValidArrays(null, null, null), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(null, null, new Object[1]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(null, new Object[1], null), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], null, null), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(null, new Object[1], new Object[1]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], null, new Object[1]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], new Object[1], null), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[0], new Object[0], new Object[0]), is(true));
+		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], new Object[1], new Object[1]), is(false));
+	}
 }

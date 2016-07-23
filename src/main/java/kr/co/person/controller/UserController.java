@@ -141,11 +141,13 @@ public class UserController {
 		}
 		String id = "";
 		Cookie[] cookies = req.getCookies();
-		for(int i = 0; i < cookies.length; i++){
-			String key = cookies[i].getName();
-			String val = cookies[i].getValue();
-			if("saveId".equals(key)){
-				id = common.cookieAesDecode(ENCRYPTION_KEY, val);
+		if(IsValid.isValidArrays(cookies)){
+			for(int i = 0; i < cookies.length; i++){
+				String key = cookies[i].getName();
+				String val = cookies[i].getValue();
+				if("saveId".equals(key)){
+					id = common.cookieAesDecode(ENCRYPTION_KEY, val);
+				}
 			}
 		}
 		User user = userService.findUserForId(id);
