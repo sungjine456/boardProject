@@ -30,14 +30,14 @@ public class AutoLoginRepositoryTest {
 	@Test
 	public void testSave() {
 		user = userRepository.findOne(1);
-		AutoLogin autoLogin = new AutoLogin(user, "O", new DateTime());
+		AutoLogin autoLogin = new AutoLogin("asdasd", new DateTime(), "O", user);
 		AutoLogin autoLoginSave = autoLoginRepository.save(autoLogin);
 		Assert.assertThat(autoLoginSave.getLoginCheck(), is("O"));
 	}
 	
 	@Test
 	public void testFindByUserIdx(){
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(1);
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(1, "asdasdasd");
 		Assert.assertThat(autoLogin.getLoginCheck(), is("O"));
 	}
 }

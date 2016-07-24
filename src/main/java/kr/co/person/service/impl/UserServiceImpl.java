@@ -68,15 +68,15 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean leave(int idx){
+	public boolean leave(int idx, String loginId){
 		log.info("userService leave");
 		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
-		if(!autoLogout(user)){
+		if(!autoLogout(user, loginId)){
 			return false;
 		}
 		log.info("userService leave success before");
@@ -191,16 +191,16 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean autoLoginCheck(User user){
+	public boolean autoLoginCheck(User user, String loginId){
 		log.info("userService autoLoginCheck");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx())){
+		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
 		if(IsValid.isNotValidObjects(user)){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(user.getIdx());
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		log.info("userService autoLoginCheck autoLogin :  " + autoLogin);
 		if(IsValid.isNotValidObjects(autoLogin)){
 			return false;
@@ -217,13 +217,13 @@ public class UserServiceImpl implements UserService {
 	};
 	
 	@Override
-	public boolean autoLogin(User user){
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx())){
+	public boolean autoLogin(User user, String loginId){
+		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(user.getIdx());
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isNotValidObjects(autoLogin)){
-			autoLoginRepository.save(new AutoLogin(user, "O", new DateTime()));
+			autoLoginRepository.save(new AutoLogin(loginId, new DateTime(), "O", user));
 		} else {
 			autoLogin.setLoginCheck("O");
 			autoLoginRepository.save(autoLogin);
@@ -232,12 +232,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean autoLogout(User user) {
+	public boolean autoLogout(User user, String loginId) {
 		log.info("execute userService autoLogout");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx())){
+		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdx(user.getIdx());
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isValidObjects(autoLogin)){
 			autoLogin.setLoginCheck("X");
 			autoLoginRepository.save(autoLogin);

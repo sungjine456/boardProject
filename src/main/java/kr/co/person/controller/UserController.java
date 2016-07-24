@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,18 +141,22 @@ public class UserController {
 			return "redirect:/board";
 		}
 		String id = "";
+		String loginId = "";
 		Cookie[] cookies = req.getCookies();
 		if(IsValid.isValidArrays(cookies)){
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
-				if("saveId".equals(key)){
+				if(StringUtils.equals("saveId", key)){
 					id = common.cookieAesDecode(ENCRYPTION_KEY, val);
+				}
+				if(StringUtils.equals("saveLoginId", key)){
+					loginId = val;
 				}
 			}
 		}
 		User user = userService.findUserForId(id);
-		if(IsValid.isValidObjects(user) && userService.autoLoginCheck(user)){
+		if(IsValid.isValidObjects(user) && userService.autoLoginCheck(user, loginId)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
 			session.setAttribute("id", user.getId());
@@ -180,7 +185,8 @@ public class UserController {
 			session.setAttribute("email", user.getEmail());
 			session.setAttribute("img", user.getImg());
 			if(IsValid.isValidObjects(idSave) && idSave.equals("check")){
-				if(!userService.autoLogin(user)){
+				String loginId = common.cookieValueEncryption(new DateTime().toString()); 
+				if(!userService.autoLogin(user, loginId)){
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
@@ -189,13 +195,16 @@ public class UserController {
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
-				Cookie cookie = new Cookie("saveId", enKeyId);
-			    cookie.setMaxAge(60*60*24);
-			    res.addCookie(cookie);
+				Cookie cookieId = new Cookie("saveId", enKeyId);
+			    cookieId.setMaxAge(60*60*24);
+			    res.addCookie(cookieId);
+			    Cookie cookieValue = new Cookie("saveLoginId", loginId);
+			    cookieValue.setMaxAge(60*60*24);
+			    res.addCookie(cookieValue);
 			}
 			return "redirect:/board";
 		} else {
-			model.addAttribute("message", "로그인에 실패하셨습니다.");
+			model.addAttribute("message", "사용자의 id가 존재 하지 않습니다.");
 			return "view/user/login";
 		}
 	}
@@ -211,7 +220,18 @@ public class UserController {
 		session.removeAttribute("email");
 		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
 		User user = userService.findUserForIdx(idx);
-		if(IsValid.isNotValidObjects(user) || !userService.autoLogout(user)){
+		String loginId = "";
+		Cookie[] cookies = req.getCookies();
+		if(IsValid.isValidArrays(cookies)){
+			for(int i = 0; i < cookies.length; i++){
+				String key = cookies[i].getName();
+				String val = cookies[i].getValue();
+				if(StringUtils.equals("saveLoginId", key)){
+					loginId = val;
+				}
+			}
+		}
+		if(IsValid.isNotValidObjects(user) || !userService.autoLogout(user, loginId)){
 			return url;
 		}
 		Cookie cookie = new Cookie("saveId", null);
@@ -269,7 +289,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/leave")
-	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, RedirectAttributes rea){
+	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", "password를 입력해주세요.");
@@ -280,7 +300,18 @@ public class UserController {
 			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
 			return "redirect:/";
 		}
-	    if(!userService.leave(user.getIdx())){
+		String loginId = "";
+		Cookie[] cookies = req.getCookies();
+		if(IsValid.isValidArrays(cookies)){
+			for(int i = 0; i < cookies.length; i++){
+				String key = cookies[i].getName();
+				String val = cookies[i].getValue();
+				if(StringUtils.equals("saveLoginId", key)){
+					loginId = val;
+				}
+			}
+		}
+	    if(!userService.leave(user.getIdx(), loginId)){
 	    	rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
 			return "redirect:/mypage";
 	    }
@@ -289,9 +320,12 @@ public class UserController {
 		session.removeAttribute("id");
 		session.removeAttribute("name");
 		session.removeAttribute("email");
-		Cookie cookie = new Cookie("saveId", null);
-		cookie.setMaxAge(0);
-	    res.addCookie(cookie);
+		Cookie cookieId = new Cookie("saveId", null);
+		cookieId.setMaxAge(0);
+	    res.addCookie(cookieId);
+	    Cookie cookieLoginId = new Cookie("saveId", null);
+	    cookieLoginId.setMaxAge(0);
+	    res.addCookie(cookieLoginId);
 	    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
 		return "redirect:/";
 	}

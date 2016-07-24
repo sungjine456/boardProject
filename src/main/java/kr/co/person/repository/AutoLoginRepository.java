@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import kr.co.person.domain.AutoLogin;
 
 public interface AutoLoginRepository extends JpaRepository<AutoLogin, Integer> {
-	AutoLogin findByUserIdx(int userIdx);
+	AutoLogin findByUserIdxAndLoginId(int userIdx, String loginId);
 }

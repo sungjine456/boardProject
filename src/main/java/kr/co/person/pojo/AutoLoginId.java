@@ -12,17 +12,17 @@ public class AutoLoginId implements Serializable {
 	 * JAVA에서는 SerialVersionUID를 선언해주는 것을 권장하기 위해 Warning이 발생한다.
 	 */
 	private static final long serialVersionUID = -3221335607180479314L;
-	private String loginCheck;
+	private String loginId;
 	private DateTime regDate;
 
 	public AutoLoginId(){
 	}
 
-	public String getLoginCheck() {
-		return loginCheck;
+	public String getLoginId() {
+		return loginId;
 	}
-	public void setLoginCheck(String loginCheck) {
-		this.loginCheck = loginCheck;
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
 	}
 	public DateTime getRegDate() {
 		return regDate;
