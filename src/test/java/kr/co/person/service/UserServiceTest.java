@@ -113,20 +113,11 @@ public class UserServiceTest {
 		Assert.assertThat(userService.autoLoginCheck(null, ""), is(false));
 		Assert.assertThat(userService.autoLoginCheck(null, "abdsbas"), is(false));
 		Assert.assertThat(userService.autoLoginCheck(user, ""), is(false));
+		user = userService.findUserForIdx(1);
 		user.setIdx(5);
-		user.setEmail("sungjin@naver.com");
-		user.setId("sungjin");
-		user.setName("홍길동");
-		user.setPassword(password);
-		user.setRegDate(date);
-		user.setUpDate(date);
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
 		user.setIdx(1);
-		/** 
-		 * 자동 로그인의 유효기간이 하루 이기 때문에 false
-		 * true로 하려면 testData를 수정한후 테스트
-		 */
-		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
+		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
 	}
 	
 	@Test
@@ -137,12 +128,14 @@ public class UserServiceTest {
 		Assert.assertThat(user.getId(), is("sungjin"));
 		Assert.assertThat(user.getPassword(), is(password));
 		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
 		Assert.assertThat(userService.leave(1, "asdasdasd"), is(true));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getEmail(), is(garbage));
 		Assert.assertThat(user.getId(), is(garbage));
 		Assert.assertThat(user.getPassword(), is(garbage));
 		Assert.assertThat(user.getName(), is(garbage));
+		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
 	}
 	
 	@Test
@@ -177,11 +170,14 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAutoLogout(){
+		user = userService.findUserForIdx(1);
 		Assert.assertThat(userService.autoLogout(null, ""), is(false));
 		Assert.assertThat(userService.autoLogout(null, "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2), "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), ""), is(false));
+		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
 		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), "asdasdasd"), is(true));
+		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
 	}
 	
 	@Test

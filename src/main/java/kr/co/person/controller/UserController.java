@@ -196,10 +196,10 @@ public class UserController {
 					return "view/user/login";
 				}
 				Cookie cookieId = new Cookie("saveId", enKeyId);
-			    cookieId.setMaxAge(60*60*24);
+			    cookieId.setMaxAge(60*60*24*365*100);
 			    res.addCookie(cookieId);
 			    Cookie cookieValue = new Cookie("saveLoginId", loginId);
-			    cookieValue.setMaxAge(60*60*24);
+			    cookieValue.setMaxAge(60*60*24*365*100);
 			    res.addCookie(cookieValue);
 			}
 			return "redirect:/board";

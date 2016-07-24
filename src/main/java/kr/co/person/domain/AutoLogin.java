@@ -1,11 +1,10 @@
 package kr.co.person.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,40 +13,36 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import kr.co.person.pojo.AutoLoginId;
-
 @Entity
 @DynamicUpdate
 @Table(name="auto_login")
-@IdClass(AutoLoginId.class)
 public class AutoLogin{
 	@Id
-	@Column(name="auto_login_id", nullable = false)
+	@GeneratedValue
+	@Column(name="auto_login_idx", nullable=false)
+	private int loginIdx;
+	@Column(name="auto_login_id", nullable=false)
 	private String loginId;
-	@Id
-	@Column(name="reg_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@Column(name="reg_date", nullable=false)
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime regDate;
-	@Column(name="auto_login_check", nullable = false)
-	private String loginCheck;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_idx")
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="user_idx")
     private User user;
 
 	public AutoLogin() {
 	}
-	public AutoLogin(String loginId, DateTime regDate, String loginCheck, User user) {
+	public AutoLogin(String loginId, DateTime regDate, User user) {
 		this.loginId = loginId;
 		this.regDate = regDate;
-		this.loginCheck = loginCheck;
 		this.user = user;
 	}
 	
-	public String getLoginCheck() {
-		return loginCheck;
+	public int getLoginIdx() {
+		return loginIdx;
 	}
-	public void setLoginCheck(String loginCheck) {
-		this.loginCheck = loginCheck;
+	public void setLoginIdx(int loginIdx) {
+		this.loginIdx = loginIdx;
 	}
 	public String getLoginId() {
 		return loginId;

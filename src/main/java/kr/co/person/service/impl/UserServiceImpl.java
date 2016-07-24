@@ -205,14 +205,6 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidObjects(autoLogin)){
 			return false;
 		}
-		log.info("userService autoLoginCheck autoLoginCheck :  " + autoLogin.getLoginCheck());
-		if(!autoLogin.getLoginCheck().equals("O")){
-			return false;
-		}
-		DateTime date = new DateTime();
-		if(date.getMillis() - autoLogin.getRegDate().getMillis() > 24 * 60 * 60 * 1000){
-			return false;
-		}
 		return true;
 	};
 	
@@ -223,10 +215,7 @@ public class UserServiceImpl implements UserService {
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isNotValidObjects(autoLogin)){
-			autoLoginRepository.save(new AutoLogin(loginId, new DateTime(), "O", user));
-		} else {
-			autoLogin.setLoginCheck("O");
-			autoLoginRepository.save(autoLogin);
+			autoLoginRepository.save(new AutoLogin(loginId, new DateTime(), user));
 		}
 		return true;
 	}
@@ -239,8 +228,7 @@ public class UserServiceImpl implements UserService {
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isValidObjects(autoLogin)){
-			autoLogin.setLoginCheck("X");
-			autoLoginRepository.save(autoLogin);
+			autoLoginRepository.delete(autoLogin);
 		}
 		return true;
 	}
