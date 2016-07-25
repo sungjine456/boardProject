@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,14 +46,14 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@ModelAttribute User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
+	public String join(User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController addUser");
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidObjects(user, file)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
 		}
-		if(IsValid.isNotValidObjects(file)){
-			model.addAttribute("message", "회원가입에 실패하셨습니다.");
+		if(!common.isEmail(user.getEmail())){
+			model.addAttribute("message", "올바른 이메일 형식을 입력해주세요.");
 			return "view/user/join";
 		}
 		String[] strArray = file.getOriginalFilename().split("\\.");
@@ -66,18 +65,7 @@ public class UserController {
 		String se = File.separator;
 		log.info("execute UserController addUser ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			Date date = new Date();
-			fileName = user.getId() + "_"  + date.getTime() + "." + ext;
-			String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
-		    File dayFile = new File(filePath);
-		    if(!dayFile.exists()){
-		       dayFile.mkdirs();
-		    }
-		    try {
-	            file.transferTo(new File(filePath+se+fileName));
-	        } catch(Exception e) {
-	            e.printStackTrace();
-	        }
+			fileName = createFile(file, ext, user.getId(), se);
 		}
 		if(StringUtils.isEmpty(fileName)){
 			fileName = "default.png";
@@ -169,7 +157,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@ModelAttribute User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
+	public String login(User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
 		log.info("execute UserController login");
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", "로그인에 실패하셨습니다.");
@@ -278,6 +266,11 @@ public class UserController {
 			return "redirect:/update";
 		}
 		int idx = (int)session.getAttribute("idx");
+		if(IsValid.isNotValidInts(idx)){
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			return "view/board/frame";
+		}
 		User user = userService.findUserForIdx(idx);
 		model.addAttribute("id", user.getId());
 		model.addAttribute("name", user.getName());
@@ -292,12 +285,12 @@ public class UserController {
 	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", "password를 입력해주세요.");
+			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
 			return "redirect:/mypage";
 		}
 		User user = userService.loginCheck((String)session.getAttribute("id"), password);
 		if(IsValid.isNotValidObjects(user) || user.getIdx() != (int)session.getAttribute("idx")){
-			rea.addFlashAttribute("message", "패스워드를 다시입력해주세요.");
+			rea.addFlashAttribute("message", "없는 사용자입니다.");
 			return "redirect:/";
 		}
 		String loginId = "";
@@ -333,12 +326,13 @@ public class UserController {
 	@RequestMapping(value="/updateView", method=RequestMethod.POST)
 	public String updateView(@RequestParam(required=false) String updatePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
-		if(StringUtils.isEmpty(updatePassword)){
-			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
-			return "redirect:/mypage";
-		}
 		int idx = (int)session.getAttribute("idx");
-		if(!userService.passwordCheck(idx, updatePassword)){
+		if(IsValid.isNotValidInts(idx)){
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			return "view/board/frame";
+		}
+		if(StringUtils.isEmpty(updatePassword) || !userService.passwordCheck(idx, updatePassword)){
 			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
 			return "redirect:/mypage";
 		}
@@ -366,18 +360,7 @@ public class UserController {
 		String se = File.separator;
 		log.info("execute UserController update ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			Date date = new Date();
-			fileName = id + "_"  + date.getTime() + "." + ext;
-			String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
-		    File dayFile = new File(filePath);
-		    if(!dayFile.exists()){
-		       dayFile.mkdirs();
-		    }
-		    try {
-		    	ufile.transferTo(new File(filePath+se+fileName));
-	        } catch(Exception e) {
-	            e.printStackTrace();
-	        }
+			fileName = createFile(ufile, ext, id, se);
 		}
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("include", "/view/user/update.ftl");
@@ -386,12 +369,7 @@ public class UserController {
 		}
 		String name = user.getName();
 		String email = user.getEmail();
-		if(StringUtils.isEmpty(name)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
-			return "view/board/frame";
-		}
-		if(StringUtils.isEmpty(email)){
+		if(StringUtils.isEmpty(name) || common.isEmail(email)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 			return "view/board/frame";
@@ -404,7 +382,7 @@ public class UserController {
 			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
 			return "view/board/frame";
 		}
-		if(!ext.equals("")){
+		if(StringUtils.isNotEmpty(ext)){
 			if(userService.update(idx, name, email, fileName)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
@@ -432,5 +410,21 @@ public class UserController {
 	@RequestMapping("/interceptorView")
 	public String interceptorView(){
 		return "common/interceptorPage";
+	}
+	
+	private String createFile(MultipartFile ufile, String ext, String id, String se) {
+		Date date = new Date();
+		String fileName = id + "_"  + date.getTime() + "." + ext;
+		String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
+		File dayFile = new File(filePath);
+		if(!dayFile.exists()){
+		   dayFile.mkdirs();
+		}
+		try {
+			ufile.transferTo(new File(filePath+se+fileName));
+		} catch(Exception e) {
+		    e.printStackTrace();
+		}
+		return fileName;
 	}
 }

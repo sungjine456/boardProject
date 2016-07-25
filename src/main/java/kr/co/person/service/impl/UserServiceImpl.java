@@ -37,9 +37,8 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidObjects(user)){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
-		user.setId(common.cleanXss(user.getId()));
 		user.setName(common.cleanXss(user.getName()));
-		String id = user.getId();
+		String id = common.cleanXss(user.getId());
 		String password = user.getPassword();
 		String email = user.getEmail();
 		if(!common.isEmail(email)){
@@ -73,10 +72,7 @@ public class UserServiceImpl implements UserService {
 		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId)){
-			return false;
-		}
-		if(!autoLogout(user, loginId)){
+		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId) || !autoLogout(user, loginId)){
 			return false;
 		}
 		log.info("userService leave success before");
@@ -201,7 +197,6 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
-		log.info("userService autoLoginCheck autoLogin :  " + autoLogin);
 		if(IsValid.isNotValidObjects(autoLogin)){
 			return false;
 		}
@@ -236,13 +231,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean update(int idx, String name, String email, String fileName) {
 		String se = File.separator;
-		if(IsValid.isNotValidInts(idx)){
-			return false;
-		}
-		if(StringUtils.isEmpty(name)){
-			return false;
-		}
-		if(StringUtils.isEmpty(email) && !common.isEmail(email)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
 			return false;
 		}
 		log.info("execute UserService update fileName : " + fileName);
@@ -267,13 +256,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean update(int idx, String name, String email) {
 		log.info("execute UserService update");
-		if(IsValid.isNotValidInts(idx)){
-			return false;
-		}
-		if(StringUtils.isEmpty(name)){
-			return false;
-		}
-		if(StringUtils.isEmpty(email) && !common.isEmail(email)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
 			return false;
 		}
 		User user = userRepository.findOne(idx);
@@ -290,10 +273,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean passwordCheck(int idx, String password) {
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user)){
-			return false;
-		}
-		if(!StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
+		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
 			return false;
 		}
 		return true;

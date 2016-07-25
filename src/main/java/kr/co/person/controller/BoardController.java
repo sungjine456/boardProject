@@ -41,7 +41,7 @@ public class BoardController {
 	public String main(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req){
 		log.info("BoardController main execute");
 		log.info("BoardController main execute num : " + num);
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidObjects(num)){
 			num = 0;
 		} else {
 			num -= 1;
@@ -99,7 +99,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidObjects(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
@@ -119,7 +119,7 @@ public class BoardController {
 	@RequestMapping(value="/boardUpdateView")
 	public String boardUpdateView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
 		log.info("BoardController boardUpdateView execute");
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidObjects(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
