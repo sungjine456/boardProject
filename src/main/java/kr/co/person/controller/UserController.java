@@ -164,7 +164,8 @@ public class UserController {
 			return "view/user/login";
 		}
 		String id = common.cleanXss(user.getId());
-		user = userService.findUserForId(id);
+		String password = user.getPassword();
+		user = userService.loginCheck(id, password);
 		if(IsValid.isValidObjects(user)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
@@ -183,16 +184,16 @@ public class UserController {
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
-				Cookie cookieId = new Cookie("saveId", enKeyId);
-			    cookieId.setMaxAge(60*60*24*365*100);
-			    res.addCookie(cookieId);
-			    Cookie cookieValue = new Cookie("saveLoginId", loginId);
-			    cookieValue.setMaxAge(60*60*24*365*100);
-			    res.addCookie(cookieValue);
+				Cookie cookieSaveId = new Cookie("saveId", enKeyId);
+				cookieSaveId.setMaxAge(60*60*24*365*100);
+			    res.addCookie(cookieSaveId);
+			    Cookie cookieLoginId = new Cookie("saveLoginId", loginId);
+			    cookieLoginId.setMaxAge(60*60*24*365*100);
+			    res.addCookie(cookieLoginId);
 			}
 			return "redirect:/board";
 		} else {
-			model.addAttribute("message", "사용자의 id가 존재 하지 않습니다.");
+			model.addAttribute("message", "아이디 혹은 비밀번호가 틀렸습니다.");
 			return "view/user/login";
 		}
 	}
@@ -222,9 +223,12 @@ public class UserController {
 		if(IsValid.isNotValidObjects(user) || !userService.autoLogout(user, loginId)){
 			return url;
 		}
-		Cookie cookie = new Cookie("saveId", null);
-		cookie.setMaxAge(0);
-	    res.addCookie(cookie);
+		Cookie cookieSaveId = new Cookie("saveId", null);
+		cookieSaveId.setMaxAge(0);
+	    res.addCookie(cookieSaveId);
+	    Cookie cookieLoginId = new Cookie("saveLoginId", null);
+	    cookieLoginId.setMaxAge(0);
+	    res.addCookie(cookieLoginId);
 		return "redirect:/";
 	}
 	
@@ -268,7 +272,7 @@ public class UserController {
 		int idx = (int)session.getAttribute("idx");
 		if(IsValid.isNotValidInts(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			return "view/board/frame";
 		}
 		User user = userService.findUserForIdx(idx);
@@ -325,11 +329,11 @@ public class UserController {
 	
 	@RequestMapping(value="/updateView", method=RequestMethod.POST)
 	public String updateView(@RequestParam(required=false) String updatePassword, Model model, HttpSession session, RedirectAttributes rea){
-		log.info("execute UserController mypageView");
+		log.info("execute UserController updateView");
 		int idx = (int)session.getAttribute("idx");
 		if(IsValid.isNotValidInts(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(updatePassword) || !userService.passwordCheck(idx, updatePassword)){
@@ -347,7 +351,7 @@ public class UserController {
 	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
 		log.info("execute UserController update");
 		if(IsValid.isNotValidObjects(ufile)){
-			model.addAttribute("message", "회원가입에 실패하셨습니다.");
+			model.addAttribute("message", "회원정보 수정에 실패하셨습니다.");
 			return "view/user/join";
 		}
 		String[] strArray = ufile.getOriginalFilename().split("\\.");
@@ -362,27 +366,30 @@ public class UserController {
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
 			fileName = createFile(ufile, ext, id, se);
 		}
+		log.info("execute UserController update user check");
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			return "view/board/frame";
 		}
 		String name = user.getName();
 		String email = user.getEmail();
-		if(StringUtils.isEmpty(name) || common.isEmail(email)){
+		int idx = (int)session.getAttribute("idx");
+		if(!common.isEmail(email)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+			model.addAttribute("message", "올바른 이메일 형식을 입력해주세요.");
+			return "view/board/frame";
+		}
+		log.info("execute UserController update name, idx check");
+		if(StringUtils.isEmpty(name) || IsValid.isNotValidInts(idx)){
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			return "view/board/frame";
 		}
 		name = common.cleanXss(name);
 		email = common.cleanXss(email);
-		int idx = (int)session.getAttribute("idx");
-		if(IsValid.isNotValidInts(idx)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
-			return "view/board/frame";
-		}
 		if(StringUtils.isNotEmpty(ext)){
+			log.info("execute UserController update 4param check");
 			if(userService.update(idx, name, email, fileName)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
@@ -391,9 +398,10 @@ public class UserController {
 				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
 			} else {
 				model.addAttribute("include", "/view/user/update.ftl");
-				model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+				model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			}
 		} else {
+			log.info("execute UserController update 3param check");
 			if(userService.update(idx, name, email)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
@@ -401,7 +409,7 @@ public class UserController {
 				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
 			} else {
 				model.addAttribute("include", "/view/user/update.ftl");
-				model.addAttribute("message", "회원정보를 수정에 실패 하셨습니다.");
+				model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			}
 		}
 		return "view/board/frame";
@@ -412,7 +420,7 @@ public class UserController {
 		return "common/interceptorPage";
 	}
 	
-	private String createFile(MultipartFile ufile, String ext, String id, String se) {
+	private String createFile(MultipartFile file, String ext, String id, String se) {
 		Date date = new Date();
 		String fileName = id + "_"  + date.getTime() + "." + ext;
 		String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
@@ -421,9 +429,9 @@ public class UserController {
 		   dayFile.mkdirs();
 		}
 		try {
-			ufile.transferTo(new File(filePath+se+fileName));
+			file.transferTo(new File(filePath+se+fileName));
 		} catch(Exception e) {
-		    e.printStackTrace();
+		    log.error(e.getMessage());
 		}
 		return fileName;
 	}

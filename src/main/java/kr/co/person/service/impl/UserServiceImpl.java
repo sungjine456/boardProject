@@ -272,6 +272,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean passwordCheck(int idx, String password) {
+		log.info("execute UserService passwordCheck");
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
 			return false;

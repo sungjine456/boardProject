@@ -23,7 +23,7 @@ public class UserRepositoryTest {
 	@Autowired private UserRepository userRepository;
     private User user;
     // 비밀번호 123456을 암호화한 형태
-    private String password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92personProject";
+    private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
  
     @Test
     public void testFindById() {

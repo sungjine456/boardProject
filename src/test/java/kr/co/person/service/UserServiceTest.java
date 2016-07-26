@@ -28,12 +28,12 @@ public class UserServiceTest {
 	private UserService userService;
 	private User user;
 	// 비밀번호 123456을 암호화한 형태
-    private String password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92personProject";
+    private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
     private DateTime date = new DateTime();
 
 	@Test
 	public void testLoginCheck(){
-		user = userService.loginCheck("sungjin", "123456");
+		user = userService.loginCheck("sungjin", "123123");
 		Assert.assertEquals("sungjin", user.getId());
 	}
 	
@@ -78,7 +78,7 @@ public class UserServiceTest {
 	public void testChangePassword(){
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getPassword(), is(password));
-		OkCheck ok = userService.changePassword(1, "123456", "654321");
+		OkCheck ok = userService.changePassword(1, "123123", "654321");
 		Assert.assertThat(ok.isBool(), is(true));
 		Assert.assertThat(ok.getMessage(), is("비밀번호 수정이 완료되었습니다."));
 		user = userService.findUserForIdx(1);
@@ -181,9 +181,9 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void test(){
-		Assert.assertThat(userService.passwordCheck(1, "123456"), is(true));
-		Assert.assertThat(userService.passwordCheck(2, "123456"), is(false));
+	public void testPasswordCheck(){
+		Assert.assertThat(userService.passwordCheck(1, "123123"), is(true));
+		Assert.assertThat(userService.passwordCheck(2, "123123"), is(false));
 		Assert.assertThat(userService.passwordCheck(1, "654321"), is(false));
 		Assert.assertThat(userService.passwordCheck(2, "654321"), is(false));
 	}
