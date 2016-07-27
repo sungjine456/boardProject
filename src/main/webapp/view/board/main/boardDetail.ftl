@@ -40,7 +40,7 @@
 					<div style="padding-left:5%;">
 <#if comment.circle != 0>
 	<#list 1..comment.depth as i>
-		&nbsp;&nbsp;
+		&nbsp;&nbsp;&nbsp;&nbsp;
 		<#if i == comment.depth>
 			└ RE :
 		</#if>

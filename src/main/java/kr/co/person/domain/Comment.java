@@ -26,10 +26,8 @@ public class Comment {
 	private String comment;
 	@Column(name="circle", nullable = false)
 	private int circle;
-	@Column(name="parent", nullable = false)
-	private int parent;
-	@Column(name="level", nullable = false)
-	private int level;
+	@Column(name="step", nullable = false)
+	private int step;
 	@Column(name="depth", nullable = false)
 	private int depth;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -47,11 +45,10 @@ public class Comment {
 	
 	public Comment(){
 	}	
-	public Comment(String comment, int circle, int parent, int level, int depth, User writer, Board board, DateTime regDate, DateTime upDate){
+	public Comment(String comment, int circle, int step, int depth, User writer, Board board, DateTime regDate, DateTime upDate){
 		this.comment = comment;
 		this.circle = circle;
-		this.parent = parent;
-		this.level = level;
+		this.step = step;
 		this.depth = depth;
 		this.writer = writer;
 		this.board = board;
@@ -77,17 +74,11 @@ public class Comment {
 	public void setCircle(int circle) {
 		this.circle = circle;
 	}
-	public int getParent() {
-		return parent;
+	public int getStep() {
+		return step;
 	}
-	public void setParent(int parent) {
-		this.parent = parent;
-	}
-	public int getLevel() {
-		return level;
-	}
-	public void setLevel(int level) {
-		this.level = level;
+	public void setStep(int step) {
+		this.step = step;
 	}
 	public int getDepth() {
 		return depth;

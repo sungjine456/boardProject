@@ -31,7 +31,7 @@ public class CommentServiceTest {
 		List<Comment> comments = commentService.findAllCommentByBoard(0);
 		Assert.assertThat(comments, is(new ArrayList<Comment>()));
 		comments = commentService.findAllCommentByBoard(1);
-		Assert.assertThat(comments.size(), is(1));
+		Assert.assertThat(comments.size(), is(8));
 	}
 	
 	@Test
@@ -48,10 +48,11 @@ public class CommentServiceTest {
 	@Test
 	public void testUpdate(){
 		Assert.assertThat(commentService.update(0, "comment update test"), is(false));
-		Assert.assertThat(commentService.update(3, "comment update test"), is(false));
-		Assert.assertThat(commentService.update(3, ""), is(false));
-		Assert.assertThat(commentService.update(3, null), is(false));
-		Assert.assertThat(commentService.update(1, "comment update test"), is(true));
+		Assert.assertThat(commentService.update(9, "comment update test"), is(false));
+		Assert.assertThat(commentService.update(9, ""), is(false));
+		Assert.assertThat(commentService.update(9, null), is(false));
+		// findAllCommentByBoard는 idx 역순으로 리턴 하기때문에 마지막 뎃글로 테스트. 
+		Assert.assertThat(commentService.update(5, "comment update test"), is(true));
 		List<Comment> comments = commentService.findAllCommentByBoard(1);
 		Assert.assertThat(comments.get(0).getComment(), is("comment update test"));
 	}

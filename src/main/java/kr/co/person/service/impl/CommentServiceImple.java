@@ -34,17 +34,16 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValidInts(boardIdx)){
 			return new ArrayList<Comment>();
 		}
-		List<Comment> commentList0 = commentRepository.findAllByBoardIdx(boardIdx);
+		List<Comment> commentList = commentRepository.findByBoardIdxOrderByCircleDescStepAsc(boardIdx);
 		List<Comment> commentList1 = new ArrayList<Comment>();
 		List<Comment> commentList2 = new ArrayList<Comment>();
 		List<Comment> commentList3 = new ArrayList<Comment>();
-		int size0 = commentList0.size();
-		for(int i = 0; i < size0; i++){
-			if(commentList0.get(i).getCircle() == 0){
-				commentList1.add(commentList0.get(i));
+		int size = commentList.size();
+		for(int i = 0; i < size; i++){
+			if(commentList.get(i).getCircle() == 0){
+				commentList1.add(commentList.get(i));
 			} else {
-				commentList2.add(commentList0.get(i));
-				
+				commentList2.add(commentList.get(i));
 			}
 		}
 		int size1 = commentList1.size();
@@ -75,7 +74,7 @@ public class CommentServiceImple implements CommentService {
 			return false;
 		}
 		DateTime date = new DateTime();
-		commentRepository.save(new Comment(commentSentence, 0, 0, 0, 0, writer, board, date, date));
+		commentRepository.save(new Comment(commentSentence, 0, 0, 0, writer, board, date, date));
 		return true;
 	}
 
@@ -113,9 +112,27 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValidObjects(comment, writer, board)){
 			return false;
 		}
-		int group = (IsValid.isNotValidInts(comment.getCircle()))?comment.getIdx():comment.getCircle();
+		int circle = (IsValid.isNotValidInts(comment.getCircle()))?comment.getIdx():comment.getCircle();
 		DateTime date = new DateTime();
-		commentRepository.save(new Comment(commentSentence, idx, group, comment.getLevel()+1, comment.getDepth()+1, writer, board, date, date));
+		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(boardIdx, circle, comment.getStep(), comment.getDepth());
+		int size = comments.size();
+		if(size == 0){
+			List<Comment> maxComments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(boardIdx, circle);
+			if(maxComments.size() != 0){
+				int max = maxComments.get(0).getStep();
+				commentRepository.save(new Comment(commentSentence, circle, max + 1, comment.getDepth()+1, writer, board, date, date));
+			} else {
+				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth()+1, writer, board, date, date));
+			}
+		} else {
+			int min = comments.get(0).getStep();
+			commentRepository.save(new Comment(commentSentence, circle, min, comment.getDepth()+1, writer, board, date, date));
+			for(int i = 0; i < size; i++){
+				Comment uComment = comments.get(i);
+				uComment.setStep(uComment.getStep());
+				commentRepository.save(uComment);
+			}
+		}
 		return true;
 	}
 }
