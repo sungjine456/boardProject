@@ -200,6 +200,7 @@ public class UserController {
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+		log.info("execute UserController logout");
 		String url = req.getRequestURI();
 		int idx = (int)session.getAttribute("idx");
 		session.setAttribute("loginYn", "N");
@@ -220,8 +221,13 @@ public class UserController {
 				}
 			}
 		}
-		if(IsValid.isNotValidObjects(user) || !userService.autoLogout(user, loginId)){
+		if(IsValid.isNotValidObjects(user)){
 			return url;
+		}
+		if(StringUtils.isNotEmpty(loginId)){
+			if(!userService.autoLogout(user, loginId)){
+				return url;
+			}
 		}
 		Cookie cookieSaveId = new Cookie("saveId", null);
 		cookieSaveId.setMaxAge(0);

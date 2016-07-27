@@ -218,10 +218,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLogout(User user, String loginId) {
 		log.info("execute userService autoLogout");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
+		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
+		int idx = user.getIdx();
+		if(IsValid.isNotValidInts(idx)){
+			return false;
+		}
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(idx, loginId);
 		if(IsValid.isValidObjects(autoLogin)){
 			autoLoginRepository.delete(autoLogin);
 		}

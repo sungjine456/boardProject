@@ -174,9 +174,9 @@ public class UserServiceTest {
 		Assert.assertThat(userService.autoLogout(null, ""), is(false));
 		Assert.assertThat(userService.autoLogout(null, "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2), "asdasdasd"), is(false));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), ""), is(false));
+		Assert.assertThat(userService.autoLogout(user, ""), is(false));
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(1), "asdasdasd"), is(true));
+		Assert.assertThat(userService.autoLogout(user, "asdasdasd"), is(true));
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
 	}
 	
