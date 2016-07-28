@@ -95,4 +95,14 @@ public class CommnetRepositoryTest {
 		Assert.assertThat(comments.get(1).getIdx(), is(6));
 		Assert.assertThat(comments.get(0).getIdx(), is(7));
 	}
+	
+	@Test
+	public void testFindByBoardIdxAndCircleAndStepGreaterThan(){
+		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(1, 1, 1);
+		Assert.assertThat(comments.size(), is(4));
+		Assert.assertThat(comments.get(0).getIdx(), is(3));
+		Assert.assertThat(comments.get(1).getIdx(), is(4));
+		Assert.assertThat(comments.get(2).getIdx(), is(6));
+		Assert.assertThat(comments.get(3).getIdx(), is(7));
+	}
 }

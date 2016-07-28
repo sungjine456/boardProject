@@ -48,7 +48,7 @@ public class CommentServiceImple implements CommentService {
 		}
 		int size1 = commentList1.size();
 		int size2 = commentList2.size();
-		for(int i = 0; i < size1; i++){
+		for(int i = size1 - 1; i >= 0 ; i--){
 			commentList3.add(commentList1.get(i));
 			for(int j = 0; j < size2; j++){
 				if(commentList1.get(i).getIdx() == commentList2.get(j).getCircle()){
@@ -116,20 +116,31 @@ public class CommentServiceImple implements CommentService {
 		DateTime date = new DateTime();
 		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(boardIdx, circle, comment.getStep(), comment.getDepth());
 		int size = comments.size();
+		int step = comment.getStep();
 		if(size == 0){
 			List<Comment> maxComments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(boardIdx, circle);
-			if(maxComments.size() != 0){
-				int max = maxComments.get(0).getStep();
-				commentRepository.save(new Comment(commentSentence, circle, max + 1, comment.getDepth()+1, writer, board, date, date));
+			int maxSize = maxComments.size();
+			if(maxSize != 0){
+				List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+				int stepSize = stepComments.size();
+				log.info("step size  :  " + stepSize);
+				for(int i = 0; i < stepSize; i++){
+					Comment uComment = stepComments.get(i);
+					log.info("comment idx  :  " + uComment.getIdx());
+					uComment.setStep(uComment.getStep() + 1);
+					commentRepository.save(uComment);
+				}
+				commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
 			} else {
 				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth()+1, writer, board, date, date));
 			}
 		} else {
-			int min = comments.get(0).getStep();
-			commentRepository.save(new Comment(commentSentence, circle, min, comment.getDepth()+1, writer, board, date, date));
-			for(int i = 0; i < size; i++){
-				Comment uComment = comments.get(i);
-				uComment.setStep(uComment.getStep());
+			List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
+			int stepSize = stepComments.size();
+			for(int i = 0; i < stepSize; i++){
+				Comment uComment = stepComments.get(i);
+				uComment.setStep(uComment.getStep() + 1);
 				commentRepository.save(uComment);
 			}
 		}
