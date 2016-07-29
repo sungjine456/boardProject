@@ -11,4 +11,5 @@ public interface BoardService {
 	Page<Board> findAll(Pageable pageable);
 	Board findBoardForIdx(int idx);
 	boolean update(int idx, String title, String content);
+	boolean addHitCount(int boardIdx);
 }

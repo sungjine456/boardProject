@@ -80,4 +80,19 @@ public class BoardServiceImple implements BoardService {
 		boardRepository.save(board);
 		return true;
 	}
+
+	@Override
+	public boolean addHitCount(int boardIdx) {
+		log.info("execute BoardServiceImple addHitCount");
+		if(IsValid.isNotValidInts(boardIdx)){
+			return false;
+		}
+		Board board = boardRepository.findOne(boardIdx);
+		if(IsValid.isNotValidObjects(board)){
+			return false;
+		}
+		board.setHitCount(board.getHitCount() + 1);
+		boardRepository.save(board);
+		return true;
+	}
 }

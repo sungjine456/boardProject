@@ -108,11 +108,11 @@ public class BoardController {
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		List<Comment> comments = commentService.findAllCommentByBoard(board.getIdx());
+		List<Comment> comments = commentService.findAllCommentByBoard(num);
 		model.addAttribute("comments", comments);
 		model.addAttribute("include", "main/boardDetail.ftl");
 		model.addAttribute("board", board);
-		model.addAttribute("num", num);
+		boardService.addHitCount(num);
 		return "view/board/frame";
 	}
 	

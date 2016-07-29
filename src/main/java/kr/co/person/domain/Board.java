@@ -26,6 +26,8 @@ public class Board {
 	private String title;
 	@Column(name="content", nullable = false)
 	private String content;
+	@Column(name="hit_count", nullable = false)
+	private int hitCount;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name="writer")
 	private User user;
@@ -63,6 +65,12 @@ public class Board {
 	}
 	public void setContent(String content) {
 		this.content = content;
+	}
+	public int getHitCount() {
+		return hitCount;
+	}
+	public void setHitCount(int hitCount) {
+		this.hitCount = hitCount;
 	}
 	public User getUser() {
 		return user;

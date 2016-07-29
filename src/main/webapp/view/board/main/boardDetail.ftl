@@ -19,7 +19,7 @@
 	</table>
 	<hr style="border:1px dashed #ddd"><br>
 	<form id="commentForm" action="/writeComment" method="post">
-		<input type="hidden" id="num" name="num" value="${num}"/>
+		<input type="hidden" id="num" name="num" value="${board.idx}"/>
 		<table class="table" style="background-color: #f4f4f4;">
 			<colgroup>
 				<col width="10%"/>
@@ -48,15 +48,22 @@
 </#if>
 						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate.toString("yyyy.MM.dd HH:mm")}</span>
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
-						<div style="float:right; padding-right: 5%;">
-		<#if comment.writer.idx == idx>
-							<a class="commentUpdateBtn" value="${comment.comment}" idx="${comment.idx}">수정</a>
-							<span>&nbsp;/&nbsp;</span>
-		</#if>
-							<a class="commentReplyBtn" idx="${comment.idx}">답글</a>
-						</div>
+							<div style="float:right; padding-right: 5%;">
+			<#if comment.writer.idx == idx>
+								<a class="commentUpdateBtn" value="${comment.comment}" idx="${comment.idx}">수정</a>
+								<span>&nbsp;/&nbsp;</span>
+			</#if>
+								<a class="commentReplyBtn" idx="${comment.idx}">답글</a>
+							</div>
 							<br>
-							${comment.comment}
+							<div>
+						<#if comment.depth != 0>
+							<#list 1..comment.depth as i>
+								&nbsp;&nbsp;&nbsp;&nbsp;
+							</#list>
+						</#if>
+								${comment.comment}
+							<div>
 						</span>
 					</div>
 				</td>

@@ -49,12 +49,15 @@ public class CommentServiceImple implements CommentService {
 		int size1 = commentList1.size();
 		int size2 = commentList2.size();
 		for(int i = size1 - 1; i >= 0 ; i--){
+			int last = 0;
 			commentList3.add(commentList1.get(i));
 			for(int j = 0; j < size2; j++){
 				if(commentList1.get(i).getIdx() == commentList2.get(j).getCircle()){
 					commentList3.add(commentList2.get(j));
+					last++;
 				}
 			}
+			size2 -= last;
 		}
 		return commentList3;
 	}

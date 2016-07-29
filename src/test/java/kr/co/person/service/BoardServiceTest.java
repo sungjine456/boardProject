@@ -43,4 +43,16 @@ public class BoardServiceTest {
 		board = boardService.findBoardForIdx(1);
 		Assert.assertThat(board.getRegDate(), is(not(board.getUpDate())));
 	}
+	
+	@Test
+	public void testAddHitCount(){
+		board = boardService.findBoardForIdx(1);
+		Assert.assertThat(board.getHitCount(), is(0));
+		boardService.addHitCount(1);
+		board = boardService.findBoardForIdx(1);
+		Assert.assertThat(board.getHitCount(), is(1));
+		boardService.addHitCount(1);
+		board = boardService.findBoardForIdx(1);
+		Assert.assertThat(board.getHitCount(), is(2));
+	}
 }
