@@ -10,8 +10,11 @@
 	회원 가입 & 수정 & 탈퇴, 로그인
 	xss(Cross Site Scripting) 공격 방어
 	자동로그인
-	board의 페이징
+	게시글 페이징
 	뎃글 작성 & 수정
+	유저의 이미지 저장
+	뎃글의 답글 : 최신 글이 위로 향하게 
+	게시글의 조회수
 
 ## 사용기술
 ----
@@ -31,8 +34,20 @@ back end
 	6. jUnit(Test)
 ```
 ```
-issue tracker
+util library
+	1. joda-time
+	2. apache common lang
+```
+```
+build tool
 	1. Gradle
-	2. Trello
-	3. Git
+```
+```
+issue tracker
+	1. Trello
+	2. Github
+```
+```
+DVCS
+	1. Git
 ```
