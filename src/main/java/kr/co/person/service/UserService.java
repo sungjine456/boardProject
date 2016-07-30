@@ -16,7 +16,7 @@ public interface UserService {
 	boolean autoLoginCheck(User user, String loginId);
 	boolean autoLogin(User user, String loginId);
 	boolean autoLogout(User user, String loginId);
-	boolean update(int idx, String name, String email, String fileName);
+	boolean update(int idx, String name, String email, String imgPath);
 	boolean update(int idx, String name, String email);
 	boolean passwordCheck(int idx, String password);
 }

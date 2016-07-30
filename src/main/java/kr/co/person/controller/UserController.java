@@ -61,18 +61,18 @@ public class UserController {
 		if(strArray.length == 2){
 			ext = strArray[1];
 		}
-		String fileName = "";
+		String imgPath = "";
 		String se = File.separator;
 		log.info("execute UserController addUser ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			fileName = createFile(file, ext, user.getId(), se);
+			imgPath = createImg(file, ext, user.getId(), se);
 		}
-		if(StringUtils.isEmpty(fileName)){
-			fileName = "default.png";
+		if(StringUtils.isEmpty(imgPath)){
+			imgPath = "C:"+se+"boardProject"+se+"img"+se+"user"+se+"default.png";
 		}
-		log.info("execute UserController addUser fileName : " + fileName);
+		log.info("execute UserController addUser fileName : " + imgPath);
 		
-		user.setImg("img"+se+"user"+se+fileName);
+		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
 		model.addAttribute("message", ok.getMessage());
 		if(ok.isBool()){
@@ -365,12 +365,12 @@ public class UserController {
 		if(strArray.length == 2){
 			ext = strArray[1];
 		}
-		String fileName = "";
+		String imgPath = "";
 		String id = (String)session.getAttribute("id");
 		String se = File.separator;
 		log.info("execute UserController update ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			fileName = createFile(ufile, ext, id, se);
+			imgPath = createImg(ufile, ext, id, se);
 		}
 		log.info("execute UserController update user check");
 		if(IsValid.isNotValidObjects(user)){
@@ -396,10 +396,10 @@ public class UserController {
 		email = common.cleanXss(email);
 		if(StringUtils.isNotEmpty(ext)){
 			log.info("execute UserController update 4param check");
-			if(userService.update(idx, name, email, fileName)){
+			if(userService.update(idx, name, email, imgPath)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
-				session.setAttribute("img", "img"+se+"user"+se+fileName);
+				session.setAttribute("img", imgPath);
 				model.addAttribute("include", "/view/user/mypage.ftl");
 				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
 			} else {
@@ -426,19 +426,20 @@ public class UserController {
 		return "common/interceptorPage";
 	}
 	
-	private String createFile(MultipartFile file, String ext, String id, String se) {
+	private String createImg(MultipartFile file, String ext, String id, String se) {
 		Date date = new Date();
-		String fileName = id + "_"  + date.getTime() + "." + ext;
-		String filePath = "D:"+se+"git"+se+"boardProject"+se+"boardProject"+se+"src"+se+"main"+se+"resources"+se+"static"+se+"img"+se+"user";
+		String fileName = id + "_" + date.getTime() + "." + ext;
+		String filePath = "C:"+se+"boardProject"+se+"img"+se+"user";
+		String imgPath = filePath+se+fileName;
 		File dayFile = new File(filePath);
 		if(!dayFile.exists()){
 		   dayFile.mkdirs();
 		}
 		try {
-			file.transferTo(new File(filePath+se+fileName));
+			file.transferTo(new File(imgPath));
 		} catch(Exception e) {
 		    log.error(e.getMessage());
 		}
-		return fileName;
+		return imgPath;
 	}
 }

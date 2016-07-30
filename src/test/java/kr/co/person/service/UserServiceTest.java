@@ -27,7 +27,7 @@ public class UserServiceTest {
 	@Autowired
 	private UserService userService;
 	private User user;
-	// 비밀번호 123456을 암호화한 형태
+	// 비밀번호123123을 암호화한 형태
     private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
     private DateTime date = new DateTime();
 

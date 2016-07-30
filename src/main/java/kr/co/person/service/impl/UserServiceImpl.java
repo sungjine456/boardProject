@@ -233,22 +233,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean update(int idx, String name, String email, String fileName) {
+	public boolean update(int idx, String name, String email, String imgPath) {
 		String se = File.separator;
 		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
 			return false;
 		}
-		log.info("execute UserService update fileName : " + fileName);
+		log.info("execute UserService update imgPath : " + imgPath);
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(user)){
 			return false;
 		}
-		if(StringUtils.isEmpty(fileName)){
-			fileName = "default.png";
+		if(StringUtils.isEmpty(imgPath)){
+			imgPath = "C:"+se+"boardProject"+se+"img"+se+"user"+se+"default.png";
 		} 
 		user.setName(name);
 		user.setEmail(email);
-		user.setImg("img"+se+"user"+se+fileName);
+		user.setImg(imgPath);
 		user.setUpDate(new DateTime());
 		user = userRepository.save(user);
 		if(user == null){
