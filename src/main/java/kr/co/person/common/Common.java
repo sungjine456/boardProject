@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.Cookie;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
@@ -108,5 +109,17 @@ public class Common {
     	content = content.replace("\r\n","<br/>");
     	
     	return content;
+    }
+    
+    public Cookie addCookie(String key, String value){
+    	Cookie cookie = new Cookie(key, value);
+		cookie.setMaxAge(60*60*24*365*100);
+	    return cookie;
+    }
+
+    public Cookie removeCookie(String key){
+    	Cookie cookie = new Cookie(key, null);
+    	cookie.setMaxAge(0);
+    	return cookie;
     }
 }

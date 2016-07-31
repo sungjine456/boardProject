@@ -184,12 +184,8 @@ public class UserController {
 					model.addAttribute("message", "로그인에 실패하셨습니다.");
 					return "view/user/login";
 				}
-				Cookie cookieSaveId = new Cookie("saveId", enKeyId);
-				cookieSaveId.setMaxAge(60*60*24*365*100);
-			    res.addCookie(cookieSaveId);
-			    Cookie cookieLoginId = new Cookie("saveLoginId", loginId);
-			    cookieLoginId.setMaxAge(60*60*24*365*100);
-			    res.addCookie(cookieLoginId);
+			    res.addCookie(common.addCookie("saveId", enKeyId));
+			    res.addCookie(common.addCookie("saveLoginId", loginId));
 			}
 			return "redirect:/board";
 		} else {
@@ -229,12 +225,8 @@ public class UserController {
 				return url;
 			}
 		}
-		Cookie cookieSaveId = new Cookie("saveId", null);
-		cookieSaveId.setMaxAge(0);
-	    res.addCookie(cookieSaveId);
-	    Cookie cookieLoginId = new Cookie("saveLoginId", null);
-	    cookieLoginId.setMaxAge(0);
-	    res.addCookie(cookieLoginId);
+	    res.addCookie(common.removeCookie("saveId"));
+	    res.addCookie(common.removeCookie("saveLoginId"));
 		return "redirect:/";
 	}
 	
@@ -323,12 +315,8 @@ public class UserController {
 		session.removeAttribute("id");
 		session.removeAttribute("name");
 		session.removeAttribute("email");
-		Cookie cookieId = new Cookie("saveId", null);
-		cookieId.setMaxAge(0);
-	    res.addCookie(cookieId);
-	    Cookie cookieLoginId = new Cookie("saveId", null);
-	    cookieLoginId.setMaxAge(0);
-	    res.addCookie(cookieLoginId);
+	    res.addCookie(common.removeCookie("saveId"));
+	    res.addCookie(common.removeCookie("saveLoginId"));
 	    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
 		return "redirect:/";
 	}

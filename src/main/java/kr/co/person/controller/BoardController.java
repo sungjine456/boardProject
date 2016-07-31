@@ -133,22 +133,16 @@ public class BoardController {
 					}
 					if(bool){
 						boardService.addHitCount(num);
-						Cookie cookieHit = new Cookie("hit", val + num + " ");
-						cookieHit.setMaxAge(60*60*24*365*100);
-					    res.addCookie(cookieHit);
+						res.addCookie(common.addCookie("hit", val + num + " "));
 					}
 				}
 			}
 			if(isHit){
-				Cookie cookieHit = new Cookie("hit", num+" ");
-				cookieHit.setMaxAge(60*60*24*365*100);
-			    res.addCookie(cookieHit);
+			    res.addCookie(common.addCookie("hit", num + " "));
 			    boardService.addHitCount(num);
 			}
 		} else {
-			Cookie cookieHit = new Cookie("hit", num+" ");
-			cookieHit.setMaxAge(60*60*24*365*100);
-		    res.addCookie(cookieHit);
+			res.addCookie(common.addCookie("hit", num + " "));
 		    boardService.addHitCount(num);
 		}
 		return "view/board/frame";
