@@ -2,7 +2,9 @@ package kr.co.person.controller;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,7 +100,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
+	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		if(IsValid.isNotValidObjects(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
@@ -112,7 +114,43 @@ public class BoardController {
 		model.addAttribute("comments", comments);
 		model.addAttribute("include", "main/boardDetail.ftl");
 		model.addAttribute("board", board);
-		boardService.addHitCount(num);
+		Cookie[] cookies = req.getCookies();
+		if(IsValid.isValidArrays(cookies)){
+			boolean isHit = true;
+			for(int i = 0; i < cookies.length; i++){
+				String key = cookies[i].getName();
+				String val = cookies[i].getValue();
+				if(StringUtils.equals("hit", key)){
+					isHit = false;
+					boolean bool = true;
+					String[] vals = val.split(" ");
+					int length = vals.length;
+					for(int j = 0; j < length; j++){
+						int value = Integer.parseInt(vals[j]);
+						if(value == num){
+							bool = false;
+						}
+					}
+					if(bool){
+						boardService.addHitCount(num);
+						Cookie cookieHit = new Cookie("hit", val + num + " ");
+						cookieHit.setMaxAge(60*60*24*365*100);
+					    res.addCookie(cookieHit);
+					}
+				}
+			}
+			if(isHit){
+				Cookie cookieHit = new Cookie("hit", num+" ");
+				cookieHit.setMaxAge(60*60*24*365*100);
+			    res.addCookie(cookieHit);
+			    boardService.addHitCount(num);
+			}
+		} else {
+			Cookie cookieHit = new Cookie("hit", num+" ");
+			cookieHit.setMaxAge(60*60*24*365*100);
+		    res.addCookie(cookieHit);
+		    boardService.addHitCount(num);
+		}
 		return "view/board/frame";
 	}
 	
