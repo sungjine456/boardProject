@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -112,8 +113,10 @@ public class Common {
     }
     
     public Cookie addCookie(String key, String value){
+    	DateTime date1 = DateTime.now();
+    	DateTime date2 = date1.plusYears(1);
     	Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(60*60*24*365*100);
+		cookie.setMaxAge((int)((date2.getMillis()-date1.getMillis())/1000));
 	    return cookie;
     }
 
