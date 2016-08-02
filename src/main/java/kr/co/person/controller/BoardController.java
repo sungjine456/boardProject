@@ -101,6 +101,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+		log.info("execute BoardController DetialView");
 		if(IsValid.isNotValidObjects(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";

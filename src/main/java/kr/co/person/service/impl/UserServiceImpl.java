@@ -41,8 +41,11 @@ public class UserServiceImpl implements UserService {
 		String id = common.cleanXss(user.getId());
 		String password = user.getPassword();
 		String email = user.getEmail();
+		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
+			return new OkCheck("아이디와 비밀번호를 확인해주세요.", false);	
+		}
 		if(!common.isEmail(email)){
-			return new OkCheck("회원가입에 실패하셨습니다.", false);
+			return new OkCheck("이메일 형식이 잘 못되었습니다.", false);
 		}
 		User findUser = userRepository.findById(id);
 		if(IsValid.isValidObjects(findUser)){

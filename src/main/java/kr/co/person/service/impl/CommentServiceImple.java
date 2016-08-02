@@ -34,7 +34,7 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValidInts(boardIdx)){
 			return new ArrayList<Comment>();
 		}
-		List<Comment> commentList = commentRepository.findByBoardIdxOrderByCircleDescStepAsc(boardIdx);
+		List<Comment> commentList = commentRepository.findByBoardIdxOrderByCircleDescStepAscIdxDesc(boardIdx);
 		List<Comment> commentList1 = new ArrayList<Comment>();
 		List<Comment> commentList2 = new ArrayList<Comment>();
 		List<Comment> commentList3 = new ArrayList<Comment>();
@@ -48,16 +48,13 @@ public class CommentServiceImple implements CommentService {
 		}
 		int size1 = commentList1.size();
 		int size2 = commentList2.size();
-		for(int i = size1 - 1; i >= 0 ; i--){
-			int last = 0;
+		for(int i = 0; i < size1; i++){
 			commentList3.add(commentList1.get(i));
 			for(int j = 0; j < size2; j++){
 				if(commentList1.get(i).getIdx() == commentList2.get(j).getCircle()){
 					commentList3.add(commentList2.get(j));
-					last++;
 				}
 			}
-			size2 -= last;
 		}
 		return commentList3;
 	}
@@ -118,18 +115,24 @@ public class CommentServiceImple implements CommentService {
 		int circle = (IsValid.isNotValidInts(comment.getCircle()))?comment.getIdx():comment.getCircle();
 		DateTime date = new DateTime();
 		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(boardIdx, circle, comment.getStep(), comment.getDepth());
-		int size = comments.size();
+		if(IsValid.isNotValidObjects(comments)){
+			return false;
+		}
 		int step = comment.getStep();
-		if(size == 0){
+		if(comments.size() == 0){
 			List<Comment> maxComments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(boardIdx, circle);
+			if(IsValid.isNotValidObjects(maxComments)){
+				return false;
+			}
 			int maxSize = maxComments.size();
 			if(maxSize != 0){
 				List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+				if(IsValid.isNotValidObjects(stepComments)){
+					return false;
+				}
 				int stepSize = stepComments.size();
-				log.info("step size  :  " + stepSize);
 				for(int i = 0; i < stepSize; i++){
 					Comment uComment = stepComments.get(i);
-					log.info("comment idx  :  " + uComment.getIdx());
 					uComment.setStep(uComment.getStep() + 1);
 					commentRepository.save(uComment);
 				}
@@ -138,8 +141,11 @@ public class CommentServiceImple implements CommentService {
 				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth()+1, writer, board, date, date));
 			}
 		} else {
-			List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
 			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
+			List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+			if(IsValid.isNotValidObjects(stepComments)){
+				return false;
+			}
 			int stepSize = stepComments.size();
 			for(int i = 0; i < stepSize; i++){
 				Comment uComment = stepComments.get(i);
