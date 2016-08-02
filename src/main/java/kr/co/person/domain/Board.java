@@ -22,19 +22,19 @@ public class Board {
 	@Column(name = "board_idx")
 	@GeneratedValue
 	private int idx;
-	@Column(name="title", nullable = false)
+	@Column(name = "title", nullable = false)
 	private String title;
-	@Column(name="content", nullable = false)
+	@Column(name = "content", nullable = false)
 	private String content;
-	@Column(name="hit_count", nullable = false)
+	@Column(name = "hit_count", nullable = false)
 	private int hitCount;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name="writer")
+	@JoinColumn(name = "writer")
 	private User user;
-	@Column(name="reg_date", nullable = false)
+	@Column(name = "reg_date", nullable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime regDate;
-	@Column(name="up_date", nullable = false)
+	@Column(name = "up_date", nullable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime upDate;
 	

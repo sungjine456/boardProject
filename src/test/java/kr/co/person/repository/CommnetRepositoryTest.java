@@ -25,8 +25,7 @@ import kr.co.person.domain.User;
 @Sql(scripts="classpath:/testDataSql/testData.sql")
 public class CommnetRepositoryTest {
 	
-	@Autowired
-	private CommentRepository commentRepository;
+	@Autowired private CommentRepository commentRepository;
 	DateTime date = new DateTime();
 	private Comment comment;
 

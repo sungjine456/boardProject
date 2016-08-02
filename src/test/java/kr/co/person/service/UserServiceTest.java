@@ -24,8 +24,7 @@ import kr.co.person.pojo.OkCheck;
 @Sql(scripts="classpath:/testDataSql/testData.sql")
 public class UserServiceTest {
 
-	@Autowired
-	private UserService userService;
+	@Autowired private UserService userService;
 	private User user;
 	// 비밀번호123123을 암호화한 형태
     private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
@@ -144,7 +143,7 @@ public class UserServiceTest {
 		Assert.assertEquals(user.getRegDate(), user.getUpDate());
 		Assert.assertThat(userService.update(1, "hyun", "", ""), is(false));
 		Assert.assertThat(userService.update(1, "", "hyun@naver.com", ""), is(false));
-		Assert.assertThat(userService.update(2, "hyun", "hyun@naver.com", ""), is(false));
+		Assert.assertThat(userService.update(3, "hyun", "hyun@naver.com", ""), is(false));
 		Assert.assertThat(userService.update(1, "hyun", "hyun@naver.com", ""), is(true));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getUpDate(), is(not(user.getRegDate())));
@@ -163,7 +162,7 @@ public class UserServiceTest {
 		Assert.assertThat(userService.autoLogin(null, ""), is(false));
 		Assert.assertThat(userService.autoLogin(null, "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2), ""), is(false));
-		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2), "asdasdasd"), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(3), "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), ""), is(false));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), "asdasdasd"), is(true));
 	}
@@ -173,7 +172,7 @@ public class UserServiceTest {
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(userService.autoLogout(null, ""), is(false));
 		Assert.assertThat(userService.autoLogout(null, "asdasdasd"), is(false));
-		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(2), "asdasdasd"), is(false));
+		Assert.assertThat(userService.autoLogout(userService.findUserForIdx(3), "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogout(user, ""), is(false));
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
 		Assert.assertThat(userService.autoLogout(user, "asdasdasd"), is(true));
@@ -183,8 +182,8 @@ public class UserServiceTest {
 	@Test
 	public void testPasswordCheck(){
 		Assert.assertThat(userService.passwordCheck(1, "123123"), is(true));
-		Assert.assertThat(userService.passwordCheck(2, "123123"), is(false));
+		Assert.assertThat(userService.passwordCheck(3, "123123"), is(false));
 		Assert.assertThat(userService.passwordCheck(1, "654321"), is(false));
-		Assert.assertThat(userService.passwordCheck(2, "654321"), is(false));
+		Assert.assertThat(userService.passwordCheck(3, "654321"), is(false));
 	}
 }

@@ -24,8 +24,7 @@ import kr.co.person.domain.User;
 @Sql(scripts="classpath:/testDataSql/testData.sql")
 public class BoardRepositoryTest {
 	
-	@Autowired
-	private BoardRepository boardRepository;
+	@Autowired private BoardRepository boardRepository;
 	private Board board;
 	DateTime date = new DateTime();
 

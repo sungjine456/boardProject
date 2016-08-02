@@ -1,5 +1,13 @@
 <div class="container">
-	<h1>${board.title}</h1>
+	<span style="font-size:30px;">${board.title}</span>
+	<#if board.user.idx == idx>
+		<span style="font-size:10px; padding-right:10px;">${like} (${likeCount})</span>
+		<div style="float:right">
+			<button type="button" id="boardUpdateBtn" class="btn btn-primary">내용 수정</button>
+		</div>
+	<#else>
+		<span id="likeSpan"><a id="likeCount" style="font-size:10px; padding-right:10px;" userIdx=${idx}>${like} (${likeCount})</a></span>
+	</#if>
 	<table class="table table-hover">
 		<colgroup>
 			<col width="10%"/>
@@ -13,9 +21,6 @@
 				${board.content}
 			</td>
 		</tr>
-	<#if board.user.idx == idx>
-		<button type="button" id="boardUpdateBtn" class="btn btn-primary" style="float:right">내용 수정</button>
-	</#if>
 	</table>
 	<hr style="border:1px dashed #ddd"><br>
 	<form id="commentForm" action="/writeComment" method="post">

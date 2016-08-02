@@ -20,8 +20,7 @@ import kr.co.person.domain.Board;
 @Sql(scripts="classpath:/testDataSql/testData.sql")
 public class BoardServiceTest {
 
-	@Autowired
-	private BoardService boardService;
+	@Autowired private BoardService boardService;
 	private Board board;
 	
 	@Test

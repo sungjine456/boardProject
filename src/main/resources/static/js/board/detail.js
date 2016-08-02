@@ -3,6 +3,8 @@ var detail = {
 	boardUpdateBtn : $("#boardUpdateBtn"),
 	commentBtn : $("#commentForm #commentBtn"),
 	num : $("#commentForm #num"),
+	likeCount : $("#likeCount"),
+	likeSpan : $("#likeSpan"),
 	writeComment : $("#commentForm #writeComment"),
 	commentUpdateBtn : $("#commentForm .commentUpdateBtn"),
 	commentReplyBtn : $("#commentForm .commentReplyBtn"),
@@ -52,12 +54,30 @@ var detail = {
 			}
 		});
 	},
+	likeCountEvent : function(){
+		var userIdx = this.likeCount.attr("userIdx");
+		return;
+		$.ajax({
+			url : "/addBoardLikeCount",
+			type : "POST",
+			data : {"boardIdx" : detail.num.val(), "userIdx" : userIdx},
+			success : function(data){
+				likeSpan.html(data);
+			},
+			error : function(x, e){
+				if(x.status == 404){
+					$(location).attr("href", "/error/404error.ftl");
+				}
+			}
+		});
+	},
 	init : function(){
 		var self = this;
 		self.boardUpdateBtn.click(function(){self.boardUpdateEvent();});
 		self.commentBtn.click(function(){self.commentEvent();});
 		self.commentUpdateBtn.click(function(){self.commentUpdateEvent(event);});
 		self.commentReplyBtn.click(function(){self.commentReplyEvent(event);});
+		self.likeCount.click(function(){self.likeCountEvent()});
 	}
 }
 

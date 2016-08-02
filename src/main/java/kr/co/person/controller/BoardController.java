@@ -25,7 +25,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.domain.Board;
+import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
+import kr.co.person.pojo.BoardLikeCount;
 import kr.co.person.pojo.CommentNum;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.BoardService;
@@ -100,21 +102,27 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController DetialView");
 		if(IsValid.isNotValidObjects(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
+		int userIdx = (int)session.getAttribute("idx");
 		Board board = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValidObjects(board)){
+		BoardLike boardLike = boardService.getBoardLike(num, userIdx);
+		long likeCount = boardService.getBoardLikeCount(num);
+		if(IsValid.isNotValidObjects(board) || likeCount < 0){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
+		String like = (IsValid.isNotValidObjects(boardLike))? "좋아요":"좋아요 취소";
 		List<Comment> comments = commentService.findAllCommentByBoard(num);
 		model.addAttribute("comments", comments);
 		model.addAttribute("include", "main/boardDetail.ftl");
 		model.addAttribute("board", board);
+		model.addAttribute("likeCount", likeCount);
+		model.addAttribute("like", like);
 		Cookie[] cookies = req.getCookies();
 		if(IsValid.isValidArrays(cookies)){
 			boolean isHit = true;
@@ -310,7 +318,6 @@ public class BoardController {
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
-		log.info("BoardController commentReplyWrite execute 2");
 		if(IsValid.isNotValidInts(idx)){
 			rea.addFlashAttribute("message", "seq가 없습니다.");
 			rea.addAttribute("num", bnum);
@@ -328,5 +335,10 @@ public class BoardController {
 		}
 		rea.addAttribute("num", bnum);
 		return "redirect:/boardDetail";
+	}
+	
+	@RequestMapping(value="addBoardLikeCount", method=RequestMethod.POST)
+	public void addBoardLikeCount(BoardLikeCount boardLikeCount){
+		log.info("execute BoardController addBoardLikeCount");
 	}
 }

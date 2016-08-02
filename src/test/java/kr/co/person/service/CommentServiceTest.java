@@ -23,8 +23,7 @@ import kr.co.person.domain.Comment;
 @Sql(scripts="classpath:/testDataSql/testData.sql")
 public class CommentServiceTest {
 
-	@Autowired
-	private CommentService commentService;
+	@Autowired private CommentService commentService;
 	
 	@Test
 	public void testFindAllCommentByBoard() {

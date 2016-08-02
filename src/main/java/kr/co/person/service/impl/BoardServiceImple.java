@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.common.IsValid;
 import kr.co.person.domain.Board;
+import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.repository.BoardLikeRepository;
 import kr.co.person.repository.BoardRepository;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.BoardService;
@@ -25,6 +27,7 @@ public class BoardServiceImple implements BoardService {
 
 	@Autowired private BoardRepository boardRepository;
 	@Autowired private UserRepository userRepository;
+	@Autowired private BoardLikeRepository boardLikeRepository;
 	
 	@Override
 	public OkCheck write(String title, String content, int userIdx) {
@@ -94,5 +97,27 @@ public class BoardServiceImple implements BoardService {
 		board.setHitCount(board.getHitCount() + 1);
 		boardRepository.save(board);
 		return true;
+	}
+
+	@Override
+	public long getBoardLikeCount(int boardIdx) {
+		log.info("execute BoardServiceImple getBoardLikeCount");
+		if(IsValid.isNotValidInts(boardIdx)){
+			return -1;
+		}
+		return boardLikeRepository.count();
+	}
+
+	@Override
+	public BoardLike getBoardLike(int boardIdx, int userIdx) {
+		log.info("execute BoardServiceImple getBoardLike");
+		if(IsValid.isNotValidInts(boardIdx, userIdx)){
+			return null;
+		}
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+		if(IsValid.isNotValidObjects(like)){
+			return null;
+		}
+		return like;
 	}
 }
