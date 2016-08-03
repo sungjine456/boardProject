@@ -4,6 +4,8 @@ public class BoardLikeCount {
 	private int boardIdx;
 	private int userIdx;
 	
+	public BoardLikeCount(){
+	}
 	public BoardLikeCount(int boardIdx, int userIdx){
 		this.boardIdx = boardIdx;
 		this.userIdx = userIdx;

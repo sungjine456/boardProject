@@ -1,6 +1,8 @@
 package kr.co.person.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
@@ -337,8 +340,24 @@ public class BoardController {
 		return "redirect:/boardDetail";
 	}
 	
-	@RequestMapping(value="addBoardLikeCount", method=RequestMethod.POST)
-	public void addBoardLikeCount(BoardLikeCount boardLikeCount){
-		log.info("execute BoardController addBoardLikeCount");
+	@RequestMapping(value="boardLikeCount", method=RequestMethod.POST)
+	public @ResponseBody Map<String, String> addBoardLikeCount(BoardLikeCount boardLikeCount){
+		log.info("execute BoardController boardLikeCount");
+		Map<String, String> map = new HashMap<String, String>();
+		int boardIdx = boardLikeCount.getBoardIdx();
+		int userIdx = boardLikeCount.getUserIdx();
+		BoardLike like = boardService.getBoardLike(boardIdx, userIdx);
+		if(IsValid.isNotValidObjects(like)){
+			boardService.addBoardLike(boardIdx, userIdx);
+			int count = boardService.getBoardLikeCount(boardIdx);
+			map.put("like", "좋아요 취소");
+			map.put("likeCount", count + "");
+		} else {
+			boardService.removeBoardLike(boardIdx, userIdx);
+			int count = boardService.getBoardLikeCount(boardIdx);
+			map.put("like", "좋아요");
+			map.put("likeCount", count + "");
+		}
+		return map;
 	}
 }

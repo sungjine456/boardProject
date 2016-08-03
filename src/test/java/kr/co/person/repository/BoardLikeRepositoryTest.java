@@ -29,13 +29,13 @@ public class BoardLikeRepositoryTest {
 	}
 
 	@Test
-	public void testCount() {
-		Assert.assertThat(boardLikeRepository.count(), is(1L));
-	}
-	
-	@Test
 	public void testFindByBoardIdxAndUserIdx(){
 		Assert.assertThat(boardLikeRepository.findByBoardIdxAndUserIdx(2, 5), is(nullValue()));
 		Assert.assertThat(boardLikeRepository.findByBoardIdxAndUserIdx(1, 2), is(notNullValue()));
+	}
+	
+	@Test
+	public void test(){
+		Assert.assertThat(boardLikeRepository.findByBoardIdx(1).size(), is(1));
 	}
 }

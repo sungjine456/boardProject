@@ -1,5 +1,7 @@
 package kr.co.person.service.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -100,12 +102,17 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public long getBoardLikeCount(int boardIdx) {
+	public int getBoardLikeCount(int boardIdx) {
 		log.info("execute BoardServiceImple getBoardLikeCount");
 		if(IsValid.isNotValidInts(boardIdx)){
 			return -1;
 		}
-		return boardLikeRepository.count();
+		Board board = boardRepository.findOne(boardIdx);
+		List<BoardLike> boardLikes = boardLikeRepository.findByBoardIdx(boardIdx);
+		if(IsValid.isNotValidObjects(board, boardLikes)){
+			return -1;
+		}
+		return boardLikes.size();
 	}
 
 	@Override
@@ -119,5 +126,39 @@ public class BoardServiceImple implements BoardService {
 			return null;
 		}
 		return like;
+	}
+
+	@Override
+	public boolean addBoardLike(int boardIdx, int userIdx) {
+		log.info("execute BoardServiceImple addBoardLike");
+		if(IsValid.isNotValidInts(boardIdx, userIdx)){
+			return false;
+		}
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+		if(IsValid.isValidObjects(like)){
+			return false;
+		}
+		Board board = boardRepository.findOne(boardIdx);
+		User user = userRepository.findOne(userIdx);
+		if(IsValid.isNotValidObjects(board, user)){
+			return false;
+		}
+		like = new BoardLike(board, user);
+		boardLikeRepository.save(like);
+		return true;
+	}
+
+	@Override
+	public boolean removeBoardLike(int boardIdx, int userIdx) {
+		log.info("execute BoardServiceImple removeBoardLike");
+		if(IsValid.isNotValidInts(boardIdx, userIdx)){
+			return false;
+		}
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+		if(IsValid.isNotValidObjects(like)){
+			return false;
+		}
+		boardLikeRepository.delete(like);
+		return true;
 	}
 }

@@ -6,7 +6,9 @@
 			<button type="button" id="boardUpdateBtn" class="btn btn-primary">내용 수정</button>
 		</div>
 	<#else>
-		<span id="likeSpan"><a id="likeCount" style="font-size:10px; padding-right:10px;" userIdx=${idx}>${like} (${likeCount})</a></span>
+		<span id="likeSpan">
+			<a id="likeCount" style="font-size:10px; padding-right:10px;" userIdx=${idx}>${like} (${likeCount})</a>
+		</span>
 	</#if>
 	<table class="table table-hover">
 		<colgroup>

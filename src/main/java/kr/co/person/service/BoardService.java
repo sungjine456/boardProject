@@ -13,6 +13,8 @@ public interface BoardService {
 	Board findBoardForIdx(int idx);
 	boolean update(int idx, String title, String content);
 	boolean addHitCount(int boardIdx);
-	long getBoardLikeCount(int boardIdx);
+	int getBoardLikeCount(int boardIdx);
 	BoardLike getBoardLike(int boardIdx, int userIdx);
+	boolean addBoardLike(int boardIdx, int userIdx);
+	boolean removeBoardLike(int boardIdx, int userIdx);
 }

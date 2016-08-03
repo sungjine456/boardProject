@@ -4,7 +4,6 @@ var detail = {
 	commentBtn : $("#commentForm #commentBtn"),
 	num : $("#commentForm #num"),
 	likeCount : $("#likeCount"),
-	likeSpan : $("#likeSpan"),
 	writeComment : $("#commentForm #writeComment"),
 	commentUpdateBtn : $("#commentForm .commentUpdateBtn"),
 	commentReplyBtn : $("#commentForm .commentReplyBtn"),
@@ -56,13 +55,14 @@ var detail = {
 	},
 	likeCountEvent : function(){
 		var userIdx = this.likeCount.attr("userIdx");
-		return;
 		$.ajax({
-			url : "/addBoardLikeCount",
+			url : "/boardLikeCount",
 			type : "POST",
 			data : {"boardIdx" : detail.num.val(), "userIdx" : userIdx},
+			dataType : "JSON",
 			success : function(data){
-				likeSpan.html(data);
+				detail.likeCount.attr("userIdx", userIdx);
+				detail.likeCount.text(data.like+" ("+data.likeCount+")");
 			},
 			error : function(x, e){
 				if(x.status == 404){
