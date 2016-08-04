@@ -30,7 +30,7 @@ public class CommentServiceImple implements CommentService {
 	@Autowired private UserRepository userRepository;
 	
 	public List<Comment> findAllCommentByBoard(int boardIdx){
-		log.info("CommentServiceImple findAllCommentByBoard execute");
+		log.info("execute CommentServiceImple findAllCommentByBoard");
 		if(IsValid.isNotValidInts(boardIdx)){
 			return new ArrayList<Comment>();
 		}
@@ -61,7 +61,7 @@ public class CommentServiceImple implements CommentService {
 
 	@Override
 	public boolean write(String commentSentence, int userIdx, int boardIdx) {
-		log.info("CommentServiceImple write execute");
+		log.info("execute CommentServiceImple write");
 		if(IsValid.isNotValidInts(userIdx, boardIdx)){
 			return false;
 		}
@@ -80,7 +80,7 @@ public class CommentServiceImple implements CommentService {
 
 	@Override
 	public boolean update(int idx, String commentSentence) {
-		log.info("CommentServiceImple update execute");
+		log.info("execute CommentServiceImple update");
 		if(IsValid.isNotValidInts(idx)){
 			return false;
 		}
@@ -99,7 +99,7 @@ public class CommentServiceImple implements CommentService {
 
 	@Override
 	public boolean replyWrite(int idx, String commentSentence, int userIdx, int boardIdx) {
-		log.info("CommentServiceImple replyWrite execute");
+		log.info("execute CommentServiceImple replyWrite");
 		if(IsValid.isNotValidInts(idx, userIdx, boardIdx)){
 			return false;
 		}
@@ -119,7 +119,6 @@ public class CommentServiceImple implements CommentService {
 			return false;
 		}
 		int step = comment.getStep();
-		log.info("CommentServiceImple replyWrite step  :  " + step);
 		if(comments.size() == 0){
 			List<Comment> maxComments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(boardIdx, circle);
 			if(IsValid.isNotValidObjects(maxComments)){
@@ -142,7 +141,6 @@ public class CommentServiceImple implements CommentService {
 				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth() + 1, writer, board, date, date));
 			}
 		} else {
-			log.info("CommentServiceImple replyWrite step2  :  " + step);
 			List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
 			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth() + 1, writer, board, date, date));
 			if(IsValid.isNotValidObjects(stepComments)){

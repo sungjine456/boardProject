@@ -14,7 +14,7 @@ public class ErrorController {
 	
 	@RequestMapping(value="/error404", method=RequestMethod.GET)
 	public String error404(HttpServletResponse res){
-		log.info("ErrorController execute");
+		log.info("execute ErrorController error404");
 		res.setStatus(HttpServletResponse.SC_OK);
 		return "view/error/404error";
 	}

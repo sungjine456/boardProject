@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public OkCheck join(User user){
-		log.info("execute UserService create");
+		log.info("execute UserServiceImpl join");
 		if(IsValid.isNotValidObjects(user)){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
@@ -53,43 +53,39 @@ public class UserServiceImpl implements UserService {
 				return new OkCheck("이미 가입되어있는 회원입니다.", false);
 			}
 		}
-		log.info("isEmail function success");
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck("회원가입에 실패하셨습니다.", false);
 		}
-		log.info("passwordEncryption function success");
 		user.setPassword(password);
 		DateTime date = new DateTime();
 		user.setRegDate(date);
 		user.setUpDate(date);
 		
-		log.info("create User success");
 		userRepository.save(user);
 		return new OkCheck("회원가입에 성공하셨습니다.", true);
 	}
 	
 	@Override
 	public boolean leave(int idx, String loginId){
-		log.info("userService leave");
+		log.info("execute userServiceImpl leave");
 		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId) || !autoLogout(user, loginId)){
 			return false;
 		}
-		log.info("userService leave success before");
 		user.setEmail(garbage);
 		user.setId(garbage);
 		user.setName(garbage);
 		user.setPassword(garbage);
 		userRepository.save(user);
-		log.info("userService leave success");
 		return true;
 	}
 
 	@Override
 	public OkCheck idCheck(String id) {
+		log.info("execute userServiceImpl idCheck");
 		if(StringUtils.isEmpty(id)){
 			return new OkCheck("아이디를 입력해주세요.", false);
 		}
@@ -99,6 +95,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public OkCheck emailCheck(String email) {
+		log.info("execute userServiceImpl emailCheck");
 		if(StringUtils.isEmpty(email)){
 			return new OkCheck("메일을 입력해주세요.", false);
 		}
@@ -113,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User loginCheck(String id, String password) {
-		log.info("execute UserService loginCheck");
+		log.info("execute UserServiceImpl loginCheck");
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return null;
 		}
@@ -128,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public OkCheck translatePassword(String email) {
-		log.info("execute UserService findPassword");
+		log.info("execute UserServiceImpl translatePassword");
 		if(StringUtils.isEmpty(email)){
 			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
 		}
@@ -152,17 +149,19 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findUserForIdx(int idx) {
+		log.info("execute UserServiceImpl findUserForIdx");
 		return userRepository.findOne(idx);
 	}
 	
 	@Override
 	public User findUserForId(String id) {
+		log.info("execute UserServiceImpl findUserForId");
 		return userRepository.findById(id);
 	}
 
 	@Override
 	public OkCheck changePassword(int idx, String password, String changePassword) {
-		log.info("execute UserService changePassword");
+		log.info("execute UserServiceImpl changePassword");
 		if(IsValid.isNotValidInts(idx)){
 			return new OkCheck("로그인 후 이용해주세요.", false);
 		}
@@ -183,7 +182,6 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(changePassword)){
 			return new OkCheck("비밀번호 수정을 다시 입력해 주세요", false);
 		}
-		log.info("passwordEncryption function success");
 		user.setPassword(changePassword);
 		
 		return new OkCheck("비밀번호 수정이 완료되었습니다.", true);
@@ -191,7 +189,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean autoLoginCheck(User user, String loginId){
-		log.info("userService autoLoginCheck");
+		log.info("execute UserServiceImpl autoLoginCheck");
 		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
@@ -208,6 +206,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean autoLogin(User user, String loginId){
+		log.info("execute UserServiceImpl autoLogin");
 		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
@@ -220,7 +219,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean autoLogout(User user, String loginId) {
-		log.info("execute userService autoLogout");
+		log.info("execute userServiceImpl autoLogout");
 		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
@@ -237,11 +236,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean update(int idx, String name, String email, String imgPath) {
+		log.info("execute UserServiceImpl update 4param");
 		String se = File.separator;
 		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
 			return false;
 		}
-		log.info("execute UserService update imgPath : " + imgPath);
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(user)){
 			return false;
@@ -262,7 +261,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean update(int idx, String name, String email) {
-		log.info("execute UserService update");
+		log.info("execute UserService update 3param");
 		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
 			return false;
 		}
@@ -279,7 +278,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean passwordCheck(int idx, String password) {
-		log.info("execute UserService passwordCheck");
+		log.info("execute UserServiceImpl passwordCheck");
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
 			return false;

@@ -41,13 +41,13 @@ public class UserController {
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(){
-		log.info("execute UserController addUserView");
+		log.info("execute UserController joinView");
 		return "view/user/join";
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
-		log.info("execute UserController addUser");
+		log.info("execute UserController join");
 		if(IsValid.isNotValidObjects(user, file)){
 			model.addAttribute("message", "회원가입에 실패하셨습니다.");
 			return "view/user/join";
@@ -63,15 +63,12 @@ public class UserController {
 		}
 		String imgPath = "";
 		String se = File.separator;
-		log.info("execute UserController addUser ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
 			imgPath = createImg(file, ext, user.getId(), se);
 		}
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "C:"+se+"boardProject"+se+"img"+se+"user"+se+"default.png";
 		}
-		log.info("execute UserController addUser fileName : " + imgPath);
-		
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
 		model.addAttribute("message", ok.getMessage());
@@ -258,7 +255,7 @@ public class UserController {
 	
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
 	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, Model model, HttpSession session, RedirectAttributes rea){
-		log.info("execute UserController mypageView");
+		log.info("execute UserController changePassword");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", "페스워드를 입력해주세요");
 			return "redirect:/update";
@@ -356,11 +353,9 @@ public class UserController {
 		String imgPath = "";
 		String id = (String)session.getAttribute("id");
 		String se = File.separator;
-		log.info("execute UserController update ext : " + ext);
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
 			imgPath = createImg(ufile, ext, id, se);
 		}
-		log.info("execute UserController update user check");
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
@@ -374,7 +369,6 @@ public class UserController {
 			model.addAttribute("message", "올바른 이메일 형식을 입력해주세요.");
 			return "view/board/frame";
 		}
-		log.info("execute UserController update name, idx check");
 		if(StringUtils.isEmpty(name) || IsValid.isNotValidInts(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
@@ -383,7 +377,6 @@ public class UserController {
 		name = common.cleanXss(name);
 		email = common.cleanXss(email);
 		if(StringUtils.isNotEmpty(ext)){
-			log.info("execute UserController update 4param check");
 			if(userService.update(idx, name, email, imgPath)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
@@ -395,7 +388,6 @@ public class UserController {
 				model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
 			}
 		} else {
-			log.info("execute UserController update 3param check");
 			if(userService.update(idx, name, email)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
@@ -411,6 +403,7 @@ public class UserController {
 	
 	@RequestMapping("/interceptorView")
 	public String interceptorView(){
+		log.info("execute UserController interceptorView");
 		return "common/interceptorPage";
 	}
 	

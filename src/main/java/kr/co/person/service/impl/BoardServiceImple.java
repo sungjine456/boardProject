@@ -33,7 +33,7 @@ public class BoardServiceImple implements BoardService {
 	
 	@Override
 	public OkCheck write(String title, String content, int userIdx) {
-		log.info("execute BoardService save");
+		log.info("execute BoardServiceImpl write");
 		if(StringUtils.isEmpty(title)){
 			return new OkCheck("제목을 입력해주세요.", false);
 		}
@@ -56,16 +56,25 @@ public class BoardServiceImple implements BoardService {
 
 	@Override
 	public Page<Board> findAll(Pageable pageable) {
+		log.info("execute BoardServiceImpl findAll");
+		if(IsValid.isNotValidObjects(pageable)){
+			return null;
+		}
 		return boardRepository.findAll(pageable);
 	}
 
 	@Override
 	public Board findBoardForIdx(int idx) {
+		log.info("execute BoardServiceImpl findBoardForIdx");
+		if(IsValid.isNotValidInts(idx)){
+			return null;
+		}
 		return boardRepository.findOne(idx);
 	}
 
 	@Override
 	public boolean update(int idx, String title, String content) {
+		log.info("execute BoardServiceImpl update");
 		if(IsValid.isNotValidInts(idx)){
 			return false;
 		}
