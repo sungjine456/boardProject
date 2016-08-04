@@ -119,6 +119,7 @@ public class CommentServiceImple implements CommentService {
 			return false;
 		}
 		int step = comment.getStep();
+		log.info("CommentServiceImple replyWrite step  :  " + step);
 		if(comments.size() == 0){
 			List<Comment> maxComments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(boardIdx, circle);
 			if(IsValid.isNotValidObjects(maxComments)){
@@ -138,11 +139,12 @@ public class CommentServiceImple implements CommentService {
 				}
 				commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
 			} else {
-				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth()+1, writer, board, date, date));
+				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth() + 1, writer, board, date, date));
 			}
 		} else {
-			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
+			log.info("CommentServiceImple replyWrite step2  :  " + step);
 			List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth() + 1, writer, board, date, date));
 			if(IsValid.isNotValidObjects(stepComments)){
 				return false;
 			}
