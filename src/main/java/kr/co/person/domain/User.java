@@ -6,12 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 @Entity
-@DynamicUpdate
 @Table(name = "user")
 public class User {
 	@Id
