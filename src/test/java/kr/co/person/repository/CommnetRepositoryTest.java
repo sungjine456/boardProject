@@ -52,27 +52,29 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void testFindByBoard(){
-		List<Comment> comments = commentRepository.findByBoardIdx(1);
-		Assert.assertThat(comments.size(), is(8));
-		Assert.assertThat(comments.get(0).getComment(), is("comment1"));
-		comments = commentRepository.findByBoardIdx(2);
-		Assert.assertThat(comments.size(), is(0));
-	}
-	
-	@Test
-	public void testFindByCircleAndStepGreaterThanAndDepthLessThanEqual(){
-		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(1, 1, 1, 1);
+	public void testGetCommentListBoardIdxAndCircleAndStepAndDepth(){
+		List<Comment> comments = commentRepository.getCommentList(1, 1, 1, 1);
 		Assert.assertThat(comments.size(), is(3));
-		comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(1, 1, 2, 1);
+		Assert.assertThat(comments.get(0).getIdx(), is(3));
+		Assert.assertThat(comments.get(1).getIdx(), is(6));
+		Assert.assertThat(comments.get(2).getIdx(), is(7));
+		comments = commentRepository.getCommentList(1, 1, 2, 1);
 		Assert.assertThat(comments.size(), is(2));
-		comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(1, 1, 3, 2);
+		Assert.assertThat(comments.get(0).getIdx(), is(6));
+		Assert.assertThat(comments.get(1).getIdx(), is(7));
+		comments = commentRepository.getCommentList(1, 1, 3, 2);
 		Assert.assertThat(comments.size(), is(2));
+		Assert.assertThat(comments.get(0).getIdx(), is(6));
+		Assert.assertThat(comments.get(1).getIdx(), is(7));
+		comments = commentRepository.getCommentList(1, 1, 3, 1);
+		Assert.assertThat(comments.size(), is(2));
+		Assert.assertThat(comments.get(0).getIdx(), is(6));
+		Assert.assertThat(comments.get(1).getIdx(), is(7));
 	}
 	
 	@Test
-	public void testFindByOrderByCircleDescStepAscIdxDesc(){
-		List<Comment> comments = commentRepository.findByBoardIdxOrderByCircleDescStepAscIdxDesc(1);
+	public void testGetCommentListBoardIdx(){
+		List<Comment> comments = commentRepository.getCommentList(1);
 		Assert.assertThat(comments.size(), is(8));
 		Assert.assertThat(comments.get(0).getIdx(), is(8));
 		Assert.assertThat(comments.get(1).getIdx(), is(2));
@@ -85,8 +87,8 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void testFindByBoardIdxAndCircleOrderByStepDesc(){
-		List<Comment> comments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(1, 1);
+	public void testGetCommentListBoardIdxAndCircle(){
+		List<Comment> comments = commentRepository.getCommentList(1, 1);
 		Assert.assertThat(comments.size(), is(5));
 		Assert.assertThat(comments.get(4).getIdx(), is(2));
 		Assert.assertThat(comments.get(3).getIdx(), is(3));
@@ -96,8 +98,8 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void testFindByBoardIdxAndCircleAndStepGreaterThan(){
-		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(1, 1, 1);
+	public void testGetCommentListBoardIdxAndCircleAndStep(){
+		List<Comment> comments = commentRepository.getCommentList(1, 1, 1);
 		Assert.assertThat(comments.size(), is(4));
 		Assert.assertThat(comments.get(0).getIdx(), is(3));
 		Assert.assertThat(comments.get(1).getIdx(), is(4));

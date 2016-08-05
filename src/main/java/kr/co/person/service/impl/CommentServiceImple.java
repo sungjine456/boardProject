@@ -34,7 +34,7 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValidInts(boardIdx)){
 			return new ArrayList<Comment>();
 		}
-		List<Comment> commentList = commentRepository.findByBoardIdxOrderByCircleDescStepAscIdxDesc(boardIdx);
+		List<Comment> commentList = commentRepository.getCommentList(boardIdx);
 		List<Comment> commentList1 = new ArrayList<Comment>();
 		List<Comment> commentList2 = new ArrayList<Comment>();
 		List<Comment> commentList3 = new ArrayList<Comment>();
