@@ -45,7 +45,7 @@
 				<td colspan="2">
 					<input type="hidden" name="commentIdx" value="${comment.idx}"/>
 					<div style="padding-left:5%;">
-<#if comment.circle != 0>
+<#if comment.depth &gt; 0>
 	<#list 1..comment.depth as i>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		<#if i == comment.depth>

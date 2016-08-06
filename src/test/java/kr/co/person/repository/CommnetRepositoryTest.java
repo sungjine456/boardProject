@@ -76,20 +76,21 @@ public class CommnetRepositoryTest {
 	public void testGetCommentListBoardIdx(){
 		List<Comment> comments = commentRepository.getCommentList(1);
 		Assert.assertThat(comments.size(), is(8));
-		Assert.assertThat(comments.get(0).getIdx(), is(8));
-		Assert.assertThat(comments.get(1).getIdx(), is(2));
-		Assert.assertThat(comments.get(2).getIdx(), is(3));
-		Assert.assertThat(comments.get(3).getIdx(), is(4));
-		Assert.assertThat(comments.get(4).getIdx(), is(6));
-		Assert.assertThat(comments.get(5).getIdx(), is(7));
-		Assert.assertThat(comments.get(6).getIdx(), is(5));
-		Assert.assertThat(comments.get(7).getIdx(), is(1));
+		Assert.assertThat(comments.get(0).getIdx(), is(5));
+		Assert.assertThat(comments.get(1).getIdx(), is(8));
+		Assert.assertThat(comments.get(2).getIdx(), is(1));
+		Assert.assertThat(comments.get(3).getIdx(), is(2));
+		Assert.assertThat(comments.get(4).getIdx(), is(3));
+		Assert.assertThat(comments.get(5).getIdx(), is(4));
+		Assert.assertThat(comments.get(6).getIdx(), is(6));
+		Assert.assertThat(comments.get(7).getIdx(), is(7));
 	}
 	
 	@Test
 	public void testGetCommentListBoardIdxAndCircle(){
 		List<Comment> comments = commentRepository.getCommentList(1, 1);
-		Assert.assertThat(comments.size(), is(5));
+		Assert.assertThat(comments.size(), is(6));
+		Assert.assertThat(comments.get(5).getIdx(), is(1));
 		Assert.assertThat(comments.get(4).getIdx(), is(2));
 		Assert.assertThat(comments.get(3).getIdx(), is(3));
 		Assert.assertThat(comments.get(2).getIdx(), is(4));
@@ -105,5 +106,17 @@ public class CommnetRepositoryTest {
 		Assert.assertThat(comments.get(1).getIdx(), is(4));
 		Assert.assertThat(comments.get(2).getIdx(), is(6));
 		Assert.assertThat(comments.get(3).getIdx(), is(7));
+	}
+	
+	@Test
+	public void test(){
+		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
+		Board board = new Board("title", "content", user, date, date);
+		
+		Comment comment = new Comment("testComment", 0, 0, 0, user, board, date, date);
+		commentRepository.saveComment(comment);
+		List<Comment> comments = commentRepository.findAll();
+		int size = comments.size() - 1;
+		Assert.assertThat(comments.get(size).getCircle(), is(comments.get(size).getIdx()));
 	}
 }

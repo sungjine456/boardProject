@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +38,6 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 		List<Order> orderList = new ArrayList<Order>();
 		orderList.add(cb.desc(c.get("circle")));
 		orderList.add(cb.asc(c.get("step")));
-		orderList.add(cb.desc(c.get("idx")));
 		commentcq.select(c)
 			.where(cb.equal(c.get("board"), board))
 			.orderBy(orderList);
@@ -95,9 +95,22 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
 		Root<Comment> c = commentcq.from(Comment.class);
 		commentcq.select(c)
-		.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle), cb.greaterThan(c.get("step"), step), cb.lessThanOrEqualTo(c.get("depth"), depth))
+			.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle), cb.greaterThan(c.get("step"), step), cb.lessThanOrEqualTo(c.get("depth"), depth))
 			.orderBy(cb.asc(c.get("step")));
 		
 		return em.createQuery(commentcq).getResultList();
+	}
+
+	@Override
+	@Transactional
+	public void saveComment(Comment comment) {
+		em.persist(comment);
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Comment> cq = cb.createQuery(Comment.class);
+		Root<Comment> c = cq.from(Comment.class);
+		cq.select(c)
+			.where(cb.equal(c.get("circle"), 0));
+		Comment zeroCircleComment = em.createQuery(cq).getSingleResult();
+		zeroCircleComment.setCircle(zeroCircleComment.getIdx());
 	}
 }

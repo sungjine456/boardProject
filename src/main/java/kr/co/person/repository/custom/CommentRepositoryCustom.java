@@ -5,6 +5,7 @@ import java.util.List;
 import kr.co.person.domain.Comment;
 
 public interface CommentRepositoryCustom {
+	void saveComment(Comment comment);
 	List<Comment> getCommentList(int boardIdx);
 	List<Comment> getCommentList(int boardIdx, int circle);
 	List<Comment> getCommentList(int boardIdx, int circle, int step);
