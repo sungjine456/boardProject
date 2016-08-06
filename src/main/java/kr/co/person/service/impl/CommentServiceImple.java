@@ -114,19 +114,19 @@ public class CommentServiceImple implements CommentService {
 		}
 		int circle = (IsValid.isNotValidInts(comment.getCircle()))?comment.getIdx():comment.getCircle();
 		DateTime date = new DateTime();
-		List<Comment> comments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThanAndDepthLessThanEqualOrderByStepAsc(boardIdx, circle, comment.getStep(), comment.getDepth());
+		List<Comment> comments = commentRepository.getCommentList(boardIdx, circle, comment.getStep(), comment.getDepth());
 		if(IsValid.isNotValidObjects(comments)){
 			return false;
 		}
 		int step = comment.getStep();
 		if(comments.size() == 0){
-			List<Comment> maxComments = commentRepository.findByBoardIdxAndCircleOrderByStepDesc(boardIdx, circle);
+			List<Comment> maxComments = commentRepository.getCommentList(boardIdx, circle);
 			if(IsValid.isNotValidObjects(maxComments)){
 				return false;
 			}
 			int maxSize = maxComments.size();
 			if(maxSize != 0){
-				List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+				List<Comment> stepComments = commentRepository.getCommentList(boardIdx, circle, step);
 				if(IsValid.isNotValidObjects(stepComments)){
 					return false;
 				}
@@ -141,7 +141,7 @@ public class CommentServiceImple implements CommentService {
 				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth() + 1, writer, board, date, date));
 			}
 		} else {
-			List<Comment> stepComments = commentRepository.findByBoardIdxAndCircleAndStepGreaterThan(boardIdx, circle, step);
+			List<Comment> stepComments = commentRepository.getCommentList(boardIdx, circle, step);
 			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth() + 1, writer, board, date, date));
 			if(IsValid.isNotValidObjects(stepComments)){
 				return false;

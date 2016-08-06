@@ -1,9 +1,15 @@
 package kr.co.person.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,40 +24,80 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 	
 	@Override
 	public List<Comment> getCommentList(int boardIdx) {
-		Board board = (Board) em.createQuery("select b from Board b where b.idx = :boardIdx", Board.class).setParameter("boardIdx", boardIdx)
-				.getSingleResult();
-		return em.createQuery("select c from Comment c where c.board = :board order by c.circle desc, c.step asc, c.idx desc", Comment.class)
-				.setParameter("board", board)
-				.getResultList();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
+		Root<Board> b = boardcq.from(Board.class);
+		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
+		boardcq.select(b)
+			.where(boardIdxEqual);
+		Board board = em.createQuery(boardcq).getSingleResult();
+		
+		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
+		Root<Comment> c = commentcq.from(Comment.class);
+		List<Order> orderList = new ArrayList<Order>();
+		orderList.add(cb.desc(c.get("circle")));
+		orderList.add(cb.asc(c.get("step")));
+		orderList.add(cb.desc(c.get("idx")));
+		commentcq.select(c)
+			.where(cb.equal(c.get("board"), board))
+			.orderBy(orderList);
+			
+		return em.createQuery(commentcq).getResultList();
 	}
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle) {
-		Board board = (Board) em.createQuery("select b from Board b where b.idx = :boardIdx", Board.class).setParameter("boardIdx", boardIdx).getSingleResult();
-		return em.createQuery("select c from Comment c where c.board = :board and c.circle = :circle order by c.step desc", Comment.class)
-				.setParameter("board", board)
-				.setParameter("circle", circle)
-				.getResultList();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
+		Root<Board> b = boardcq.from(Board.class);
+		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
+		boardcq.select(b)
+			.where(boardIdxEqual);
+		Board board = em.createQuery(boardcq).getSingleResult();
+		
+		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
+		Root<Comment> c = commentcq.from(Comment.class);
+		commentcq.select(c)
+			.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle))
+			.orderBy(cb.desc(c.get("step")));
+		
+		return em.createQuery(commentcq).getResultList();
 	}
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle, int step) {
-		Board board = (Board) em.createQuery("select b from Board b where b.idx = :boardIdx", Board.class).setParameter("boardIdx", boardIdx).getSingleResult();
-		return em.createQuery("select c from Comment c where c.board = :board and c.circle = :circle and c.step > :step", Comment.class)
-				.setParameter("board", board)
-				.setParameter("circle", circle)
-				.setParameter("step", step)
-				.getResultList();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
+		Root<Board> b = boardcq.from(Board.class);
+		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
+		boardcq.select(b)
+			.where(boardIdxEqual);
+		Board board = em.createQuery(boardcq).getSingleResult();
+		
+		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
+		Root<Comment> c = commentcq.from(Comment.class);
+		commentcq.select(c)
+			.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle), cb.greaterThan(c.get("step"), step));
+		
+		return em.createQuery(commentcq).getResultList();
 	}
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle, int step, int depth) {
-		Board board = (Board) em.createQuery("select b from Board b where b.idx = :boardIdx", Board.class).setParameter("boardIdx", boardIdx).getSingleResult();
-		return em.createQuery("select c from Comment c where c.board = :board and c.circle = :circle and c.step > :step and c.depth <= :depth order by c.step asc", Comment.class)
-				.setParameter("board", board)
-				.setParameter("circle", circle)
-				.setParameter("step", step)
-				.setParameter("depth", depth)
-				.getResultList();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
+		Root<Board> b = boardcq.from(Board.class);
+		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
+		boardcq.select(b)
+			.where(boardIdxEqual);
+		Board board = em.createQuery(boardcq).getSingleResult();
+		
+		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
+		Root<Comment> c = commentcq.from(Comment.class);
+		commentcq.select(c)
+		.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle), cb.greaterThan(c.get("step"), step), cb.lessThanOrEqualTo(c.get("depth"), depth))
+			.orderBy(cb.asc(c.get("step")));
+		
+		return em.createQuery(commentcq).getResultList();
 	}
 }
