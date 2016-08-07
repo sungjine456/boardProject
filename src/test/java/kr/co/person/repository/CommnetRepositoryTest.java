@@ -109,7 +109,7 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void test(){
+	public void testSaveComment(){
 		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
 		Board board = new Board("title", "content", user, date, date);
 		
@@ -118,5 +118,22 @@ public class CommnetRepositoryTest {
 		List<Comment> comments = commentRepository.findAll();
 		int size = comments.size() - 1;
 		Assert.assertThat(comments.get(size).getCircle(), is(comments.get(size).getIdx()));
+	}
+	
+	@Test
+	public void testUpdateComment(){
+		List<Comment> comments = commentRepository.getCommentList(1, 1, 1);
+		Assert.assertThat(comments.size(), is(4));
+		Assert.assertThat(comments.get(0).getStep(), is(2));
+		Assert.assertThat(comments.get(1).getStep(), is(3));
+		Assert.assertThat(comments.get(2).getStep(), is(4));
+		Assert.assertThat(comments.get(3).getStep(), is(5));
+		commentRepository.updateComment(1, 1, 1);
+		comments = commentRepository.getCommentList(1, 1, 1);
+		Assert.assertThat(comments.size(), is(4));
+		Assert.assertThat(comments.get(0).getStep(), is(3));
+		Assert.assertThat(comments.get(1).getStep(), is(4));
+		Assert.assertThat(comments.get(2).getStep(), is(5));
+		Assert.assertThat(comments.get(3).getStep(), is(6));
 	}
 }

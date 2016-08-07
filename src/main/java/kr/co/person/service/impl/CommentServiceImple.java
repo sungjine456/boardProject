@@ -104,32 +104,14 @@ public class CommentServiceImple implements CommentService {
 			}
 			int maxSize = maxComments.size();
 			if(maxSize != 0){
-				List<Comment> stepComments = commentRepository.getCommentList(boardIdx, circle, step);
-				if(IsValid.isNotValidObjects(stepComments)){
-					return false;
-				}
-				int stepSize = stepComments.size();
-				for(int i = 0; i < stepSize; i++){
-					Comment uComment = stepComments.get(i);
-					uComment.setStep(uComment.getStep() + 1);
-					commentRepository.save(uComment);
-				}
+				commentRepository.updateComment(boardIdx, circle, step);
 				commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
 			} else {
 				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth() + 1, writer, board, date, date));
 			}
 		} else {
-			List<Comment> stepComments = commentRepository.getCommentList(boardIdx, circle, step);
 			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth() + 1, writer, board, date, date));
-			if(IsValid.isNotValidObjects(stepComments)){
-				return false;
-			}
-			int stepSize = stepComments.size();
-			for(int i = 0; i < stepSize; i++){
-				Comment uComment = stepComments.get(i);
-				uComment.setStep(uComment.getStep() + 1);
-				commentRepository.save(uComment);
-			}
+			commentRepository.updateComment(boardIdx, circle, step);
 		}
 		return true;
 	}

@@ -113,4 +113,15 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 		Comment zeroCircleComment = em.createQuery(cq).getSingleResult();
 		zeroCircleComment.setCircle(zeroCircleComment.getIdx());
 	}
+
+	@Override
+	@Transactional
+	public void updateComment(int boardIdx, int circle, int step) {
+		List<Comment> comments = getCommentList(boardIdx, circle, step);
+		int size = comments.size();
+		for(int i = 0; i < size; i++){
+			Comment comment = comments.get(i);
+			comment.setStep(comment.getStep() + 1);
+		}
+	}
 }
