@@ -1,5 +1,7 @@
 package kr.co.person.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,12 +12,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
+import kr.co.person.pojo.CommonEntity;
 
 @Entity
 @Table(name = "comment")
-public class Comment {
+@AttributeOverrides({
+	@AttributeOverride(name = "regDate", column = @Column(name = "reg_date", nullable = false)),
+	@AttributeOverride(name = "upDate", column = @Column(name = "up_date", nullable = false))
+})
+public class Comment extends CommonEntity {
 	@Id
 	@Column(name = "comment_idx")
 	@GeneratedValue
@@ -34,24 +41,17 @@ public class Comment {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name="board")
 	private Board board;
-	@Column(name="reg_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime regDate;
-	@Column(name="up_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime upDate;
 	
 	public Comment(){
 	}	
 	public Comment(String comment, int circle, int step, int depth, User writer, Board board, DateTime regDate, DateTime upDate){
+		super(regDate, upDate);
 		this.comment = comment;
 		this.circle = circle;
 		this.step = step;
 		this.depth = depth;
 		this.writer = writer;
 		this.board = board;
-		this.regDate = regDate;
-		this.upDate = upDate;
 	}
 	
 	public int getIdx() {
@@ -95,17 +95,5 @@ public class Comment {
 	}
 	public void setBoard(Board board) {
 		this.board = board;
-	}
-	public DateTime getRegDate() {
-		return regDate;
-	}
-	public void setRegDate(DateTime regDate) {
-		this.regDate = regDate;
-	}
-	public DateTime getUpDate() {
-		return upDate;
-	}
-	public void setUpDate(DateTime upDate) {
-		this.upDate = upDate;
 	}
 }

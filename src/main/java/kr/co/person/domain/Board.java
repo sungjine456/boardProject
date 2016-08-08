@@ -1,5 +1,7 @@
 package kr.co.person.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,12 +12,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
+import kr.co.person.pojo.CommonEntity;
 
 @Entity
 @Table(name = "board")
-public class Board {
+@AttributeOverrides({
+	@AttributeOverride(name = "regDate", column = @Column(name = "reg_date", nullable = false)),
+	@AttributeOverride(name = "upDate", column = @Column(name = "up_date", nullable = false))
+})
+public class Board extends CommonEntity{
 	@Id
 	@Column(name = "board_idx")
 	@GeneratedValue
@@ -29,21 +36,14 @@ public class Board {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "writer")
 	private User user;
-	@Column(name = "reg_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime regDate;
-	@Column(name = "up_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime upDate;
 	
 	public Board(){
 	}
 	public Board(String title, String content, User user, DateTime regDate, DateTime upDate){
+		super(regDate, upDate);
 		this.title = title;
 		this.content = content;
 		this.user = user;
-		this.regDate = regDate;
-		this.upDate = upDate;
 	}
 
 	public int getIdx() {
@@ -75,17 +75,5 @@ public class Board {
 	}
 	public void setUser(User user) {
 		this.user = user;
-	}
-	public DateTime getRegDate() {
-		return regDate;
-	}
-	public void setRegDate(DateTime regDate) {
-		this.regDate = regDate;
-	}
-	public DateTime getUpDate() {
-		return upDate;
-	}
-	public void setUpDate(DateTime upDate) {
-		this.upDate = upDate;
 	}
 }

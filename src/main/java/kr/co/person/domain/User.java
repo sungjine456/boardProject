@@ -1,17 +1,24 @@
 package kr.co.person.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
+import kr.co.person.pojo.CommonEntity;
 
 @Entity
 @Table(name = "user")
-public class User {
+@AttributeOverrides({
+	@AttributeOverride(name = "regDate", column = @Column(name = "reg_date", nullable = false)),
+	@AttributeOverride(name = "upDate", column = @Column(name = "up_date", nullable = false))
+})
+public class User extends CommonEntity {
 	@Id
 	@Column(name = "user_idx")
 	@GeneratedValue
@@ -26,24 +33,17 @@ public class User {
 	private String email;
 	@Column(name="img")
 	private String img;
-	@Column(name="reg_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime regDate;
-	@Column(name="up_date", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime upDate;
 	
 	public User(){
 	}
 	
 	public User(String id, String email, String password, String name, String img, DateTime regDate, DateTime upDate){
+		super(regDate, upDate);
 		this.id = id;
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.img = img;
-		this.regDate = regDate;
-		this.upDate = upDate;
 	}
 	
 	public int getIdx() {
@@ -75,18 +75,6 @@ public class User {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public DateTime getRegDate() {
-		return regDate;
-	}
-	public void setRegDate(DateTime regDate) {
-		this.regDate = regDate;
-	}
-	public DateTime getUpDate() {
-		return upDate;
-	}
-	public void setUpDate(DateTime upDate) {
-		this.upDate = upDate;
 	}
 	public String getImg() {
 		return img;
