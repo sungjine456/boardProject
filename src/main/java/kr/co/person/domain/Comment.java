@@ -14,8 +14,6 @@ import javax.persistence.Table;
 
 import org.joda.time.DateTime;
 
-import kr.co.person.pojo.CommonEntity;
-
 @Entity
 @Table(name = "comment")
 @AttributeOverrides({

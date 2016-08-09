@@ -1,12 +1,23 @@
 package kr.co.person.service;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,11 +35,26 @@ public class BoardServiceTest {
 	private Board board;
 	
 	@Test
-	public void testSave() {
+	public void testWrite() {
 		Assert.assertThat(boardService.write("", "content", 1).getMessage(), is("제목을 입력해주세요."));
 		Assert.assertThat(boardService.write("title", "", 1).getMessage(), is("내용을 입력해주세요."));
 		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is("유효한 회원이 아닙니다."));
 		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is("글이 등록 되었습니다."));
+	}
+	
+	@Test
+	@Transactional
+	public void testFindAll(){
+		Pageable pageable = new PageRequest(0, 10, Direction.DESC, "idx");
+		Page<Board> page = boardService.findAll(pageable);
+		List<Board> boards = page.getContent();
+		Assert.assertThat(page.getTotalPages(), is(1));
+		Assert.assertThat(page.getTotalElements(), is(1L));
+		Assert.assertThat(boards.get(0).getIdx(), is(1));
+		Assert.assertThat(boards.get(0).getContent(), is("content"));
+		Assert.assertThat(boards.get(0).getTitle(), is("title"));
+		Assert.assertThat(boards.get(0).getHitCount(), is(0));
+		Assert.assertThat(boards.get(0).getUser().getIdx(), is(1));
 	}
 	
 	@Test

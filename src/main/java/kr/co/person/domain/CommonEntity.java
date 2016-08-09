@@ -1,4 +1,4 @@
-package kr.co.person.pojo;
+package kr.co.person.domain;
 
 import javax.persistence.MappedSuperclass;
 
