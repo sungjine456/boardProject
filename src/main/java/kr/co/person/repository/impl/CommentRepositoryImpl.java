@@ -117,11 +117,11 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 	@Override
 	@Transactional
 	public void updateComment(int boardIdx, int circle, int step) {
-		List<Comment> comments = getCommentList(boardIdx, circle, step);
-		int size = comments.size();
-		for(int i = 0; i < size; i++){
-			Comment comment = comments.get(i);
-			comment.setStep(comment.getStep() + 1);
-		}
+		Board board = (Board) em.createQuery("select b from Board b where b.idx = :boardIdx", Board.class).setParameter("boardIdx", boardIdx).getSingleResult();
+		em.createQuery("update Comment c set c.step = (c.step + 1) where c.board = :board and c.circle = :circle and c.step > :step")
+			.setParameter("board", board)
+			.setParameter("circle", circle)
+			.setParameter("step", step)
+			.executeUpdate();
 	}
 }
