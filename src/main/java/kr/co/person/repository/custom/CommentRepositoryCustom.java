@@ -7,7 +7,6 @@ import kr.co.person.domain.Comment;
 public interface CommentRepositoryCustom {
 	void saveComment(Comment comment);
 	void updateComment(int boardIdx, int circle, int step);
-	List<Comment> getCommentList(int boardIdx);
 	List<Comment> getCommentList(int boardIdx, int circle);
 	List<Comment> getCommentList(int boardIdx, int circle, int step);
 	List<Comment> getCommentList(int boardIdx, int circle, int step, int depth);

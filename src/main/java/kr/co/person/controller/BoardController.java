@@ -1,7 +1,6 @@
 package kr.co.person.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,16 +45,16 @@ public class BoardController {
 	@Autowired private Common common;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req){
+	public String main(@RequestParam(required=false) Integer pageNum, Model model, HttpServletRequest req){
 		log.info("execute BoardController main");
-		if(IsValid.isNotValidObjects(num)){
-			num = 0;
+		if(IsValid.isNotValidObjects(pageNum)){
+			pageNum = 0;
 		} else {
-			num -= 1;
+			pageNum -= 1;
 		}
-		Pageable pageable = new PageRequest(num, 10, Direction.DESC, "idx");
-		int startNum = num / 5 * 5 + 1;
-		int lastNum = (num / 5 + 1) * 5;
+		Pageable pageable = new PageRequest(pageNum, 10, Direction.DESC, "idx");
+		int startNum = pageNum / 5 * 5 + 1;
+		int lastNum = (pageNum / 5 + 1) * 5;
 		Page<Board> pages = boardService.findAll(pageable);
 		if(IsValid.isNotValidObjects(pages)){
 			return "view/user/login";
@@ -107,13 +107,24 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam(required=false) Integer num, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
+	public String boardDetailView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
 		if(IsValid.isNotValidObjects(num)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
 			return "redirect:/board";
 		}
+		if(IsValid.isNotValidObjects(pageNum)){
+			pageNum = 0;
+		} else {
+			pageNum -= 1;
+		}
+		Pageable pageable = new PageRequest(0, 99, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		int startNum = pageNum / 5 * 5 + 1;
+		int lastNum = (pageNum / 5 + 1) * 5;
 		int userIdx = (int)session.getAttribute("idx");
+
 		Board board = boardService.findBoardForIdx(num);
 		BoardLike boardLike = boardService.getBoardLike(num, userIdx);
 		long likeCount = boardService.getBoardLikeCount(num);
@@ -122,8 +133,18 @@ public class BoardController {
 			return "redirect:/board";
 		}
 		String like = (IsValid.isNotValidObjects(boardLike))? "좋아요":"좋아요 취소";
-		List<Comment> comments = commentService.findAllCommentByBoard(num);
+		Page<Comment> comments = commentService.findAllCommentByBoard(num, pageable);
+		if(IsValid.isNotValidObjects(comments)){
+			return "view/board/frame";
+		}
+		int lastPage = comments.getTotalPages();
+		if(lastNum > lastPage){
+			lastNum = lastPage;
+		}
 		model.addAttribute("comments", comments);
+		model.addAttribute("startNum", startNum);
+		model.addAttribute("lastNum", lastNum);
+		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("include", "main/boardDetail.ftl");
 		model.addAttribute("board", board);
 		model.addAttribute("likeCount", likeCount);
@@ -135,27 +156,29 @@ public class BoardController {
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
 				if(StringUtils.equals("hit", key)){
-					isHit = false;
-					boolean bool = true;
 					String[] vals = val.split(" ");
 					int length = vals.length;
 					for(int j = 0; j < length; j++){
 						int value = Integer.parseInt(vals[j]);
 						if(value == num){
-							bool = false;
+							isHit = false;
 						}
 					}
-					if(bool){
+					if(isHit){
+						// cookie에 hit가 있으면서 현제 게시글 값은 없을 때
 						boardService.addHitCount(num);
 						res.addCookie(common.addCookie("hit", val + num + " "));
+						isHit = false;
 					}
 				}
 			}
 			if(isHit){
+				// cookie에 hit이 없을 때
 			    res.addCookie(common.addCookie("hit", num + " "));
 			    boardService.addHitCount(num);
 			}
 		} else {
+			// cookie값이 없을 때
 			res.addCookie(common.addCookie("hit", num + " "));
 		    boardService.addHitCount(num);
 		}
@@ -172,7 +195,7 @@ public class BoardController {
 		Board board = boardService.findBoardForIdx(num);
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
-			return "redirect:/boardDetail";
+			return "redirect:/board";
 		}
 		model.addAttribute("include", "main/update.ftl");
 		model.addAttribute("board", board);

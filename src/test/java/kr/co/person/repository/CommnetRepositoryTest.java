@@ -10,6 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -74,7 +79,11 @@ public class CommnetRepositoryTest {
 	
 	@Test
 	public void testGetCommentListBoardIdx(){
-		List<Comment> comments = commentRepository.getCommentList(1);
+		Pageable pageable = new PageRequest(0, 10, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		Page<Comment> pages = commentRepository.findByBoardIdx(1, pageable);
+		List<Comment> comments = pages.getContent();
 		Assert.assertThat(comments.size(), is(8));
 		Assert.assertThat(comments.get(0).getIdx(), is(5));
 		Assert.assertThat(comments.get(1).getIdx(), is(8));

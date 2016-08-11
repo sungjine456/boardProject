@@ -1,6 +1,5 @@
 package kr.co.person.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +7,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +30,15 @@ public class CommentServiceImple implements CommentService {
 	@Autowired private BoardRepository boardRepository;
 	@Autowired private UserRepository userRepository;
 	
-	public List<Comment> findAllCommentByBoard(int boardIdx){
+	public Page<Comment> findAllCommentByBoard(int boardIdx, Pageable pageable){
 		log.info("execute CommentServiceImple findAllCommentByBoard");
-		if(IsValid.isNotValidInts(boardIdx)){
-			return new ArrayList<Comment>();
+		if(IsValid.isNotValidObjects(pageable)){
+			return null;
 		}
-		return commentRepository.getCommentList(boardIdx);
+		if(IsValid.isNotValidInts(boardIdx)){
+			return null;
+		}
+		return commentRepository.findByBoardIdx(boardIdx, pageable);
 	}
 
 	@Override

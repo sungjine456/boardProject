@@ -1,8 +1,8 @@
 package kr.co.person.service;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -10,6 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -27,9 +32,13 @@ public class CommentServiceTest {
 	
 	@Test
 	public void testFindAllCommentByBoard() {
-		List<Comment> comments = commentService.findAllCommentByBoard(0);
-		Assert.assertThat(comments, is(new ArrayList<Comment>()));
-		comments = commentService.findAllCommentByBoard(1);
+		Pageable pageable = new PageRequest(0, 10, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		Page<Comment> pages = commentService.findAllCommentByBoard(0, pageable);
+		Assert.assertThat(pages, is(nullValue()));
+		pages = commentService.findAllCommentByBoard(1, pageable);
+		List<Comment> comments = pages.getContent();
 		Assert.assertThat(comments.size(), is(8));
 	}
 	
@@ -52,7 +61,11 @@ public class CommentServiceTest {
 		Assert.assertThat(commentService.update(9, null), is(false));
 		// findAllCommentByBoard는 idx 역순으로 리턴 하기때문에 마지막 뎃글로 테스트. 
 		Assert.assertThat(commentService.update(5, "comment update test"), is(true));
-		List<Comment> comments = commentService.findAllCommentByBoard(1);
+		Pageable pageable = new PageRequest(0, 10, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		Page<Comment> pages = commentService.findAllCommentByBoard(1, pageable);
+		List<Comment> comments = pages.getContent();
 		Assert.assertThat(comments.get(0).getComment(), is("comment update test"));
 	}
 }

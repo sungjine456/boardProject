@@ -40,7 +40,7 @@
 					<button type="button" id="commentBtn" class="btn btn-primary">댓글</button>
 				</td>
 			</tr>
-<#list comments as comment>
+<#list comments.content as comment>
 			<tr>
 				<td colspan="2">
 					<input type="hidden" name="commentIdx" value="${comment.idx}"/>
@@ -89,6 +89,21 @@
 				</td>
 			</tr>
 </#list>
+			<tr>
+				<td colspan="5">
+					<div style="text-align:center;">
+		<#if startNum &gt; 2>
+			<a class="btn btn-default btn-sm" href="?num=${startNum-1}">이전</a>
+		</#if>
+		<#list startNum..lastNum as i>
+			<a class="btn btn-default btn-sm" href="?num=${i}">${i}</a>
+		</#list>
+		<#if lastNum != lastPage>
+			<a class="btn btn-default btn-sm" href="?num=${lastNum+1}">다음</a>
+		</#if>
+					</div>
+				</td>
+			</tr>
 		</table>
 	</form>
 </div>

@@ -1,13 +1,11 @@
 package kr.co.person.repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
@@ -22,28 +20,6 @@ import kr.co.person.repository.custom.CommentRepositoryCustom;
 public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
 	@PersistenceContext private EntityManager em;
-	
-	@Override
-	public List<Comment> getCommentList(int boardIdx) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
-		Root<Board> b = boardcq.from(Board.class);
-		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
-		boardcq.select(b)
-			.where(boardIdxEqual);
-		Board board = em.createQuery(boardcq).getSingleResult();
-		
-		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
-		Root<Comment> c = commentcq.from(Comment.class);
-		List<Order> orderList = new ArrayList<Order>();
-		orderList.add(cb.desc(c.get("circle")));
-		orderList.add(cb.asc(c.get("step")));
-		commentcq.select(c)
-			.where(cb.equal(c.get("board"), board))
-			.orderBy(orderList);
-			
-		return em.createQuery(commentcq).getResultList();
-	}
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle) {
