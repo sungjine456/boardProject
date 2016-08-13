@@ -4,16 +4,17 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
+
 import kr.co.person.domain.Board;
 import kr.co.person.domain.Comment;
+import kr.co.person.domain.QBoard;
+import kr.co.person.domain.QComment;
 import kr.co.person.repository.custom.CommentRepositoryCustom;
 
 @Repository
@@ -23,81 +24,68 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
-		Root<Board> b = boardcq.from(Board.class);
-		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
-		boardcq.select(b)
-			.where(boardIdxEqual);
-		Board board = em.createQuery(boardcq).getSingleResult();
-		
-		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
-		Root<Comment> c = commentcq.from(Comment.class);
-		commentcq.select(c)
-			.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle))
-			.orderBy(cb.desc(c.get("step")));
-		
-		return em.createQuery(commentcq).getResultList();
+		JPAQuery query = new JPAQuery(em);
+		QBoard qBoard = new QBoard("b");
+		Board board = query.from(qBoard)
+							.where(qBoard.idx.eq(boardIdx))
+							.uniqueResult(qBoard);
+		QComment qComment = new QComment("c");
+		return query.from(qComment)
+				.where(qComment.board.eq(board).and(qComment.circle.eq(circle)))
+				.orderBy(qComment.step.desc())
+				.list(qComment);
 	}
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle, int step) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
-		Root<Board> b = boardcq.from(Board.class);
-		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
-		boardcq.select(b)
-			.where(boardIdxEqual);
-		Board board = em.createQuery(boardcq).getSingleResult();
-		
-		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
-		Root<Comment> c = commentcq.from(Comment.class);
-		commentcq.select(c)
-			.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle), cb.greaterThan(c.get("step"), step));
-		
-		return em.createQuery(commentcq).getResultList();
+		JPAQuery query = new JPAQuery(em);
+		QBoard qBoard = new QBoard("b");
+		Board board = query.from(qBoard)
+							.where(qBoard.idx.eq(boardIdx))
+							.uniqueResult(qBoard);
+		QComment qComment = new QComment("c");
+		return query.from(qComment)
+				.where(qComment.board.eq(board).and(qComment.circle.eq(circle)).and(qComment.step.gt(step)))
+				.list(qComment);
 	}
 
 	@Override
 	public List<Comment> getCommentList(int boardIdx, int circle, int step, int depth) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Board> boardcq = cb.createQuery(Board.class);
-		Root<Board> b = boardcq.from(Board.class);
-		Predicate boardIdxEqual = cb.equal(b.get("idx"), boardIdx);
-		boardcq.select(b)
-			.where(boardIdxEqual);
-		Board board = em.createQuery(boardcq).getSingleResult();
-		
-		CriteriaQuery<Comment> commentcq = cb.createQuery(Comment.class);
-		Root<Comment> c = commentcq.from(Comment.class);
-		commentcq.select(c)
-			.where(cb.equal(c.get("board"), board), cb.equal(c.get("circle"), circle), cb.greaterThan(c.get("step"), step), cb.lessThanOrEqualTo(c.get("depth"), depth))
-			.orderBy(cb.asc(c.get("step")));
-		
-		return em.createQuery(commentcq).getResultList();
+		JPAQuery query = new JPAQuery(em);
+		QBoard qBoard = new QBoard("b");
+		Board board = query.from(qBoard)
+							.where(qBoard.idx.eq(boardIdx))
+							.uniqueResult(qBoard);
+		QComment qComment = new QComment("c");
+		return query.from(qComment)
+				.where(qComment.board.eq(board).and(qComment.circle.eq(circle)).and(qComment.step.gt(step)).and(qComment.depth.loe(depth)))
+				.orderBy(qComment.step.asc())
+				.list(qComment);
 	}
 
 	@Override
 	@Transactional
 	public void saveComment(Comment comment) {
+		JPAQuery query = new JPAQuery(em);
 		em.persist(comment);
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Comment> cq = cb.createQuery(Comment.class);
-		Root<Comment> c = cq.from(Comment.class);
-		cq.select(c)
-			.where(cb.equal(c.get("circle"), 0));
-		Comment zeroCircleComment = em.createQuery(cq).getSingleResult();
+		QComment qComment = new QComment("c");
+		Comment zeroCircleComment = query.from(qComment)
+										.where(qComment.circle.eq(0))
+										.uniqueResult(qComment);
 		zeroCircleComment.setCircle(zeroCircleComment.getIdx());
 	}
 
 	@Override
 	@Transactional
 	public void updateComment(int boardIdx, int circle, int step) {
-		Board board = (Board) em.createQuery("select b from Board b where b.idx = :boardIdx", Board.class).setParameter("boardIdx", boardIdx).getSingleResult();
-		em.createQuery("update Comment c set c.step = (c.step + 1) where c.board = :board and c.circle = :circle and c.step > :step")
-			.setParameter("board", board)
-			.setParameter("circle", circle)
-			.setParameter("step", step)
-			.executeUpdate();
+		JPAQuery query = new JPAQuery(em);
+		QBoard qBoard = new QBoard("b");
+		Board board = query.from(qBoard)
+							.where(qBoard.idx.eq(boardIdx))
+							.uniqueResult(qBoard);
+		QComment qComment = new QComment("c");
+		new JPAUpdateClause(em, qComment).where(qComment.board.eq(board).and(qComment.circle.eq(circle)).and(qComment.step.gt(step)))
+										.set(qComment.step, qComment.step.add(1))
+										.execute();
 	}
 }

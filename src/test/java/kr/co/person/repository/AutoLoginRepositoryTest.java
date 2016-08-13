@@ -29,7 +29,7 @@ public class AutoLoginRepositoryTest {
 	public void testSave() {
 		User user = userRepository.findOne(1);
 		Assert.assertThat(user.getIdx(), is(1));
-		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(user.getName(), is("hong"));
 		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
 		AutoLogin autoLoginSave = autoLoginRepository.save(new AutoLogin("asdasdasd", new DateTime(), user));
 		Assert.assertThat(autoLoginSave.getLoginId(), is("asdasdasd"));

@@ -40,7 +40,7 @@ public class UserRepositoryTest {
     @Test
     public void testFindByIdAndPassword() {
     	user = userRepository.findByIdAndPassword("sungjin", password);
-    	Assert.assertThat(user.getName(), is("홍길동"));
+    	Assert.assertThat(user.getName(), is("hong"));
     	Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
     	Assert.assertThat(user.getId(), is("sungjin"));
     	Assert.assertThat(user.getPassword(), is(password));
@@ -49,7 +49,7 @@ public class UserRepositoryTest {
     @Test
     public void testFindByEmail(){
     	user = userRepository.findByEmail("sungjin@naver.com");
-    	Assert.assertThat(user.getName(), is("홍길동"));
+    	Assert.assertThat(user.getName(), is("hong"));
     	Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
     	Assert.assertThat(user.getId(), is("sungjin"));
     	Assert.assertThat(user.getPassword(), is(password));

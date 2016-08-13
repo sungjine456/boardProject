@@ -56,7 +56,7 @@ public class UserServiceTest {
 	@Test
 	public void testFindUserForIdx() {
 		user = userService.findUserForIdx(1);
-		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(user.getName(), is("hong"));
 		Assert.assertThat(user.getId(), is("sungjin"));
 		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
 	}
@@ -68,7 +68,7 @@ public class UserServiceTest {
 		user = userService.findUserForId("abcdabcd");
 		Assert.assertThat(user, is(nullValue()));
 		user = userService.findUserForId("sungjin");
-		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(user.getName(), is("hong"));
 		Assert.assertThat(user.getId(), is("sungjin"));
 		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
 	}
@@ -89,7 +89,7 @@ public class UserServiceTest {
 		user = new User();
 		user.setEmail("sungjin1@naver.com");
 		user.setId("sungjin1");
-		user.setName("홍길동");
+		user.setName("hong");
 		user.setPassword(password);
 		user.setRegDate(date);
 		user.setUpDate(date);
@@ -126,7 +126,7 @@ public class UserServiceTest {
 		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
 		Assert.assertThat(user.getId(), is("sungjin"));
 		Assert.assertThat(user.getPassword(), is(password));
-		Assert.assertThat(user.getName(), is("홍길동"));
+		Assert.assertThat(user.getName(), is("hong"));
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
 		Assert.assertThat(userService.leave(1, "asdasdasd"), is(true));
 		user = userService.findUserForIdx(1);
