@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
+import kr.co.person.common.Message;
 import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
@@ -24,38 +25,36 @@ import kr.co.person.service.UserService;
 public class UserServiceImpl implements UserService {
 	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 	
-	@Autowired 
-	private UserRepository userRepository;
-	@Autowired
-	private AutoLoginRepository autoLoginRepository;
-	@Autowired 
-	private Common common;
+	@Autowired private UserRepository userRepository;
+	@Autowired private AutoLoginRepository autoLoginRepository;
+	@Autowired private Common common;
+	@Autowired private Message message;
 	
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserServiceImpl join");
 		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck("회원가입에 실패하셨습니다.", false);
+			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
 		user.setName(common.cleanXss(user.getName()));
 		String id = common.cleanXss(user.getId());
 		String password = user.getPassword();
 		String email = user.getEmail();
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
-			return new OkCheck("아이디와 비밀번호를 확인해주세요.", false);	
+			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
 		}
 		if(!common.isEmail(email)){
-			return new OkCheck("이메일 형식이 잘 못되었습니다.", false);
+			return new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		}
 		User findUser = userRepository.findById(id);
 		if(IsValid.isValidObjects(findUser)){
 			if(StringUtils.isNotEmpty(findUser.getId())){
-				return new OkCheck("이미 가입되어있는 회원입니다.", false);
+				return new OkCheck(message.USER_ALREADY_JOIN, false);
 			}
 		}
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
-			return new OkCheck("회원가입에 실패하셨습니다.", false);
+			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
 		user.setPassword(password);
 		DateTime date = new DateTime();
@@ -63,7 +62,7 @@ public class UserServiceImpl implements UserService {
 		user.setUpDate(date);
 		
 		userRepository.save(user);
-		return new OkCheck("회원가입에 성공하셨습니다.", true);
+		return new OkCheck(message.USER_SUCCESS_JOIN, true);
 	}
 	
 	@Override
@@ -87,24 +86,30 @@ public class UserServiceImpl implements UserService {
 	public OkCheck idCheck(String id) {
 		log.info("execute userServiceImpl idCheck");
 		if(StringUtils.isEmpty(id)){
-			return new OkCheck("아이디를 입력해주세요.", false);
+			return new OkCheck(message.USER_NO_ID, false);
 		}
 		User user = userRepository.findById(id);
-		return (IsValid.isNotValidObjects(user))?new OkCheck("가입 가능한 아이디입니다.", true):new OkCheck("이미 가입되어 있는 아이디입니다.", false);
+		return (IsValid.isNotValidObjects(user))
+				?new OkCheck(message.USER_AVAILABLE_ID, true)
+				:new OkCheck(message.USER_ALREADY_JOIN_ID, false);
 	}
 
 	@Override
 	public OkCheck emailCheck(String email) {
 		log.info("execute userServiceImpl emailCheck");
 		if(StringUtils.isEmpty(email)){
-			return new OkCheck("메일을 입력해주세요.", false);
+			return new OkCheck(message.USER_NO_EMAIL, false);
 		}
 		User findUserByEmail = userRepository.findByEmail(email);
 		if(IsValid.isValidObjects(findUserByEmail)){
 			String emailVal = findUserByEmail.getEmail();
-			return (emailVal != null && common.isEmail(email))?new OkCheck("이미 가입되어 있는 이메일입니다.", false):new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
+			return (emailVal != null && common.isEmail(email))
+					?new OkCheck(message.USER_ALREADY_JOIN_EMAIL, false)
+					:new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		} else {
-			return (common.isEmail(email))?new OkCheck("가입 가능한 이메일입니다.", true):new OkCheck("올바른 형식의 메일을 입력해주세요.", false);
+			return (common.isEmail(email))
+					?new OkCheck(message.USER_AVAILABLE_EMAIL, true)
+					:new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		}
 	}
 
@@ -127,11 +132,11 @@ public class UserServiceImpl implements UserService {
 	public OkCheck translatePassword(String email) {
 		log.info("execute UserServiceImpl translatePassword");
 		if(StringUtils.isEmpty(email)){
-			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
+			return new OkCheck(message.USER_FAIL_TRANSlATE_PASSWORD, false);
 		}
 		User user = userRepository.findByEmail(email); 
 		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
+			return new OkCheck(message.USER_FAIL_TRANSlATE_PASSWORD, false);
 		}
 		String random = "";
 		for(int i = 0; i < 6; i++){
@@ -139,7 +144,7 @@ public class UserServiceImpl implements UserService {
 		}
 		String password = common.passwordEncryption(random);
 		if(StringUtils.isEmpty(password)){
-			return new OkCheck("비밀번호 수정을 실패했습니다.", false);
+			return new OkCheck(message.USER_FAIL_TRANSlATE_PASSWORD, false);
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);
@@ -163,28 +168,28 @@ public class UserServiceImpl implements UserService {
 	public OkCheck changePassword(int idx, String password, String changePassword) {
 		log.info("execute UserServiceImpl changePassword");
 		if(IsValid.isNotValidInts(idx)){
-			return new OkCheck("로그인 후 이용해주세요.", false);
+			return new OkCheck(message.USER_NO_LOGIN, false);
 		}
 		if(StringUtils.isEmpty(password)){
-			return new OkCheck("비밀번호를 입력해 주세요", false);
+			return new OkCheck(message.USER_NO_PASSWORD, false);
 		}
 		if(StringUtils.isEmpty(changePassword)){
-			return new OkCheck("비밀번호 수정을 입력해 주세요", false);
+			return new OkCheck(message.USER_NO_UPDATE_PASSWORD, false);
 		}
 		User user = userRepository.findOne(idx);
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
-			return new OkCheck("비밀번호를 다시 입력해 주세요", false);
+			return new OkCheck(message.USER_NO_PASSWORD, false);
 		} else if(!password.equals(user.getPassword())){
-			return new OkCheck("아이디의 비밀번호가 맞지 않습니다.", false);
+			return new OkCheck(message.USER_RE_PASSWORD, false);
 		}
 		changePassword = common.passwordEncryption(changePassword);
 		if(StringUtils.isEmpty(changePassword)){
-			return new OkCheck("비밀번호 수정을 다시 입력해 주세요", false);
+			return new OkCheck(message.USER_RE_UPDATE_PASSWORD, false);
 		}
 		user.setPassword(changePassword);
 		
-		return new OkCheck("비밀번호 수정이 완료되었습니다.", true);
+		return new OkCheck(message.USER_SUCCESS_TRANSlATE_PASSWORD, true);
 	}
 	
 	@Override

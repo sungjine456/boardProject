@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
+import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
@@ -43,6 +44,7 @@ public class BoardController {
 	@Autowired private BoardService boardService;
 	@Autowired private CommentService commentService;
 	@Autowired private Common common;
+	@Autowired private Message message;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String main(@RequestParam(required=false) Integer pageNum, Model model, HttpServletRequest req){
@@ -81,19 +83,19 @@ public class BoardController {
 	public String boardWrite(Board board, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
 		if(IsValid.isNotValidObjects(board)){
-			model.addAttribute("message", "잘못된 내용입니다.");
+			model.addAttribute("message", message.BOARD_WRONG_BOARD);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
 		String title = board.getTitle();
 		String content = board.getContent();
 		if(StringUtils.isEmpty(title)){
-			model.addAttribute("message", "제목을 입력해주세요.");
+			model.addAttribute("message", message.BOARD_NO_TITLE);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(content)){
-			model.addAttribute("message", "내용을 입력해주세요.");
+			model.addAttribute("message", message.BOARD_NO_CONTENT);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
@@ -110,7 +112,7 @@ public class BoardController {
 	public String boardDetailView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
 		if(IsValid.isNotValidObjects(num)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		if(IsValid.isNotValidObjects(pageNum)){
@@ -118,7 +120,7 @@ public class BoardController {
 		} else {
 			pageNum -= 1;
 		}
-		Pageable pageable = new PageRequest(0, 99, new Sort(
+		Pageable pageable = new PageRequest(pageNum, 99, new Sort(
 			    new Sort.Order(Direction.DESC, "circle"),
 			    new Sort.Order(Direction.ASC, "step")));
 		int startNum = pageNum / 5 * 5 + 1;
@@ -129,10 +131,10 @@ public class BoardController {
 		BoardLike boardLike = boardService.getBoardLike(num, userIdx);
 		long likeCount = boardService.getBoardLikeCount(num);
 		if(IsValid.isNotValidObjects(board) || likeCount < 0){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		String like = (IsValid.isNotValidObjects(boardLike))? "좋아요":"좋아요 취소";
+		String like = (IsValid.isNotValidObjects(boardLike))? message.BOARD_LIKE:message.BOARD_LIKE_CANCLE;
 		Page<Comment> comments = commentService.findAllCommentByBoard(num, pageable);
 		if(IsValid.isNotValidObjects(comments)){
 			return "view/board/frame";
@@ -151,7 +153,7 @@ public class BoardController {
 		model.addAttribute("like", like);
 		Cookie[] cookies = req.getCookies();
 		if(IsValid.isValidArrays(cookies)){
-			boolean isHit = true;
+			boolean addHit = true;
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
@@ -161,24 +163,21 @@ public class BoardController {
 					for(int j = 0; j < length; j++){
 						int value = Integer.parseInt(vals[j]);
 						if(value == num){
-							isHit = false;
+							addHit = false;
 						}
 					}
-					if(isHit){
-						// cookie에 hit가 있으면서 현제 게시글 값은 없을 때
+					if(addHit){
 						boardService.addHitCount(num);
 						res.addCookie(common.addCookie("hit", val + num + " "));
-						isHit = false;
+						addHit = false;
 					}
 				}
 			}
-			if(isHit){
-				// cookie에 hit이 없을 때
+			if(addHit){
 			    res.addCookie(common.addCookie("hit", num + " "));
 			    boardService.addHitCount(num);
 			}
 		} else {
-			// cookie값이 없을 때
 			res.addCookie(common.addCookie("hit", num + " "));
 		    boardService.addHitCount(num);
 		}
@@ -189,12 +188,12 @@ public class BoardController {
 	public String boardUpdateView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
 		log.info("execute BoardController boardUpdateView");
 		if(IsValid.isNotValidObjects(num)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
 		if(IsValid.isNotValidObjects(board)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		model.addAttribute("include", "main/update.ftl");
@@ -207,35 +206,35 @@ public class BoardController {
 	public String boardUpdate(Board board, RedirectAttributes rea){
 		log.info("execute BoardController boardUpdate");
 		if(IsValid.isNotValidObjects(board)){
-			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			rea.addFlashAttribute("message", message.BOARD_WRONG_BOARD);
 			return "redirect:/boardDetail";
 		}
 		int num = board.getIdx();
 		String title = board.getTitle();
 		String content = board.getContent();
 		if(IsValid.isNotValidInts(num)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		Board findBoard = boardService.findBoardForIdx(num);
 		if(IsValid.isNotValidObjects(findBoard)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(title)){
-			rea.addFlashAttribute("message", "제목을 입력해주세요.");
+			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
 			return "redirect:/boardUpdateView";
 		}
 		if(StringUtils.isEmpty(content)){
-			rea.addFlashAttribute("message", "내용을 입력해주세요.");
+			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
 			return "redirect:/boardUpdateView";
 		}
 		if(!boardService.update(num, common.cleanXss(title), common.cleanXss(content))){
-			rea.addFlashAttribute("message", "수정에 실패하셨습니다.");
+			rea.addFlashAttribute("message", message.BOARD_FAIL_UPDATE);
 			rea.addAttribute("num", num);
 			return "redirect:/boardUpdateView";
 		}
-		rea.addFlashAttribute("message", "수정에 성공하셨습니다.");
+		rea.addFlashAttribute("message", message.BOARD_SUCCESS_UPDATE);
 		rea.addAttribute("num", num);
 		return "redirect:/boardDetail";
 	}
@@ -244,31 +243,31 @@ public class BoardController {
 	public String writeComment(CommentNum CommentNum, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
 		if(IsValid.isNotValidObjects(CommentNum)){
-			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
 			return "redirect:/boardDetail";
 		}
-		int num = CommentNum.getNum();
+		int boardIdx = CommentNum.getNum();
 		String commentSentence = CommentNum.getComment();
-		if(IsValid.isNotValidInts(num)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+		if(IsValid.isNotValidInts(boardIdx)){
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(num);
+		Board board = boardService.findBoardForIdx(boardIdx);
 		if(IsValid.isNotValidObjects(board)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(commentSentence)){
-			rea.addFlashAttribute("message", "댓글을 다시 작성해주세요.");
-			rea.addAttribute("num", num);
+			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
+			rea.addAttribute("num", boardIdx);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), num)){
-			rea.addFlashAttribute("message", "댓글을 다시 작성해주세요.");
-			rea.addAttribute("num", num);
+		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), boardIdx)){
+			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
+			rea.addAttribute("num", boardIdx);
 			return "redirect:/boardDetail";
 		}
-		rea.addAttribute("num", num);
+		rea.addAttribute("num", boardIdx);
 		return "redirect:/boardDetail";
 	}
 	
@@ -285,19 +284,19 @@ public class BoardController {
 	public String updateComment(CommentNum commentNum, RedirectAttributes rea){
 		log.info("execute BoardController updateComment");
 		if(IsValid.isNotValidObjects(commentNum)){
-			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
 			return "redirect:/board";
 		}
 		int num = commentNum.getNum();
 		int idx = commentNum.getIdx();
 		String comment = commentNum.getComment();
 		if(IsValid.isNotValidInts(num)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(num);
 		if(IsValid.isNotValidObjects(board)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		if(IsValid.isNotValidInts(idx)){
@@ -328,33 +327,33 @@ public class BoardController {
 	public String commentReplyWrite(CommentNum commentNum, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
 		if(IsValid.isNotValidObjects(commentNum)){
-			rea.addFlashAttribute("message", "잘못된 내용입니다.");
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
 			return "redirect:/board";
 		}
 		int bnum = commentNum.getNum();
 		int idx = commentNum.getIdx();
 		String comment = commentNum.getComment();
 		if(IsValid.isNotValidInts(bnum)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(bnum);
 		if(IsValid.isNotValidObjects(board)){
-			rea.addFlashAttribute("message", "존재하지 않는 글입니다.");
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		if(IsValid.isNotValidInts(idx)){
-			rea.addFlashAttribute("message", "seq가 없습니다.");
+			rea.addFlashAttribute("message", message.COMMENT_NO_COMMENT);
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(comment)){
-			rea.addFlashAttribute("message", "comment가 없습니다.");
+			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";
 		}
 		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), bnum)){
-			rea.addFlashAttribute("message", "답글작성에 실패했습니다.");
+			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
 			rea.addAttribute("num", bnum);
 			return "redirect:/boardDetail";
 		}
@@ -372,12 +371,12 @@ public class BoardController {
 		if(IsValid.isNotValidObjects(like)){
 			boardService.addBoardLike(boardIdx, userIdx);
 			int count = boardService.getBoardLikeCount(boardIdx);
-			map.put("like", "좋아요 취소");
+			map.put("like", message.BOARD_LIKE_CANCLE);
 			map.put("likeCount", count + "");
 		} else {
 			boardService.removeBoardLike(boardIdx, userIdx);
 			int count = boardService.getBoardLikeCount(boardIdx);
-			map.put("like", "좋아요");
+			map.put("like", message.BOARD_LIKE);
 			map.put("likeCount", count + "");
 		}
 		return map;

@@ -115,8 +115,9 @@ public class Common {
     public Cookie addCookie(String key, String value){
     	DateTime date1 = DateTime.now();
     	DateTime date2 = date1.plusYears(1);
+    	int expiredate = (int)(date2.getMillis()-date1.getMillis())/1000;
     	Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge((int)((date2.getMillis()-date1.getMillis())/1000));
+		cookie.setMaxAge(expiredate);
 	    return cookie;
     }
 

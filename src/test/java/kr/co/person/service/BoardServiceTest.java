@@ -38,7 +38,7 @@ public class BoardServiceTest {
 	public void testWrite() {
 		Assert.assertThat(boardService.write("", "content", 1).getMessage(), is("제목을 입력해주세요."));
 		Assert.assertThat(boardService.write("title", "", 1).getMessage(), is("내용을 입력해주세요."));
-		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is("유효한 회원이 아닙니다."));
+		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is("존재하지 않는 회원입니다."));
 		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is("글이 등록 되었습니다."));
 	}
 	

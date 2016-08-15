@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
+import kr.co.person.common.Message;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.UserService;
@@ -38,6 +39,7 @@ public class UserController {
 	@Value("${keyValue}") private String ENCRYPTION_KEY;
 	@Autowired private UserService userService;
 	@Autowired private Common common;
+	@Autowired private Message message;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(){
@@ -49,11 +51,11 @@ public class UserController {
 	public String join(User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController join");
 		if(IsValid.isNotValidObjects(user, file)){
-			model.addAttribute("message", "회원가입에 실패하셨습니다.");
+			model.addAttribute("message", message.USER_FAIL_JOIN);
 			return "view/user/join";
 		}
 		if(!common.isEmail(user.getEmail())){
-			model.addAttribute("message", "올바른 이메일 형식을 입력해주세요.");
+			model.addAttribute("message", message.USER_NO_EMAIL_FORMAT);
 			return "view/user/join";
 		}
 		String[] strArray = file.getOriginalFilename().split("\\.");
@@ -90,7 +92,7 @@ public class UserController {
 		log.info("execute UserController idCheck");
 		Map<String, String> map = new HashMap<String, String>();
 		if(StringUtils.isEmpty(id)){
-			map.put("str", "아이디를 다시입력해주세요.");
+			map.put("str", message.USER_NO_ID);
 			map.put("bool", "false");
 			
 			return map;
@@ -107,7 +109,7 @@ public class UserController {
 		log.info("execute UserController emailCheck");
 		Map<String, String> map = new HashMap<String, String>();
 		if(StringUtils.isEmpty(email)){
-			map.put("str", "이메일을 다시입력해주세요.");
+			map.put("str", message.USER_NO_EMAIL);
 			map.put("bool", "false");
 			
 			return map;
@@ -157,7 +159,7 @@ public class UserController {
 	public String login(User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
 		log.info("execute UserController login");
 		if(IsValid.isNotValidObjects(user)){
-			model.addAttribute("message", "로그인에 실패하셨습니다.");
+			model.addAttribute("message", message.USER_FAIL_LOGIN);
 			return "view/user/login";
 		}
 		String id = common.cleanXss(user.getId());
@@ -173,12 +175,12 @@ public class UserController {
 			if(IsValid.isValidObjects(idSave) && idSave.equals("check")){
 				String loginId = common.cookieValueEncryption(new DateTime().toString()); 
 				if(!userService.autoLogin(user, loginId)){
-					model.addAttribute("message", "로그인에 실패하셨습니다.");
+					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
 				String enKeyId = common.cookieAesEncode(ENCRYPTION_KEY, id);
 				if(StringUtils.isEmpty(enKeyId)){
-					model.addAttribute("message", "로그인에 실패하셨습니다.");
+					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
 			    res.addCookie(common.addCookie("saveId", enKeyId));
@@ -186,7 +188,7 @@ public class UserController {
 			}
 			return "redirect:/board";
 		} else {
-			model.addAttribute("message", "아이디 혹은 비밀번호가 틀렸습니다.");
+			model.addAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
 			return "view/user/login";
 		}
 	}
@@ -201,7 +203,7 @@ public class UserController {
 		session.removeAttribute("id");
 		session.removeAttribute("name");
 		session.removeAttribute("email");
-		rea.addFlashAttribute("message", "로그아웃 하셨습니다.");
+		rea.addFlashAttribute("message", message.USER_LOGOUT);
 		User user = userService.findUserForIdx(idx);
 		String loginId = "";
 		Cookie[] cookies = req.getCookies();
@@ -231,7 +233,7 @@ public class UserController {
 	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea){
 		log.info("execute UserController translatePassword");
 		if(StringUtils.isEmpty(email)){
-			rea.addFlashAttribute("message", "이메일을 입력해주세요.");
+			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
 			return "redirect:/";
 		}
 		OkCheck ok = userService.translatePassword(email);
@@ -257,20 +259,24 @@ public class UserController {
 	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController changePassword");
 		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", "페스워드를 입력해주세요");
+			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/update";
 		}
 		if(StringUtils.isEmpty(changePassword)){
-			rea.addFlashAttribute("message", "수정할 페스워드를 입력해주세요");
+			rea.addFlashAttribute("message", message.USER_NO_UPDATE_PASSWORD);
 			return "redirect:/update";
 		}
 		int idx = (int)session.getAttribute("idx");
 		if(IsValid.isNotValidInts(idx)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
-			return "view/board/frame";
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
 		}
 		User user = userService.findUserForIdx(idx);
+		if(IsValid.isNotValidObjects(user)){
+			model.addAttribute("include", "/view/user/update.ftl");
+			model.addAttribute("message", message.USER_FAIL_UPDATE);
+			return "view/board/frame";
+		}
 		model.addAttribute("id", user.getId());
 		model.addAttribute("name", user.getName());
 		model.addAttribute("email", user.getEmail());
@@ -284,13 +290,23 @@ public class UserController {
 	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
+			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
 		}
-		User user = userService.loginCheck((String)session.getAttribute("id"), password);
-		if(IsValid.isNotValidObjects(user) || user.getIdx() != (int)session.getAttribute("idx")){
-			rea.addFlashAttribute("message", "없는 사용자입니다.");
-			return "redirect:/";
+		String id = (String)session.getAttribute("id");
+		int idx = (int)session.getAttribute("idx");
+		if(StringUtils.isEmpty(id) || IsValid.isNotValidInts(idx)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
+		User user = userService.loginCheck(id, password);
+		if(IsValid.isNotValidObjects(user)){
+			model.addAttribute("message", message.USER_NO_USER);
+			return "view/user/login";
+		}
+		if(user.getIdx() != idx){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
 		}
 		String loginId = "";
 		Cookie[] cookies = req.getCookies();
@@ -304,7 +320,7 @@ public class UserController {
 			}
 		}
 	    if(!userService.leave(user.getIdx(), loginId)){
-	    	rea.addFlashAttribute("message", "탈퇴에 실패하셨습니다.");
+	    	rea.addFlashAttribute("message", message.USER_FAIL_REMOVE);
 			return "redirect:/mypage";
 	    }
 		session.setAttribute("loginYn", "N");
@@ -314,7 +330,7 @@ public class UserController {
 		session.removeAttribute("email");
 	    res.addCookie(common.removeCookie("saveId"));
 	    res.addCookie(common.removeCookie("saveLoginId"));
-	    rea.addFlashAttribute("message", "탈퇴에 성공하셨습니다.");
+	    rea.addFlashAttribute("message", message.USER_SUCCESS_REMOVE);
 		return "redirect:/";
 	}
 	
@@ -324,11 +340,11 @@ public class UserController {
 		int idx = (int)session.getAttribute("idx");
 		if(IsValid.isNotValidInts(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
+			model.addAttribute("message", message.USER_FAIL_UPDATE);
 			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(updatePassword) || !userService.passwordCheck(idx, updatePassword)){
-			rea.addFlashAttribute("message", "패스워드를 입력해주세요.");
+			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
 		}
 		model.addAttribute("id", session.getAttribute("id"));
@@ -342,7 +358,7 @@ public class UserController {
 	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
 		log.info("execute UserController update");
 		if(IsValid.isNotValidObjects(ufile)){
-			model.addAttribute("message", "회원정보 수정에 실패하셨습니다.");
+			model.addAttribute("message", message.USER_FAIL_UPDATE);
 			return "view/user/join";
 		}
 		String[] strArray = ufile.getOriginalFilename().split("\\.");
@@ -358,7 +374,7 @@ public class UserController {
 		}
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
+			model.addAttribute("message", message.USER_FAIL_UPDATE);
 			return "view/board/frame";
 		}
 		String name = user.getName();
@@ -366,12 +382,12 @@ public class UserController {
 		int idx = (int)session.getAttribute("idx");
 		if(!common.isEmail(email)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "올바른 이메일 형식을 입력해주세요.");
+			model.addAttribute("message", message.USER_NO_EMAIL_FORMAT);
 			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(name) || IsValid.isNotValidInts(idx)){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
+			model.addAttribute("message", message.USER_FAIL_UPDATE);
 			return "view/board/frame";
 		}
 		name = common.cleanXss(name);
@@ -382,20 +398,20 @@ public class UserController {
 				session.setAttribute("email", email);
 				session.setAttribute("img", imgPath);
 				model.addAttribute("include", "/view/user/mypage.ftl");
-				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+				model.addAttribute("message", message.USER_SUCCESS_UPDATE);
 			} else {
 				model.addAttribute("include", "/view/user/update.ftl");
-				model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
+				model.addAttribute("message", message.USER_FAIL_UPDATE);
 			}
 		} else {
 			if(userService.update(idx, name, email)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
 				model.addAttribute("include", "/view/user/mypage.ftl");
-				model.addAttribute("message", "회원정보를 수정 하셨습니다.");
+				model.addAttribute("message", message.USER_SUCCESS_UPDATE);
 			} else {
 				model.addAttribute("include", "/view/user/update.ftl");
-				model.addAttribute("message", "회원정보 수정에 실패 하셨습니다.");
+				model.addAttribute("message", message.USER_FAIL_UPDATE);
 			}
 		}
 		return "view/board/frame";

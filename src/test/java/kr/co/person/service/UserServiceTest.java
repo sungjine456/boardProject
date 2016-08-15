@@ -46,8 +46,8 @@ public class UserServiceTest {
 
 	@Test
 	public void testEmailCheck() {
-		Assert.assertThat(userService.emailCheck(null).getMessage(), is("메일을 입력해주세요."));
-		Assert.assertThat(userService.emailCheck("").getMessage(), is("메일을 입력해주세요."));
+		Assert.assertThat(userService.emailCheck(null).getMessage(), is("이메일을 입력해주세요."));
+		Assert.assertThat(userService.emailCheck("").getMessage(), is("이메일을 입력해주세요."));
 		Assert.assertThat(userService.emailCheck("tjdwls@naver.com").getMessage(), is("가입 가능한 이메일입니다."));
 		Assert.assertThat(userService.emailCheck("sungjin@naver.com").getMessage(), is("이미 가입되어 있는 이메일입니다."));
 		Assert.assertThat(userService.emailCheck("sungjin").getMessage(), is("올바른 형식의 메일을 입력해주세요."));
@@ -98,11 +98,11 @@ public class UserServiceTest {
 		Assert.assertThat(ok.isBool(), is(true));
 		user.setId("sungjin1");
 		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is("이미 가입되어있는 회원입니다."));
+		Assert.assertThat(ok.getMessage(), is("이미 가입되어 있는 회원입니다."));
 		Assert.assertThat(ok.isBool(), is(false));
 		user.setEmail("sungjin@naver.com");
 		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is("이미 가입되어있는 회원입니다."));
+		Assert.assertThat(ok.getMessage(), is("이미 가입되어 있는 회원입니다."));
 		Assert.assertThat(ok.isBool(), is(false));
 	}
 	

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.person.common.IsValid;
+import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.User;
@@ -30,28 +31,29 @@ public class BoardServiceImple implements BoardService {
 	@Autowired private BoardRepository boardRepository;
 	@Autowired private UserRepository userRepository;
 	@Autowired private BoardLikeRepository boardLikeRepository;
+	@Autowired private Message message;
 	
 	@Override
 	public OkCheck write(String title, String content, int userIdx) {
 		log.info("execute BoardServiceImpl write");
 		if(StringUtils.isEmpty(title)){
-			return new OkCheck("제목을 입력해주세요.", false);
+			return new OkCheck(message.BOARD_NO_TITLE, false);
 		}
 		if(StringUtils.isEmpty(content)){
-			return new OkCheck("내용을 입력해주세요.", false);
+			return new OkCheck(message.BOARD_NO_CONTENT, false);
 		}
 		if(IsValid.isNotValidInts(userIdx)){
-			return new OkCheck("유효한 회원이 아닙니다.", false);
+			return new OkCheck(message.USER_NO_USER, false);
 		}
 		DateTime date = new DateTime();
 		User user = userRepository.findOne(userIdx);
 		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck("유효한 회원이 아닙니다.", false);
+			return new OkCheck(message.USER_NO_USER, false);
 		}
 		Board board = new Board(title, content, user, date, date);
 		boardRepository.save(board);
 		
-		return new OkCheck("글이 등록 되었습니다.", true);
+		return new OkCheck(message.BOARD_SUCCESS_WRITE, true);
 	}
 
 	@Override
