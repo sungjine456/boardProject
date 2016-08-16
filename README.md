@@ -15,6 +15,7 @@
 	유저의 이미지 저장
 	뎃글의 답글 : 최신 글이 위로 향하게 
 	게시글의 조회수 (cookie를 통한 새로고침으로 조회수 올리는 것 방지)
+	messageSource를 통한 message관리
 
 ## 사용기술
 ----
@@ -29,14 +30,15 @@ back end
 	1. java 8
 	2. Spring Boot
 	3. Spring Data JPA(ORM)
-	4. MySql
-	5. SLF4J(Logger)
-	6. jUnit(Test)
+	4. QueryDSL
+	5. MySql
+	6. SLF4J(Logger)
+	7. jUnit(Test)
 ```
 ```
 util library
 	1. joda-time
-	2. apache common lang
+	2. apache common lang3
 ```
 ```
 build tool

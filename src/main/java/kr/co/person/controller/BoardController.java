@@ -45,18 +45,18 @@ public class BoardController {
 	@Autowired private CommentService commentService;
 	@Autowired private Common common;
 	@Autowired private Message message;
+	private final int PAGE_SIZE = 5;
+	private final int PAGE_SIZE_CONTROL_NUM = 1;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(@RequestParam(required=false) Integer pageNum, Model model, HttpServletRequest req){
+	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req){
 		log.info("execute BoardController main");
-		if(IsValid.isNotValidObjects(pageNum)){
-			pageNum = 0;
-		} else {
+		if(pageNum > 0){
 			pageNum -= 1;
 		}
 		Pageable pageable = new PageRequest(pageNum, 10, Direction.DESC, "idx");
-		int startNum = pageNum / 5 * 5 + 1;
-		int lastNum = (pageNum / 5 + 1) * 5;
+		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastNum = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		Page<Board> pages = boardService.findAll(pageable);
 		if(IsValid.isNotValidObjects(pages)){
 			return "view/user/login";
@@ -109,22 +109,20 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam(required=false) Integer num, @RequestParam(required=false) Integer pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
+	public String boardDetailView(@RequestParam(required=false, defaultValue="0") int num, @RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
-		if(IsValid.isNotValidObjects(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValidObjects(pageNum)){
-			pageNum = 0;
-		} else {
+		if(pageNum > 0){
 			pageNum -= 1;
 		}
 		Pageable pageable = new PageRequest(pageNum, 99, new Sort(
 			    new Sort.Order(Direction.DESC, "circle"),
 			    new Sort.Order(Direction.ASC, "step")));
-		int startNum = pageNum / 5 * 5 + 1;
-		int lastNum = (pageNum / 5 + 1) * 5;
+		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastNum = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		int userIdx = (int)session.getAttribute("idx");
 
 		Board board = boardService.findBoardForIdx(num);
@@ -185,9 +183,9 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardUpdateView")
-	public String boardUpdateView(@RequestParam(required=false) Integer num, Model model, RedirectAttributes rea){
+	public String boardUpdateView(@RequestParam(required=false, defaultValue="0") int num, Model model, RedirectAttributes rea){
 		log.info("execute BoardController boardUpdateView");
-		if(IsValid.isNotValidObjects(num)){
+		if(IsValid.isNotValidInts(num)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
