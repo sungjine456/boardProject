@@ -365,18 +365,18 @@ public class BoardController {
 		Map<String, String> map = new HashMap<String, String>();
 		int boardIdx = boardLikeCount.getBoardIdx();
 		int userIdx = boardLikeCount.getUserIdx();
-		BoardLike like = boardService.getBoardLike(boardIdx, userIdx);
-		if(IsValid.isNotValidObjects(like)){
+		BoardLike boardLike = boardService.getBoardLike(boardIdx, userIdx);
+		int count = boardService.getBoardLikeCount(boardIdx);
+		String likeStr = "";
+		if(IsValid.isNotValidObjects(boardLike)){
 			boardService.addBoardLike(boardIdx, userIdx);
-			int count = boardService.getBoardLikeCount(boardIdx);
-			map.put("like", message.BOARD_LIKE_CANCLE);
-			map.put("likeCount", count + "");
+			likeStr = message.BOARD_LIKE_CANCLE;
 		} else {
 			boardService.removeBoardLike(boardIdx, userIdx);
-			int count = boardService.getBoardLikeCount(boardIdx);
-			map.put("like", message.BOARD_LIKE);
-			map.put("likeCount", count + "");
+			likeStr = message.BOARD_LIKE;
 		}
+		map.put("like", likeStr);
+		map.put("likeCount", count + "");
 		return map;
 	}
 }

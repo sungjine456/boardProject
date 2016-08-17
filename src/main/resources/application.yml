@@ -16,3 +16,6 @@ spring:
       jadira:
         usertype:
           autoRegisterUserTypes: true
+
+  resources:
+    static-locations: classpath:/static/
