@@ -69,7 +69,7 @@ public class UserController {
 			imgPath = createImg(file, ext, user.getId(), se);
 		}
 		if(StringUtils.isEmpty(imgPath)){
-			imgPath = "C:"+se+"boardProject"+se+"img"+se+"user"+se+"default.png";
+			imgPath = "img"+se+"user"+se+"default.png";
 		}
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
@@ -427,13 +427,13 @@ public class UserController {
 		Date date = new Date();
 		String fileName = id + "_" + date.getTime() + "." + ext;
 		String filePath = "C:"+se+"boardProject"+se+"img"+se+"user";
-		String imgPath = filePath+se+fileName;
+		String imgPath = "img"+se+"user"+se+fileName;
 		File dayFile = new File(filePath);
 		if(!dayFile.exists()){
 		   dayFile.mkdirs();
 		}
 		try {
-			file.transferTo(new File(imgPath));
+			file.transferTo(new File(filePath + se + fileName));
 		} catch(Exception e) {
 		    log.error(e.getMessage());
 		}
