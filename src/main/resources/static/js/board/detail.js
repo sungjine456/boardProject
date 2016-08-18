@@ -7,6 +7,7 @@ var detail = {
 	writeComment : $("#commentForm #writeComment"),
 	commentUpdateBtn : $("#commentForm .commentUpdateBtn"),
 	commentReplyBtn : $("#commentForm .commentReplyBtn"),
+	commentLengthCount : $("#commentLengthCount"),
 	boardUpdateEvent : function(){
 		$(location).attr("href", "/boardUpdateView?num=" + this.num.val());
 	},
@@ -71,6 +72,18 @@ var detail = {
 			}
 		});
 	},
+	remainingEvent : function(){
+        var maximumCount = this.commentLengthCount.attr("maxCount") * 1;
+        
+        var now = maximumCount - this.writeComment.val().length;
+        if (now < 0) {
+            var str = this.writeComment.val();
+            alert('글자 입력수를 초과하였습니다.');
+            this.writeComment.val(str.substr(0, maximumCount));
+            now = 0;
+        }
+        this.commentLengthCount.text(now);
+	},
 	init : function(){
 		var self = this;
 		self.boardUpdateBtn.click(function(){self.boardUpdateEvent();});
@@ -78,6 +91,7 @@ var detail = {
 		self.commentUpdateBtn.click(function(){self.commentUpdateEvent(event);});
 		self.commentReplyBtn.click(function(){self.commentReplyEvent(event);});
 		self.likeCount.click(function(){self.likeCountEvent()});
+		self.writeComment.keyup(function(){self.remainingEvent()});
 	}
 }
 

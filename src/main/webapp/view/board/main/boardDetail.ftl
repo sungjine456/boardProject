@@ -35,6 +35,7 @@
 			<tr>
 				<td style="padding-left: 5%; width: 90%">
 					<input type="text" id="writeComment" class="form-control" name="comment"/>
+					<DIV style="float:right">남은 글자수: <SPAN id="commentLengthCount" maxCount="200">200</SPAN></DIV>
 				</td>
 				<td>
 					<button type="button" id="commentBtn" class="btn btn-primary">댓글</button>
@@ -84,7 +85,7 @@
 			<tr>
 				<td colspan="2">
 					<div style="padding-left:5%;">
-						뎃글을 입력해주세요.
+						댓글을 입력해주세요.
 					</div>
 				</td>
 			</tr>
