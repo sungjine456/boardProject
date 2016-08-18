@@ -47,6 +47,8 @@ public class BoardController {
 	@Autowired private Message message;
 	private final int PAGE_SIZE = 5;
 	private final int PAGE_SIZE_CONTROL_NUM = 1;
+	private final int BOARD_MAX_COUNT_OF_PAGE = 10;
+	private final int COMMENT_MAX_COUNT_OF_PAGE = 20;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
 	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req){
@@ -54,7 +56,7 @@ public class BoardController {
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
-		Pageable pageable = new PageRequest(pageNum, 10, Direction.DESC, "idx");
+		Pageable pageable = new PageRequest(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
 		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastNum = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		Page<Board> pages = boardService.findAll(pageable);
@@ -118,7 +120,7 @@ public class BoardController {
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
-		Pageable pageable = new PageRequest(pageNum, 99, new Sort(
+		Pageable pageable = new PageRequest(pageNum, COMMENT_MAX_COUNT_OF_PAGE, new Sort(
 			    new Sort.Order(Direction.DESC, "circle"),
 			    new Sort.Order(Direction.ASC, "step")));
 		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;

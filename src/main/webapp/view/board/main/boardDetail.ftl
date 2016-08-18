@@ -93,13 +93,13 @@
 				<td colspan="5">
 					<div style="text-align:center;">
 		<#if startNum &gt; 2>
-			<a class="btn btn-default btn-sm" href="?num=${startNum-1}">이전</a>
+			<a class="btn btn-default btn-sm" href="?num=${board.idx}&pageNum=${startNum-1}">이전</a>
 		</#if>
 		<#list startNum..lastNum as i>
-			<a class="btn btn-default btn-sm" href="?num=${i}">${i}</a>
+			<a class="btn btn-default btn-sm" href="?num=${board.idx}&pageNum=${i}">${i}</a>
 		</#list>
 		<#if lastNum != lastPage>
-			<a class="btn btn-default btn-sm" href="?num=${lastNum+1}">다음</a>
+			<a class="btn btn-default btn-sm" href="?num=${board.idx}&pageNum=${lastNum+1}">다음</a>
 		</#if>
 					</div>
 				</td>
