@@ -13,6 +13,7 @@
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="css/common/common.css">
 		<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>
+		<script type="text/javascript" src="js/common/imgError.js"></script>
 	</head>
 	<body>
 		<div id="wrap">
