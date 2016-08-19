@@ -76,6 +76,4 @@
 		</tbody>
 	</table>
 </div>
-<script type="text/javascript">
-</script>
 <script type="text/javascript" src="js/board/main.js"></script>
