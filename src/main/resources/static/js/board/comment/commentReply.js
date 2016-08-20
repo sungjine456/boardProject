@@ -20,13 +20,15 @@ var commentReply = {
 		
 	    var now = maximumCount - target.val().length;
 	    if (now < 0) {
-	    	alert("now : " + now);
-	        var str = target.val();
+	    	func(target, maximumCount);
 	        alert('글자 입력수를 초과하였습니다.');
-	        target.val(str.substr(0, maximumCount));
 	        now = 0;
 	    }
 	    replyCommentLengthCount.text(now);
+	},
+	func : function(target, maximumCount){
+		var str = target.val();
+		target.val(str.substr(0, maximumCount));
 	},
 	init : function(){
 		var self = this;
