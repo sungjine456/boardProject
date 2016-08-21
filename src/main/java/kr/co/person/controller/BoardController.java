@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -33,6 +32,7 @@ import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
 import kr.co.person.pojo.BoardLikeCount;
 import kr.co.person.pojo.CommentNum;
+import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.BoardService;
 import kr.co.person.service.CommentService;
@@ -56,7 +56,7 @@ public class BoardController {
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
-		Pageable pageable = new PageRequest(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
+		Pageable pageable = new CustomPageable(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
 		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastNum = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		Page<Board> pages = boardService.findAll(pageable);
@@ -120,7 +120,7 @@ public class BoardController {
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
-		Pageable pageable = new PageRequest(pageNum, COMMENT_MAX_COUNT_OF_PAGE, new Sort(
+		Pageable pageable = new CustomPageable(pageNum, COMMENT_MAX_COUNT_OF_PAGE, new Sort(
 			    new Sort.Order(Direction.DESC, "circle"),
 			    new Sort.Order(Direction.ASC, "step")));
 		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
