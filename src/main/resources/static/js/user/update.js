@@ -57,7 +57,6 @@ var update = {
 		var ext = fileName.slice(fileName.lastIndexOf(".") + 1).toLowerCase();
 		if(!fileName == "" && !(ext == "gif" || ext == "jpg" || ext == "jpeg" || ext == "png")){
 			update.ufile.val("");
-			preview.innerHTML = '';
 			alert("이미지파일 (.jpg, .jpeg, .png, .gif ) 만 업로드 가능합니다.");
 			return;
 		}
