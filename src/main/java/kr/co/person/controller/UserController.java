@@ -134,10 +134,10 @@ public class UserController {
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
-				if(StringUtils.equals("saveId", key)){
+				if(StringUtils.equals("psvd", key)){
 					id = common.cookieAesDecode(ENCRYPTION_KEY, val);
 				}
-				if(StringUtils.equals("saveLoginId", key)){
+				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
 				}
 			}
@@ -183,8 +183,8 @@ public class UserController {
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
-			    res.addCookie(common.addCookie("saveId", enKeyId));
-			    res.addCookie(common.addCookie("saveLoginId", loginId));
+			    res.addCookie(common.addCookie("psvd", enKeyId));
+			    res.addCookie(common.addCookie("psvlgnd", loginId));
 			}
 			return "redirect:/board";
 		} else {
@@ -211,7 +211,7 @@ public class UserController {
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
-				if(StringUtils.equals("saveLoginId", key)){
+				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
 				}
 			}
@@ -224,8 +224,8 @@ public class UserController {
 				return url;
 			}
 		}
-	    res.addCookie(common.removeCookie("saveId"));
-	    res.addCookie(common.removeCookie("saveLoginId"));
+	    res.addCookie(common.removeCookie("psvd"));
+	    res.addCookie(common.removeCookie("psvlgnd"));
 		return "redirect:/";
 	}
 	
@@ -314,7 +314,7 @@ public class UserController {
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
-				if(StringUtils.equals("saveLoginId", key)){
+				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
 				}
 			}
@@ -328,8 +328,8 @@ public class UserController {
 		session.removeAttribute("id");
 		session.removeAttribute("name");
 		session.removeAttribute("email");
-	    res.addCookie(common.removeCookie("saveId"));
-	    res.addCookie(common.removeCookie("saveLoginId"));
+	    res.addCookie(common.removeCookie("psvd"));
+	    res.addCookie(common.removeCookie("psvlgnd"));
 	    rea.addFlashAttribute("message", message.USER_SUCCESS_REMOVE);
 		return "redirect:/";
 	}

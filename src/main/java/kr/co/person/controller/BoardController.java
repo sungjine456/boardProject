@@ -157,7 +157,7 @@ public class BoardController {
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
-				if(StringUtils.equals("hit", key)){
+				if(StringUtils.equals("pht", key)){
 					String[] vals = val.split(" ");
 					int length = vals.length;
 					for(int j = 0; j < length; j++){
@@ -168,17 +168,17 @@ public class BoardController {
 					}
 					if(addHit){
 						boardService.addHitCount(num);
-						res.addCookie(common.addCookie("hit", val + num + " "));
+						res.addCookie(common.addCookie("pht", val + num + " "));
 						addHit = false;
 					}
 				}
 			}
 			if(addHit){
-			    res.addCookie(common.addCookie("hit", num + " "));
+			    res.addCookie(common.addCookie("pht", num + " "));
 			    boardService.addHitCount(num);
 			}
 		} else {
-			res.addCookie(common.addCookie("hit", num + " "));
+			res.addCookie(common.addCookie("pht", num + " "));
 		    boardService.addHitCount(num);
 		}
 		return "view/board/frame";
