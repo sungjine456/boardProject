@@ -19,7 +19,8 @@
 					<label for="content">내용 : </label>
 				</th>
 				<td>
-					<textarea id="content" class="form-control" name="content" rows="3"></textarea>
+					<input id="editFontBold" type="button" value="B"/>
+					<iframe id="editFrame" width="100%" height="400px"></iframe>
 				</td>
 			</tr>
 			<tr>
@@ -31,3 +32,4 @@
 	</form>
 </div>
 <script type="text/javascript" src="js/board/write.js"></script>
+<script type="text/javascript" src="js/common/editer.js"></script>
