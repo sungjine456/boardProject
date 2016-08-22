@@ -89,19 +89,20 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		String title = board.getTitle();
+		String title = board.getTitle().trim();
 		String content = board.getContent();
+		String contentTrim = content.replaceAll("&nbsp;", " ");
 		if(StringUtils.isEmpty(title)){
 			model.addAttribute("message", message.BOARD_NO_TITLE);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		if(StringUtils.isEmpty(content)){
+		if(StringUtils.isEmpty(content) || StringUtils.isEmpty(contentTrim.trim())){
 			model.addAttribute("message", message.BOARD_NO_CONTENT);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		OkCheck ok = boardService.write(common.cleanXss(title), common.enter(common.cleanXss(content)), (int)session.getAttribute("idx"));
+		OkCheck ok = boardService.write(common.cleanXss(title), common.cleanEditerXss(content), (int)session.getAttribute("idx"));
 		if(!ok.isBool()){
 			model.addAttribute("message", ok.getMessage());
 			model.addAttribute("include", "main/write.ftl");

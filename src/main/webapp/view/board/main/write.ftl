@@ -1,6 +1,7 @@
 <div class="container">
 	<h1>글쓰기</h1>
 	<form id="writeForm" action="/boardWrite" method="post">
+		<textarea type="text" id="content" name="content" style="display:none"></textarea>
 		<table class="table table-hover">
 			<colgroup>
 				<col width="10%"/>
@@ -20,7 +21,7 @@
 				</th>
 				<td>
 					<input id="editFontBold" type="button" value="B"/>
-					<iframe id="editFrame" width="100%" height="400px"></iframe>
+					<iframe id="editFrame" name="frame" width="100%" height="400px"></iframe>
 				</td>
 			</tr>
 			<tr>
