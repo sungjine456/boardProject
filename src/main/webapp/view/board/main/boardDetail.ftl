@@ -17,10 +17,10 @@
 		</colgroup>
 		<tr>
 			<th>
-				<label for="content">내용 : </label>
+				<label style="font-size:25px;">내용 : </label>
 			</th>
 			<td>
-				${board.content}
+				<span style="font-size:25px;">${board.content}</span>
 			</td>
 		</tr>
 	</table>

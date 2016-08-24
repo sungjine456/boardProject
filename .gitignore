@@ -6,7 +6,6 @@
 .classpath
 .project
 key.properties
-*.png
 *.jpg
 *.jpeg
 *.gif

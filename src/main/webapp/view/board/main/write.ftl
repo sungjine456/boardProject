@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="css/common/editer.css">
 <div class="container">
 	<h1>글쓰기</h1>
 	<form id="writeForm" action="/boardWrite" method="post">
@@ -20,13 +21,16 @@
 					<label for="content">내용 : </label>
 				</th>
 				<td>
-					<input id="editFontBold" type="button" value="B"/>
+					<input id="editFontBold" class="edit-btn" type="button" value="B"/>
+					<button id="editLeftBold" class="edit-btn" type="button"><img src="image/editer/left.png" style="padding-bottom: 2px;"/></button>
+					<button id="editCenterBold" class="edit-btn" type="button"><img src="image/editer/center.png" style="padding-bottom: 2px;"/></button>
+					<button id="editRightBold" class="edit-btn" type="button"><img src="image/editer/right.png" style="padding-bottom: 2px;"/></button>
 					<iframe id="editFrame" name="frame" width="100%" height="400px"></iframe>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 90%">
-					<button type="button" id="writeBtn" class="btn btn-primary">글쓰기</button>
+					<button type="button" id="writeBtn" class="btn btn-primary active">글쓰기</button>
 				</td>
 			</tr>
 		</table>

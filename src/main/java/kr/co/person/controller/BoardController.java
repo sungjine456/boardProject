@@ -102,7 +102,7 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		OkCheck ok = boardService.write(common.cleanXss(title), common.cleanEditerXss(content), (int)session.getAttribute("idx"));
+		OkCheck ok = boardService.write(common.cleanXss(title), content, (int)session.getAttribute("idx"));
 		if(!ok.isBool()){
 			model.addAttribute("message", ok.getMessage());
 			model.addAttribute("include", "main/write.ftl");

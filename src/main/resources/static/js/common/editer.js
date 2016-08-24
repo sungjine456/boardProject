@@ -1,15 +1,22 @@
 var editer = {
 	frame : document.getElementById("editFrame"),
 	editFontBold : $("#editFontBold"),
+	editLeftBold : $("#editLeftBold"),
+	editCenterBold : $("#editCenterBold"),
+	editRightBold : $("#editRightBold"),
 	func : function(){
 		this.frame.contentWindow.document.designMode = "on";
 	},
-	editFontBoldEvent : function(command){
-		this.frame.contentWindow.document.execCommand(command, false, null);
+	editEvent : function(command){
+		this.frame.focus();
+		this.frame.contentWindow.document.execCommand(command);
 	},
 	init : function(){
 		var self = this;
-		self.editFontBold.click(function(){self.editFontBoldEvent('bold')});
+		self.editFontBold.click(function(){self.editEvent('bold')});
+		self.editLeftBold.click(function(){self.editEvent('justifyleft')});
+		self.editCenterBold.click(function(){self.editEvent('justifycenter')});
+		self.editRightBold.click(function(){self.editEvent('justifyright')});
 	}
 }
 
