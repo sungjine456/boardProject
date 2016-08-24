@@ -97,25 +97,14 @@ public class Common {
     public String cleanXss(String str){
     	str = str.replaceAll("&", "&amp;");
     	str = str.replaceAll("%2F", "");
-    	str = str.replaceAll("\"","&gt;");
+    	str = str.replaceAll("\"","&#34;");
         str = str.replaceAll("<", "&lt;");
         str = str.replaceAll(">", "&gt;");
         str = str.replaceAll("%", "&#37;");
         str = str.replaceAll("..\\\\", "");
+        str = str.replaceAll("\0", " ");
         
         return str;
-    }
-    
-    public String cleanEditerXss(String str){
-    	str = cleanXss(str);
-    	str = str.replaceAll("&lt;b&gt;", "<b>");
-    	str = str.replaceAll("&lt;div&gt;", "<div>");
-    	str = str.replaceAll("&lt;/b&gt;", "</b>");
-    	str = str.replaceAll("&lt;/div&gt;", "</div>");
-    	str = str.replaceAll("&lt;br&gt;", "<br>");
-    	str = str.replaceAll("&amp;nbsp;", "&nbsp;");
-    	
-    	return str;
     }
     
     public String enter(String content){
