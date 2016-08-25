@@ -94,7 +94,7 @@ public class CommentServiceImple implements CommentService {
 		if(IsValid.isNotValidObjects(comment, writer, board)){
 			return false;
 		}
-		int circle = (IsValid.isNotValidInts(comment.getCircle()))?comment.getIdx():comment.getCircle();
+		int circle = comment.getCircle();
 		DateTime date = new DateTime();
 		List<Comment> comments = commentRepository.getCommentList(boardIdx, circle, comment.getStep(), comment.getDepth());
 		if(IsValid.isNotValidObjects(comments)){

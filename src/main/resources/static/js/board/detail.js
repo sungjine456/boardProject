@@ -43,7 +43,7 @@ var detail = {
 		$.ajax({
 			url : "/replyView",
 			type : "POST",
-			data : {"boardNum" : detail.boardNum.val(), "idx" : idx},
+			data : {"boardNum" : detail.boardNum.val(), "commentIdx" : idx},
 			success : function(data){
 				span.html(data);
 			},
