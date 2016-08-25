@@ -3,7 +3,6 @@ package kr.co.person.controller;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -112,6 +111,9 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
+		if(se.equals("\\")){
+			se += se;
+		}
 		String[] paths = imgPath.split(se);
 		String title = board.getTitle().trim();
 		String content = board.getContent();
@@ -132,7 +134,7 @@ public class BoardController {
 		log.info("===================================");
 		log.info(imgPath);
 		log.info(content);
-		content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+imgPath+">");
+		content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+filePath+se+kindPath+se+fileName+">");
 		log.info(content);
 		log.info("===================================");
 		OkCheck ok = boardService.write(common.cleanXss(title), content, (int)session.getAttribute("idx"));
