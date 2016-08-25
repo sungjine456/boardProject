@@ -26,7 +26,7 @@
 	</table>
 	<hr style="border:1px dashed #ddd"><br>
 	<form id="commentForm" action="/writeComment" method="post">
-		<input type="hidden" id="num" name="num" value="${board.idx}"/>
+		<input type="hidden" id="boardNum" name="boardNum" value="${board.idx}"/>
 		<table class="table" style="background-color: #f4f4f4;">
 			<colgroup>
 				<col width="10%"/>
@@ -44,7 +44,6 @@
 <#list comments.content as comment>
 			<tr>
 				<td colspan="2">
-					<input type="hidden" name="commentIdx" value="${comment.idx}"/>
 					<div style="padding-left:5%;">
 <#if comment.depth &gt; 0>
 	<#list 1..comment.depth as i>
@@ -93,14 +92,14 @@
 			<tr>
 				<td colspan="5">
 					<div style="text-align:center;">
-		<#if startNum &gt; 2>
-			<a class="btn btn-default btn-sm" href="?num=${board.idx}&pageNum=${startNum-1}">이전</a>
+		<#if startPage &gt; 2>
+			<a class="btn btn-default btn-sm" href="?boardNum=${board.idx}&pageNum=${startPage-1}">이전</a>
 		</#if>
-		<#list startNum..lastNum as i>
-			<a class="btn btn-default btn-sm" href="?num=${board.idx}&pageNum=${i}">${i}</a>
+		<#list startPage..lastPage as i>
+			<a class="btn btn-default btn-sm" href="?boardNum=${board.idx}&pageNum=${i}">${i}</a>
 		</#list>
-		<#if lastNum != lastPage>
-			<a class="btn btn-default btn-sm" href="?num=${board.idx}&pageNum=${lastNum+1}">다음</a>
+		<#if lastPage &lt; maxPage>
+			<a class="btn btn-default btn-sm" href="?boardNum=${board.idx}&pageNum=${lastPage+1}">다음</a>
 		</#if>
 					</div>
 				</td>

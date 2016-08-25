@@ -35,7 +35,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.BOARD_NO_BOARD, is("존재하지 않는 글입니다."));
 		Assert.assertThat(message.BOARD_NO_TITLE, is("제목을 입력해주세요."));
 		Assert.assertThat(message.BOARD_NO_CONTENT, is("내용을 입력해주세요."));
-		Assert.assertThat(message.BOARD_WRONG_BOARD, is("다시 입력해주세요."));
+		Assert.assertThat(message.BOARD_WRONG_BOARD, is("글을 다시 입력해주세요."));
 		Assert.assertThat(message.BOARD_SUCCESS_WRITE, is("글이 등록 되었습니다."));
 		Assert.assertThat(message.BOARD_SUCCESS_UPDATE, is("수정에 성공하셨습니다."));
 		Assert.assertThat(message.BOARD_FAIL_UPDATE, is("수정에 실패하셨습니다."));
@@ -43,7 +43,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.BOARD_LIKE_CANCLE, is("좋아요 취소"));
 		
 		Assert.assertThat(message.COMMENT_NO_COMMENT, is("존재하지 않는 댓글입니다."));
-		Assert.assertThat(message.COMMENT_WRONG_COMMENT, is("다시 입력해주세요."));
+		Assert.assertThat(message.COMMENT_WRONG_COMMENT, is("댓글을 다시 입력해주세요."));
 		Assert.assertThat(message.COMMENT_RE_COMMENT, is("댓글을 입력해주세요."));
 		Assert.assertThat(message.COMMENT_NO_REPLY, is("답을 입력해주세요."));
 		

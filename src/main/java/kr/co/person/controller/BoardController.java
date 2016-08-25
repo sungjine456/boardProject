@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +34,6 @@ import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
 import kr.co.person.pojo.BoardLikeCount;
-import kr.co.person.pojo.CommentNum;
 import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.BoardService;
@@ -59,20 +59,20 @@ public class BoardController {
 			pageNum -= 1;
 		}
 		Pageable pageable = new CustomPageable(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
-		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
-		int lastNum = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
+		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		Page<Board> pages = boardService.findAll(pageable);
 		if(IsValid.isNotValidObjects(pages)){
 			return "view/user/login";
 		}
-		int lastPage = pages.getTotalPages();
-		if(lastNum > lastPage){
-			lastNum = lastPage;
+		int maxPage = pages.getTotalPages();
+		if(lastPage > maxPage){
+			lastPage = maxPage;
 		}
 		model.addAttribute("boardList", pages);
-		model.addAttribute("startNum", startNum);
-		model.addAttribute("lastNum", lastNum);
+		model.addAttribute("startPage", startPage);
 		model.addAttribute("lastPage", lastPage);
+		model.addAttribute("maxPage", maxPage);
 		return "view/board/frame";
 	}
 	
@@ -147,9 +147,9 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
-	public String boardDetailView(@RequestParam(required=false, defaultValue="0") int num, @RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
+	public String boardDetailView(@RequestParam(required=false, defaultValue="0") int boardNum, @RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -159,30 +159,33 @@ public class BoardController {
 		Pageable pageable = new CustomPageable(pageNum, COMMENT_MAX_COUNT_OF_PAGE, new Sort(
 			    new Sort.Order(Direction.DESC, "circle"),
 			    new Sort.Order(Direction.ASC, "step")));
-		int startNum = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
-		int lastNum = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
+		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		int userIdx = (int)session.getAttribute("idx");
 
-		Board board = boardService.findBoardForIdx(num);
-		BoardLike boardLike = boardService.getBoardLike(num, userIdx);
-		long likeCount = boardService.getBoardLikeCount(num);
+		Board board = boardService.findBoardForIdx(boardNum);
+		BoardLike boardLike = boardService.getBoardLike(boardNum, userIdx);
+		long likeCount = boardService.getBoardLikeCount(boardNum);
 		if(IsValid.isNotValidObjects(board) || likeCount < 0){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		String like = (IsValid.isNotValidObjects(boardLike))? message.BOARD_LIKE:message.BOARD_LIKE_CANCLE;
-		Page<Comment> comments = commentService.findAllCommentByBoard(num, pageable);
+		Page<Comment> comments = commentService.findAllCommentByBoard(boardNum, pageable);
 		if(IsValid.isNotValidObjects(comments)){
 			return "view/board/frame";
 		}
-		int lastPage = comments.getTotalPages();
-		if(lastNum > lastPage){
-			lastNum = lastPage;
+		int maxPage = comments.getTotalPages();
+		if(lastPage > maxPage){
+			lastPage = maxPage;
+		}
+		if(maxPage == 0){
+			lastPage = 1;
 		}
 		model.addAttribute("comments", comments);
-		model.addAttribute("startNum", startNum);
-		model.addAttribute("lastNum", lastNum);
+		model.addAttribute("startPage", startPage);
 		model.addAttribute("lastPage", lastPage);
+		model.addAttribute("maxPage", maxPage);
 		model.addAttribute("include", "main/boardDetail.ftl");
 		model.addAttribute("board", board);
 		model.addAttribute("likeCount", likeCount);
@@ -198,24 +201,24 @@ public class BoardController {
 					int length = vals.length;
 					for(int j = 0; j < length; j++){
 						int value = Integer.parseInt(vals[j]);
-						if(value == num){
+						if(value == boardNum){
 							addHit = false;
 						}
 					}
 					if(addHit){
-						boardService.addHitCount(num);
-						res.addCookie(common.addCookie("pht", val + num + " "));
+						boardService.addHitCount(boardNum);
+						res.addCookie(common.addCookie("pht", val + boardNum + " "));
 						addHit = false;
 					}
 				}
 			}
 			if(addHit){
-			    res.addCookie(common.addCookie("pht", num + " "));
-			    boardService.addHitCount(num);
+			    res.addCookie(common.addCookie("pht", boardNum + " "));
+			    boardService.addHitCount(boardNum);
 			}
 		} else {
-			res.addCookie(common.addCookie("pht", num + " "));
-		    boardService.addHitCount(num);
+			res.addCookie(common.addCookie("pht", boardNum + " "));
+		    boardService.addHitCount(boardNum);
 		}
 		return "view/board/frame";
 	}
@@ -243,7 +246,7 @@ public class BoardController {
 		log.info("execute BoardController boardUpdate");
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", message.BOARD_WRONG_BOARD);
-			return "redirect:/boardDetail";
+			return "redirect:/board";
 		}
 		int num = board.getIdx();
 		String title = board.getTitle();
@@ -255,7 +258,7 @@ public class BoardController {
 		Board findBoard = boardService.findBoardForIdx(num);
 		if(IsValid.isNotValidObjects(findBoard)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
-			return "redirect:/boardDetail";
+			return "redirect:/board";
 		}
 		if(StringUtils.isEmpty(title)){
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
@@ -271,129 +274,137 @@ public class BoardController {
 			return "redirect:/boardUpdateView";
 		}
 		rea.addFlashAttribute("message", message.BOARD_SUCCESS_UPDATE);
-		rea.addAttribute("num", num);
+		rea.addAttribute("boardNum", num);
 		return "redirect:/boardDetail";
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(CommentNum CommentNum, HttpSession session, RedirectAttributes rea){
+	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
-		if(IsValid.isNotValidObjects(CommentNum)){
-			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
-			return "redirect:/boardDetail";
-		}
-		int boardIdx = CommentNum.getNum();
-		String commentSentence = CommentNum.getComment();
-		if(IsValid.isNotValidInts(boardIdx)){
-			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
+		if(IsValid.isNotValidInts(boardNum)){
+			rea.addFlashAttribute("message", message.BOARD_WRONG_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(boardIdx);
+		if(IsValid.isNotValidObjects(comment)){
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
+			rea.addAttribute("boardNum", boardNum);
+			return "redirect:/boardDetail";
+		}
+		String commentSentence = comment.getComment();
+		Board board = boardService.findBoardForIdx(boardNum);
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/boardDetail";
 		}
 		if(StringUtils.isEmpty(commentSentence)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("num", boardIdx);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), boardIdx)){
+		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("num", boardIdx);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		rea.addAttribute("num", boardIdx);
+		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";
 	}
 	
 	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
-	public String updateCommentView(CommentNum commentNum, Model model){
+	public String updateCommentView(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") Comment comment, Model model){
 		log.info("execute BoardController updateCommentView");
-		model.addAttribute("comment", commentNum.getComment());
-		model.addAttribute("num", commentNum.getNum());
-		model.addAttribute("idx", commentNum.getIdx());
+		model.addAttribute("boardNum", boardNum);
+		model.addAttribute("comment", comment.getComment());
+		model.addAttribute("idx", comment.getIdx());
 		return "view/board/ajax/commentUpdate";
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(CommentNum commentNum, RedirectAttributes rea){
+	public String updateComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") Comment comment, RedirectAttributes rea){
 		log.info("execute BoardController updateComment");
-		if(IsValid.isNotValidObjects(commentNum)){
-			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
+		if(IsValid.isNotValidInts(boardNum)){
+			rea.addFlashAttribute("message", message.BOARD_WRONG_BOARD);
 			return "redirect:/board";
 		}
-		int num = commentNum.getNum();
-		int idx = commentNum.getIdx();
-		String comment = commentNum.getComment();
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidObjects(comment)){
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
+			rea.addAttribute("boardNum", boardNum);
+			return "redirect:/boardDetail";
+		}
+		int idx = comment.getIdx();
+		String commentSentence = comment.getComment();
+		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(num);
+		Board board = boardService.findBoardForIdx(boardNum);
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		if(IsValid.isNotValidInts(idx)){
-			rea.addAttribute("num", num);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(StringUtils.isEmpty(comment)){
-			rea.addAttribute("num", num);
+		if(StringUtils.isEmpty(commentSentence)){
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.update(idx, common.enter(common.cleanXss(comment)))){
-			rea.addAttribute("num", num);
+		if(!commentService.update(idx, common.enter(common.cleanXss(commentSentence)))){
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		rea.addAttribute("num", num);
+		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";
 	}
 	
 	@RequestMapping(value="replyView", method=RequestMethod.POST)
-	public String commentReplyView(CommentNum commentNum, Model model){
+	public String commentReplyView(@RequestParam(required=false, defaultValue="0") int boardNum, @RequestParam(required=false, defaultValue="0") int commentIdx, Model model){
 		log.info("execute BoardController commentReplyView");
-		model.addAttribute("num", commentNum.getNum());
-		model.addAttribute("idx", commentNum.getIdx());
+		model.addAttribute("boardNum", boardNum);
+		model.addAttribute("commentIdx", commentIdx);
 		return "view/board/ajax/commentReply";
 	}
 	
 	@RequestMapping(value="writeReply", method=RequestMethod.POST)
-	public String commentReplyWrite(CommentNum commentNum, HttpSession session, RedirectAttributes rea){
+	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
-		if(IsValid.isNotValidObjects(commentNum)){
-			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
+		if(IsValid.isNotValidInts(boardNum)){
+			rea.addFlashAttribute("message", message.BOARD_WRONG_BOARD);
 			return "redirect:/board";
 		}
-		int bnum = commentNum.getNum();
-		int idx = commentNum.getIdx();
-		String comment = commentNum.getComment();
-		if(IsValid.isNotValidInts(bnum)){
+		if(IsValid.isNotValidObjects(comment)){
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
+			rea.addAttribute("boardNum", boardNum);
+			return "redirect:/boardDetail";
+		}
+		String commentSentence = comment.getComment();
+		int idx = comment.getIdx();
+		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(bnum);
+		Board board = boardService.findBoardForIdx(boardNum);
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		if(IsValid.isNotValidInts(idx)){
 			rea.addFlashAttribute("message", message.COMMENT_NO_COMMENT);
-			rea.addAttribute("num", bnum);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(StringUtils.isEmpty(comment)){
+		if(StringUtils.isEmpty(commentSentence)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("num", bnum);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(comment)), (int)session.getAttribute("idx"), bnum)){
+		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
-			rea.addAttribute("num", bnum);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		rea.addAttribute("num", bnum);
+		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";
 	}
 	

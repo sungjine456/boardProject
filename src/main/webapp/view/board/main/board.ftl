@@ -34,7 +34,7 @@
 					${board.idx}
 				</td>
 				<td>
-					<a href="/boardDetail?num=${board.idx}">${board.title}</a>
+					<a href="/boardDetail?boardNum=${board.idx}">${board.title}</a>
 				</td>
 				<td>
 					${board.user.name}
@@ -61,14 +61,14 @@
 			<tr>
 				<td colspan="5">
 					<div style="text-align:center;">
-		<#if startNum &gt; 2>
-			<a class="btn btn-default btn-sm" href="?num=${startNum-1}">이전</a>
+		<#if startPage &gt; 2>
+			<a class="btn btn-default btn-sm" href="?pageNum=${startPage-1}">이전</a>
 		</#if>
-		<#list startNum..lastNum as i>
-			<a class="btn btn-default btn-sm" href="?num=${i}">${i}</a>
+		<#list startPage..lastPage as i>
+			<a class="btn btn-default btn-sm" href="?pageNum=${i}">${i}</a>
 		</#list>
-		<#if lastNum != lastPage>
-			<a class="btn btn-default btn-sm" href="?num=${lastNum+1}">다음</a>
+		<#if lastPage &lt; maxPage>
+			<a class="btn btn-default btn-sm" href="?pageNum=${lastPage+1}">다음</a>
 		</#if>
 					</div>
 				</td>

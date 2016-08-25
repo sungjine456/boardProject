@@ -1,24 +1,16 @@
 package kr.co.person.pojo;
 
 public class CommentNum {
-	private int num;
 	private int idx;
 	private String comment;
 	
 	public CommentNum(){
 	}
-	public CommentNum(int num, int idx, String comment){
-		this.num = num;
+	public CommentNum(int idx, String comment){
 		this.idx = idx;
 		this.comment = comment;
 	}
 	
-	public int getNum() {
-		return num;
-	}
-	public void setNum(int num) {
-		this.num = num;
-	}
 	public int getIdx() {
 		return idx;
 	}

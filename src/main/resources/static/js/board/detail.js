@@ -2,14 +2,14 @@ var detail = {
 	commentForm : $("#commentForm"),
 	boardUpdateBtn : $("#boardUpdateBtn"),
 	commentBtn : $("#commentForm #commentBtn"),
-	num : $("#commentForm #num"),
+	boardNum : $("#commentForm #boardNum"),
 	likeCount : $("#likeCount"),
 	writeComment : $("#commentForm #writeComment"),
 	commentUpdateBtn : $("#commentForm .commentUpdateBtn"),
 	commentReplyBtn : $("#commentForm .commentReplyBtn"),
 	commentLengthCount : $("#commentLengthCount"),
 	boardUpdateEvent : function(){
-		$(location).attr("href", "/boardUpdateView?num=" + this.num.val());
+		$(location).attr("href", "/boardUpdateView?boardNum=" + this.num.val());
 	},
 	commentEvent : function(){
 		if(this.writeComment.val() == ""){
@@ -25,7 +25,7 @@ var detail = {
 		$.ajax({
 			url : "/updateCommentView",
 			type : "POST",
-			data : {"comment" : target.attr("value"), "num" : detail.num.val(), "idx" : idx},
+			data : {"comment" : target.attr("value"), "boardNum" : detail.boardNum.val(), "idx" : idx},
 			success : function(data){
 				span.html(data);
 			},
@@ -43,7 +43,7 @@ var detail = {
 		$.ajax({
 			url : "/replyView",
 			type : "POST",
-			data : {"num" : detail.num.val(), "idx" : idx},
+			data : {"boardNum" : detail.boardNum.val(), "idx" : idx},
 			success : function(data){
 				span.html(data);
 			},
@@ -59,7 +59,7 @@ var detail = {
 		$.ajax({
 			url : "/boardLikeCount",
 			type : "POST",
-			data : {"boardIdx" : detail.num.val(), "userIdx" : userIdx},
+			data : {"boardIdx" : detail.boardNum.val(), "userIdx" : userIdx},
 			dataType : "JSON",
 			success : function(data){
 				detail.likeCount.attr("userIdx", userIdx);

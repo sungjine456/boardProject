@@ -1,8 +1,6 @@
-<div style="float:right; padding-right: 5%;">
-	<a href="/boardDetail?num=${num!0}">취소</a>
-</div>
+
 <form id="commentReplyForm${idx!0}" action="/writeReply" method="post">
-	<input type="hidden" name="num" value="${num!0}">
+	<input type="hidden" name="boardNum" value="${boardNum!0}">
 	<input type="hidden" name="idx" value="${idx!0}">
 	<br/>
 	<table style="background-color: #f4f4f4; width:98%;">
@@ -12,7 +10,8 @@
 				<DIV style="float:right">남은 글자수: <SPAN id="replyCommentLengthCount${idx!0}" maxCount="200">200</SPAN></DIV>
 			</td>
 			<td>
-				<a class="commentReplyBtn" class="btn btn-primary" idx="${idx!0}">댓글</a>
+				<a class="commentReplyBtn" class="btn btn-primary" idx="${idx!0}">답글</a>
+				<a href="/boardDetail?boardNum=${boardNum!0}">취소</a>
 			</td>
 		</tr>
 	</table>
