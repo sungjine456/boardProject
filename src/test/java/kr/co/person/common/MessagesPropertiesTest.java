@@ -72,5 +72,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.USER_ALREADY_JOIN_EMAIL, is("이미 가입되어 있는 이메일입니다."));
 		Assert.assertThat(message.USER_AVAILABLE_ID, is("가입 가능한 아이디입니다."));
 		Assert.assertThat(message.USER_AVAILABLE_EMAIL, is("가입 가능한 이메일입니다."));
+
+		Assert.assertThat(message.FILE_FAIL_UPLOAD, is("파일 업로드에 실패했습니다."));
 	}
 }

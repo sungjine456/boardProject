@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="css/common/editer.css">
 <div class="container">
 	<h1>글쓰기</h1>
-	<form id="writeForm" action="/boardWrite" method="post">
+	<form id="writeForm" action="/boardWrite" method="post" enctype="multipart/form-data">
 		<textarea type="text" id="content" name="content" style="display:none"></textarea>
 		<table class="table table-hover">
 			<colgroup>
@@ -25,6 +25,8 @@
 					<button id="editLeftBold" class="edit-btn" type="button"><img src="image/editer/left.png" style="padding-bottom: 2px;"/></button>
 					<button id="editCenterBold" class="edit-btn" type="button"><img src="image/editer/center.png" style="padding-bottom: 2px;"/></button>
 					<button id="editRightBold" class="edit-btn" type="button"><img src="image/editer/right.png" style="padding-bottom: 2px;"/></button>
+					<input id="editImage" name="editImage" class="edit-img" type="file"/>
+					<button class="edit-btn" type="button"><img src="image/editer/image.png" style="padding-bottom: 2px;"/></button>
 					<iframe id="editFrame" name="frame" width="100%" height="400px"></iframe>
 				</td>
 			</tr>

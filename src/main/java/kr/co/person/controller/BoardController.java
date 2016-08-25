@@ -1,7 +1,9 @@
 package kr.co.person.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
@@ -82,16 +85,40 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(Board board, Model model, HttpSession session){
+	public String boardWrite(Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
 		if(IsValid.isNotValidObjects(board)){
 			model.addAttribute("message", message.BOARD_WRONG_BOARD);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
+		if(IsValid.isNotValidObjects(editImage)){
+			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
+			model.addAttribute("include", "main/write.ftl");
+			return "view/board/frame";
+		}
+		String[] strArray = editImage.getOriginalFilename().split("\\.");
+		String ext = "";
+		if(strArray.length == 2){
+			ext = strArray[1];
+		}
+		String imgPath = "";
+		String se = File.separator;
+		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
+			imgPath = common.createImg(editImage, ext, (String)session.getAttribute("id"), se, "board");
+		}
+		if(StringUtils.isEmpty(imgPath)){
+			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
+			model.addAttribute("include", "main/write.ftl");
+			return "view/board/frame";
+		}
+		String[] paths = imgPath.split(se);
 		String title = board.getTitle().trim();
 		String content = board.getContent();
 		String contentTrim = content.replaceAll("&nbsp;", " ");
+		String filePath = paths[0];
+		String kindPath = paths[1];
+		String fileName = paths[2];
 		if(StringUtils.isEmpty(title)){
 			model.addAttribute("message", message.BOARD_NO_TITLE);
 			model.addAttribute("include", "main/write.ftl");
@@ -102,6 +129,12 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
+		log.info("===================================");
+		log.info(imgPath);
+		log.info(content);
+		content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+imgPath+">");
+		log.info(content);
+		log.info("===================================");
 		OkCheck ok = boardService.write(common.cleanXss(title), content, (int)session.getAttribute("idx"));
 		if(!ok.isBool()){
 			model.addAttribute("message", ok.getMessage());

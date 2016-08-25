@@ -45,6 +45,8 @@ public class Message {
 	public final String USER_AVAILABLE_ID;
 	public final String USER_AVAILABLE_EMAIL;
 	
+	public final String FILE_FAIL_UPLOAD;
+	
 	public Message(MessageSource messageSource){
 		this.messageSource = messageSource;
 		
@@ -88,6 +90,8 @@ public class Message {
 		USER_ALREADY_JOIN_EMAIL = messageSource.getMessage("user.alreadyJoinEmail", null, null);
 		USER_AVAILABLE_ID = messageSource.getMessage("user.availableId", null, null);
 		USER_AVAILABLE_EMAIL = messageSource.getMessage("user.availableEmail", null, null);
+
+		FILE_FAIL_UPLOAD = messageSource.getMessage("file.failUpload", null, null);
 	}
 
 	public MessageSource getMessageSource() {

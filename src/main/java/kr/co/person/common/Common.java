@@ -1,8 +1,10 @@
 package kr.co.person.common;
 
+import java.io.File;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
@@ -13,6 +15,7 @@ import javax.servlet.http.Cookie;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class Common {
@@ -127,4 +130,21 @@ public class Common {
     	cookie.setMaxAge(0);
     	return cookie;
     }
+    
+    public String createImg(MultipartFile file, String ext, String id, String se, String kind) {
+		Date date = new Date();
+		String fileName = id + "_" + date.getTime() + "." + ext;
+		String filePath = "C:"+se+"boardProject"+se+"img"+se+kind;
+		String imgPath = "img"+se+kind+se+fileName;
+		File dayFile = new File(filePath);
+		if(!dayFile.exists()){
+		   dayFile.mkdirs();
+		}
+		try {
+			file.transferTo(new File(filePath + se + fileName));
+		} catch(Exception e) {
+			e.printStackTrace(); 
+		}
+		return imgPath;
+	}
 }

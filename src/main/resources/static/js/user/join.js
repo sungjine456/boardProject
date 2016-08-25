@@ -115,7 +115,7 @@ var join = {
 			}
 		});
 	},
-	imagePreviewEvent : function(e){
+	imagePreviewEvent : function(){
 		var fileName = this.file.val();
 		var ext = fileName.slice(fileName.lastIndexOf(".") + 1).toLowerCase();
 		if(!fileName == "" && !(ext == "gif" || ext == "jpg" || ext == "jpeg" || ext == "png")){

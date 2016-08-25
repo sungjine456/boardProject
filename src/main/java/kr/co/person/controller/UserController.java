@@ -1,7 +1,6 @@
 package kr.co.person.controller;
 
 import java.io.File;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,8 +49,12 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session){
 		log.info("execute UserController join");
-		if(IsValid.isNotValidObjects(user, file)){
+		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", message.USER_FAIL_JOIN);
+			return "view/user/join";
+		}
+		if(IsValid.isNotValidObjects(file)){
+			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
 			return "view/user/join";
 		}
 		if(!common.isEmail(user.getEmail())){
@@ -66,7 +69,7 @@ public class UserController {
 		String imgPath = "";
 		String se = File.separator;
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			imgPath = createImg(file, ext, user.getId(), se);
+			imgPath = common.createImg(file, ext, user.getId(), se, "user");
 		}
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "img"+se+"user"+se+"default.png";
@@ -358,7 +361,7 @@ public class UserController {
 	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
 		log.info("execute UserController update");
 		if(IsValid.isNotValidObjects(ufile)){
-			model.addAttribute("message", message.USER_FAIL_UPDATE);
+			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
 			return "view/user/join";
 		}
 		String[] strArray = ufile.getOriginalFilename().split("\\.");
@@ -370,7 +373,7 @@ public class UserController {
 		String id = (String)session.getAttribute("id");
 		String se = File.separator;
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			imgPath = createImg(ufile, ext, id, se);
+			imgPath = common.createImg(ufile, ext, id, se, "user");
 		}
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("include", "/view/user/update.ftl");
@@ -421,22 +424,5 @@ public class UserController {
 	public String interceptorView(){
 		log.info("execute UserController interceptorView");
 		return "common/interceptorPage";
-	}
-	
-	private String createImg(MultipartFile file, String ext, String id, String se) {
-		Date date = new Date();
-		String fileName = id + "_" + date.getTime() + "." + ext;
-		String filePath = "C:"+se+"boardProject"+se+"img"+se+"user";
-		String imgPath = "img"+se+"user"+se+fileName;
-		File dayFile = new File(filePath);
-		if(!dayFile.exists()){
-		   dayFile.mkdirs();
-		}
-		try {
-			file.transferTo(new File(filePath + se + fileName));
-		} catch(Exception e) {
-		    log.error(e.getMessage());
-		}
-		return imgPath;
 	}
 }
