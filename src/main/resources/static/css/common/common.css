@@ -4,3 +4,24 @@ a{
 #idSaveCheck{
 	cursor:pointer;
 }
+.a-btn {
+	padding : 0px;
+	text-align : center;
+	cursor : pointer;
+	border : 0px solid white;
+	background : transparent;
+	outline : 0;
+	text-decoration : none;
+	color : #337ab7;
+}
+.a-btn:focus, .a-btn:hover {
+	padding : 0px;
+	text-align : center;
+	cursor : pointer;
+	border : 0px solid white;
+	background : transparent;
+	outline : 0;
+	text-decoration : none;
+	color : #23527c;
+	text-decoration : underline;
+}

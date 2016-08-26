@@ -333,6 +333,7 @@ public class BoardController {
 		}
 		int idx = comment.getIdx();
 		String commentSentence = comment.getComment();
+		String trimCommentSentence = commentSentence.trim();
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
@@ -343,14 +344,17 @@ public class BoardController {
 			return "redirect:/board";
 		}
 		if(IsValid.isNotValidInts(idx)){
+			rea.addFlashAttribute("message", message.COMMENT_NO_COMMENT);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(StringUtils.isEmpty(commentSentence)){
+		if(StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(trimCommentSentence)){
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
 		if(!commentService.update(idx, common.enter(common.cleanXss(commentSentence)))){
+			rea.addFlashAttribute("message", message.COMMENT_WRONG_COMMENT);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}

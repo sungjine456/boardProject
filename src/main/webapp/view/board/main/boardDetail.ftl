@@ -44,7 +44,7 @@
 <#list comments.content as comment>
 			<tr>
 				<td colspan="2">
-					<div style="padding-left:5%;">
+					<div style="padding: 0 3% 0 5%;">
 <#if comment.depth &gt; 0>
 	<#list 1..comment.depth as i>
 		&nbsp;&nbsp;&nbsp;&nbsp;
@@ -55,12 +55,12 @@
 </#if>
 						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate.toString("yyyy.MM.dd HH:mm")}</span>
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
-							<div style="float:right; padding-right: 5%;">
+							<div style="float:right; padding-right: 3%;">
 			<#if comment.writer.idx == idx>
-								<a class="commentUpdateBtn" value="${comment.comment}" idx="${comment.idx}">수정</a>
+								<input class="commentUpdateBtn a-btn" type="button" value="수정" comment="${comment.comment}" idx="${comment.idx}"/>
 								<span>&nbsp;/&nbsp;</span>
 			</#if>
-								<a class="commentReplyBtn" idx="${comment.idx}">답글</a>
+								<input class="commentReplyBtn a-btn" idx="${comment.idx}" type="button" value="답글">
 							</div>
 							<br>
 							<div>
@@ -70,14 +70,16 @@
 							</#list>
 						</#if>
 								${comment.comment}
-							<div>
+							</div>
 						</span>
 					</div>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
-					<span id="replySpan${comment.idx}">
+				<td colspan="2" style="height:0px; padding: 0px;">
+					<div style="padding: 0 3% 0 5%;">
+						<span id="replySpan${comment.idx}">
+					</div>
 				</td>
 			</tr>
 <#else>

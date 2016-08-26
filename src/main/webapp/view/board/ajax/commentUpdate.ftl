@@ -1,5 +1,5 @@
-<div style="float:right; padding-right: 5%;">
-	<a class="commentUpdateBtn" idx="${idx!0}">수정</a>
+<div style="float:right; padding-right: 3%;">
+	<input class="commentUpdateBtn a-btn" idx="${idx!0}" type="button" value="수정"/>
 	<span>&nbsp;/&nbsp;</span>
 	<a href="/boardDetail?boardNum=${boardNum!0}">취소</a>
 </div>

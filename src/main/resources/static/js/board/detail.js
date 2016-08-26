@@ -25,7 +25,7 @@ var detail = {
 		$.ajax({
 			url : "/updateCommentView",
 			type : "POST",
-			data : {"comment" : target.attr("value"), "boardNum" : detail.boardNum.val(), "idx" : idx},
+			data : {"comment" : target.attr("comment"), "boardNum" : detail.boardNum.val(), "idx" : idx},
 			success : function(data){
 				span.html(data);
 			},
