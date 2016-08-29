@@ -21,10 +21,12 @@
 					<label for="content">내용 : </label>
 				</th>
 				<td>
-					<input id="editFontBold" class="edit-btn" type="button" value="B"/>
-					<button id="editLeftBold" class="edit-btn" type="button"><img src="image/editer/left.png" style="padding-bottom: 2px;"/></button>
-					<button id="editCenterBold" class="edit-btn" type="button"><img src="image/editer/center.png" style="padding-bottom: 2px;"/></button>
-					<button id="editRightBold" class="edit-btn" type="button"><img src="image/editer/right.png" style="padding-bottom: 2px;"/></button>
+					<input id="editFontBold" class="edit-btn" type="button" style="font-weight:bold;" value="B"/>
+					<input id="editFontUnderLine" class="edit-btn" type="button" style="text-decoration:underline" value="U"/>
+					<input id="editFontItalic" class="edit-btn" type="button" style="font-style: italic;" value="I"/>
+					<button id="editLeftSort" class="edit-btn" type="button"><img src="image/editer/left.png" style="padding-bottom: 2px;"/></button>
+					<button id="editCenterSort" class="edit-btn" type="button"><img src="image/editer/center.png" style="padding-bottom: 2px;"/></button>
+					<button id="editRightSort" class="edit-btn" type="button"><img src="image/editer/right.png" style="padding-bottom: 2px;"/></button>
 					<input id="editImage" name="editImage" class="edit-img" type="file"/>
 					<button class="edit-btn" type="button"><img src="image/editer/image.png" style="padding-bottom: 2px;"/></button>
 					<iframe id="editFrame" name="frame" width="100%" height="400px"></iframe>

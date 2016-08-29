@@ -1,9 +1,11 @@
 var editer = {
 	frame : document.getElementById("editFrame"),
 	editFontBold : $("#editFontBold"),
-	editLeftBold : $("#editLeftBold"),
-	editCenterBold : $("#editCenterBold"),
-	editRightBold : $("#editRightBold"),
+	editFontUnderLine : $("#editFontUnderLine"),
+	editFontItalic : $("#editFontItalic"),
+	editLeftSort : $("#editLeftSort"),
+	editCenterSort : $("#editCenterSort"),
+	editRightSort : $("#editRightSort"),
 	editImage : $("#editImage"),
 	func : function(){
 		this.frame.contentWindow.document.designMode = "on";
@@ -32,9 +34,11 @@ var editer = {
 	init : function(){
 		var self = this;
 		self.editFontBold.click(function(){self.editEvent('bold')});
-		self.editLeftBold.click(function(){self.editEvent('justifyleft')});
-		self.editCenterBold.click(function(){self.editEvent('justifycenter')});
-		self.editRightBold.click(function(){self.editEvent('justifyright')});
+		self.editFontUnderLine.click(function(){self.editEvent('underline')});
+		self.editFontItalic.click(function(){self.editEvent('italic')});
+		self.editLeftSort.click(function(){self.editEvent('justifyleft')});
+		self.editCenterSort.click(function(){self.editEvent('justifycenter')});
+		self.editRightSort.click(function(){self.editEvent('justifyright')});
 		self.editImage.change(function(){self.editImageEvent('insertimage')});
 	}
 }
