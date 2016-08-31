@@ -29,6 +29,7 @@ ext {
 }
 
 dependencies {
+	compile('org.mockito:mockito-all:1.9.5')
     compile 'com.mysema.querydsl:querydsl-jpa:' + querydsl
 	compile 'com.mysema.querydsl:querydsl-apt:' + querydsl + ':jpa'
 	compile('joda-time:joda-time')
