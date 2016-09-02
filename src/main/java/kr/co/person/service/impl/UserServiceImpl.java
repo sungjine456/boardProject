@@ -235,8 +235,10 @@ public class UserServiceImpl implements UserService {
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(idx, loginId);
 		if(IsValid.isValidObjects(autoLogin)){
 			autoLoginRepository.delete(autoLogin);
+			return true;
+		} else {
+			return false;
 		}
-		return true;
 	}
 
 	@Override

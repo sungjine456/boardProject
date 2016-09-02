@@ -197,9 +197,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
-	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String logout(HttpSession session, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
-		String url = req.getRequestURI();
 		int idx = (int)session.getAttribute("idx");
 		session.setAttribute("loginYn", "N");
 		session.removeAttribute("idx");
@@ -220,11 +219,13 @@ public class UserController {
 			}
 		}
 		if(IsValid.isNotValidObjects(user)){
-			return url;
+			rea.addFlashAttribute("message", message.USER_FAIL_LOGOUT);
+			return "redirect:/board";
 		}
 		if(StringUtils.isNotEmpty(loginId)){
 			if(!userService.autoLogout(user, loginId)){
-				return url;
+				rea.addFlashAttribute("message", message.USER_FAIL_LOGOUT);
+				return "redirect:/board";
 			}
 		}
 	    res.addCookie(common.removeCookie("psvd"));

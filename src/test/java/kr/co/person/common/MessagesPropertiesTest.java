@@ -51,6 +51,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.USER_NO_USER, is("존재하지 않는 회원입니다."));
 		Assert.assertThat(message.USER_FAIL_JOIN, is("회원가입에 실패하셨습니다."));
 		Assert.assertThat(message.USER_FAIL_LOGIN, is("로그인에 실패하셨습니다."));
+		Assert.assertThat(message.USER_FAIL_LOGOUT, is("로그아웃에 실패하셨습니다."));
 		Assert.assertThat(message.USER_FAIL_UPDATE, is("회원정보 수정에 실패 하셨습니다."));
 		Assert.assertThat(message.USER_FAIL_REMOVE, is("탈퇴에 실패하셨습니다."));
 		Assert.assertThat(message.USER_FAIL_TRANSlATE_PASSWORD, is("비밀번호 수정을 실패했습니다."));

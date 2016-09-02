@@ -23,6 +23,7 @@ public class Message {
 	public final String USER_NO_USER;
 	public final String USER_FAIL_JOIN;
 	public final String USER_FAIL_LOGIN;
+	public final String USER_FAIL_LOGOUT;
 	public final String USER_FAIL_UPDATE;
 	public final String USER_FAIL_REMOVE;
 	public final String USER_FAIL_TRANSlATE_PASSWORD;
@@ -69,6 +70,7 @@ public class Message {
 		USER_NO_USER = messageSource.getMessage("user.noUser", null, null);
 		USER_FAIL_JOIN = messageSource.getMessage("user.failJoin", null, null);
 		USER_FAIL_LOGIN = messageSource.getMessage("user.failLogin", null, null);
+		USER_FAIL_LOGOUT = messageSource.getMessage("user.failLogout", null, null);
 		USER_FAIL_UPDATE = messageSource.getMessage("user.failUpdate", null, null);
 		USER_FAIL_REMOVE = messageSource.getMessage("user.failRemove", null, null);
 		USER_FAIL_TRANSlATE_PASSWORD = messageSource.getMessage("user.failTranslatePassword", null, null);
