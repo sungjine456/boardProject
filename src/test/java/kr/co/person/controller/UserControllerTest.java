@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.FileInputStream;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 
@@ -17,7 +18,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,17 +33,26 @@ import kr.co.person.service.UserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BoardProjectApplication.class)
 @WebAppConfiguration
+@Sql(scripts="classpath:/testDataSql/testData.sql")
 public class UserControllerTest {
 	
 	@Mock private UserService userService;
 	@InjectMocks private UserController userController;
 	@Autowired private WebApplicationContext wac;
 	private MockMvc mock;
+	private MockHttpSession mockSession;
 	 
     @Before
     public void setUp() throws Exception {
     	MockitoAnnotations.initMocks(this);
-    	this.mock = MockMvcBuilders.webAppContextSetup(wac).build();
+    	mock = MockMvcBuilders.webAppContextSetup(wac).build();
+    	mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
+    	mockSession.setAttribute("loginYn", "Y");
+    	mockSession.setAttribute("idx", 1);
+    	mockSession.setAttribute("id", "sungjin");
+    	mockSession.setAttribute("img", "defaul.png");
+    	mockSession.setAttribute("name", "hong");
+    	mockSession.setAttribute("email", "sungjin@naver.com");
     }
 	
     @Test
@@ -173,13 +185,13 @@ public class UserControllerTest {
     		get("/logout")
 	    		.sessionAttr("loginYn", "Y")
 	    		.sessionAttr("idx", 5))
-    		.andExpect(status().isFound())
-    		.andExpect(redirectedUrl("/board"))
-    		.andExpect(flash().attribute("message", "로그아웃에 실패하셨습니다."));
+	    	.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
     	
     	mock.perform(
     		get("/logout")
-	    		.sessionAttr("loginYn", "Y")
+	    		.session(mockSession)
 	    		.sessionAttr("idx", 1)
 	    		.cookie(new Cookie("psvlgnd", "asdasdasdsss")))
     		.andExpect(status().isFound())
@@ -188,10 +200,204 @@ public class UserControllerTest {
     	
     	mock.perform(
     		get("/logout")
-	    		.sessionAttr("loginYn", "Y")
-	    		.sessionAttr("idx", 1)
+    			.session(mockSession)
 	    		.cookie(new Cookie("psvlgnd", "asdasdasd")))
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/"));
+    }
+    
+    @Test
+    public void testMyPageView() throws Exception{
+    	mock.perform(
+    		get("/mypage")
+    			.session(mockSession)
+	    		.sessionAttr("include", "/view/user/mypage.ftl"))
+    		.andExpect(status().isOk())
+    		.andExpect(view().name("view/board/frame"));
+
+    	mock.perform(
+    		get("/mypage")
+    			.sessionAttr("loginYn", "Y")
+    			.sessionAttr("include", "/view/user/mypage.ftl"))
+	    	.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+    }
+    
+    @Test
+    public void testChangePassword() throws Exception {
+    	mock.perform(
+    		post("/changePassword")
+    			.session(mockSession))
+    		.andExpect(status().isFound())
+    		.andExpect(redirectedUrl("/update"));
+    	
+    	mock.perform(
+    		post("/changePassword")
+    			.sessionAttr("loginYn", "Y")
+    			.param("password", "123123"))
+	    	.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+    	
+    	mock.perform(
+    		post("/changePassword")
+    			.session(mockSession)
+    			.param("changePassword", "123123"))
+    		.andExpect(status().isFound())
+    		.andExpect(redirectedUrl("/update"));
+    	
+    	mock.perform(
+    		post("/changePassword")
+    			.session(mockSession)
+    			.param("password", "123123")
+    			.param("changePassword", "123123"))
+    		.andExpect(status().isFound())
+    		.andExpect(redirectedUrl("/update"));
+    	
+    	mock.perform(
+    		post("/changePassword")
+	    		.sessionAttr("idx", 5)
+				.session(mockSession)
+    			.param("password", "123123")
+    			.param("changePassword", "123456"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+    	
+    	mock.perform(
+    		post("/changePassword")
+    			.sessionAttr("loginYn", "Y")
+    			.sessionAttr("idx", 1)
+    			.sessionAttr("id", "test")
+    			.sessionAttr("img", "defaul.png")
+    			.sessionAttr("name", "test")
+    			.sessionAttr("email", "test@naver.com")
+    			.param("password", "123123")
+    			.param("changePassword", "123456"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+
+    	mock.perform(
+    		post("/changePassword")
+    			.sessionAttr("idx", 1)
+    			.session(mockSession)
+    			.param("password", "123123")
+    			.param("changePassword", "123456"))
+	    	.andExpect(status().isFound())
+	    	.andExpect(redirectedUrl("/mypage"))
+	    	.andExpect(flash().attribute("message", "비밀번호 수정이 완료되었습니다."));
+    }
+    
+    @Test
+    public void testLeave() throws Exception {
+    	mock.perform(
+    		get("/leave")
+	    		.session(mockSession))
+    		.andExpect(status().isFound())
+    		.andExpect(redirectedUrl("/mypage"))
+    		.andExpect(flash().attribute("message", "비밀번호를 입력해주세요."));
+    	
+    	mock.perform(
+    		get("/leave")
+    			.sessionAttr("loginYn", "Y")
+    			.param("password", "123123"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+    	
+    	mock.perform(
+   			get("/leave")
+    			.sessionAttr("loginYn", "Y")
+    			.sessionAttr("id", "sungjin")
+    			.param("password", "123123"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+
+    	mock.perform(
+   			get("/leave")
+    			.sessionAttr("loginYn", "Y")
+    			.sessionAttr("idx", 1)
+    			.param("password", "123123"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+
+    	mock.perform(
+    		get("/leave")
+    			.session(mockSession)
+    			.sessionAttr("id", "test")
+    			.param("password", "123123"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+
+    	mock.perform(
+    		get("/leave")
+    			.session(mockSession)
+    			.sessionAttr("id", "sungjin")
+    			.sessionAttr("idx", 2)
+    			.param("password", "123123"))
+	    	.andExpect(status().isOk())
+	    	.andExpect(view().name("view/user/login"))
+	    	.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+
+    	mock.perform(
+    		get("/leave")
+    			.session(mockSession)
+    			.sessionAttr("idx", 1)
+    			.param("password", "123123"))
+	    	.andExpect(status().isFound())
+			.andExpect(redirectedUrl("/"))
+	    	.andExpect(flash().attribute("message", "탈퇴에 성공하셨습니다."))
+	    	.andExpect(request().sessionAttribute("loginYn", "N"));
+    }
+    
+    @Test
+    public void testUpdateView() throws Exception{
+    	mock.perform(
+    		post("/updateView")
+	    		.sessionAttr("loginYn", "Y")
+				.sessionAttr("id", "test")
+				.sessionAttr("img", "defaul.png")
+				.sessionAttr("name", "test")
+				.sessionAttr("email", "test@naver.com"))
+    		.andExpect(status().isOk())
+    		.andExpect(view().name("view/user/login"))
+    		.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+
+    	mock.perform(
+    		post("/updateView")
+    			.session(mockSession))
+	    	.andExpect(status().isFound())
+	    	.andExpect(redirectedUrl("/mypage"))
+	    	.andExpect(flash().attribute("message", "비밀번호를 입력해주세요."));
+    	
+    	mock.perform(
+    		post("/updateView")
+    			.session(mockSession)
+    			.sessionAttr("idx", 3))
+	    	.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", "로그인 후 이용해 주세요."));
+    	
+    	mock.perform(
+    		post("/updateView")
+    			.session(mockSession)
+    			.sessionAttr("idx", 1)
+    			.param("updatePassword", "111111"))
+	    	.andExpect(status().isFound())
+	    	.andExpect(redirectedUrl("/mypage"))
+	    	.andExpect(flash().attribute("message", "비밀번호를 입력해주세요."));
+    	
+    	mock.perform(
+    		post("/updateView")
+	    		.session(mockSession)
+	    		.param("updatePassword", "123123"))
+    		.andExpect(status().isOk())
+    		.andExpect(view().name("view/board/frame"))
+    		.andExpect(model().attribute("include", "/view/user/update.ftl"));
     }
 }
