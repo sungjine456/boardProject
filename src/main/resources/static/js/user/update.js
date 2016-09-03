@@ -12,15 +12,15 @@ var update = {
 	changeForm : $("#changeForm"),
 	passwordChangeEvent : function(){
 		if(this.password.val() == ""){
-			alert("비밀번호 칸을 입력해주세요.");
+			alert("비밀번호를 입력해주세요.");
 			return false;
 		}
 		if(this.changePassword.val() == ""){
-			alert("비밀번호 수정칸을 입력해주세요.");
+			alert("비밀번호 수정을 입력해주세요.");
 			return false;
 		}
 		if(this.changePasswordConfirm.val() == ""){
-			alert("비밀번호 수정 확인칸을 입력해주세요.");
+			alert("비밀번호 수정 확인을 입력해주세요.");
 			return false;
 		}
 		if(this.changePassword.val().length < 6 && this.changePasswordConfirm.val().length < 6){
@@ -28,7 +28,11 @@ var update = {
 			return false;
 		}
 		if(this.changePassword.val() !== this.changePasswordConfirm.val()){
-			alert("비밀번호 수정 확인칸을 다시 입력해주세요");
+			alert("비밀번호 수정과 비밀번호 수정 확인이 동일하게 입력해주세요.");
+			return false;
+		}
+		if(this.password.val() === this.changePassword){
+			alert("비밀번호와 비밀번호 수정이 다르게 입력해주세요.");
 			return false;
 		}
 		this.changeForm.submit();

@@ -270,6 +270,10 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_UPDATE_PASSWORD);
 			return "redirect:/update";
 		}
+		if(password.equals(changePassword)){
+			rea.addFlashAttribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD);
+			return "redirect:/update";
+		}
 		int idx = (int)session.getAttribute("idx");
 		if(IsValid.isNotValidInts(idx)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
