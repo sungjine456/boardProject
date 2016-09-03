@@ -199,13 +199,11 @@ public class UserController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
-		int idx = (int)session.getAttribute("idx");
-		session.setAttribute("loginYn", "N");
-		session.removeAttribute("idx");
-		session.removeAttribute("id");
-		session.removeAttribute("name");
-		session.removeAttribute("email");
-		rea.addFlashAttribute("message", message.USER_LOGOUT);
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
 		User user = userService.findUserForIdx(idx);
 		String loginId = "";
 		Cookie[] cookies = req.getCookies();
@@ -230,6 +228,12 @@ public class UserController {
 		}
 	    res.addCookie(common.removeCookie("psvd"));
 	    res.addCookie(common.removeCookie("psvlgnd"));
+	    session.setAttribute("loginYn", "N");
+		session.removeAttribute("idx");
+		session.removeAttribute("id");
+		session.removeAttribute("name");
+		session.removeAttribute("email");
+	    rea.addFlashAttribute("message", message.USER_LOGOUT);
 		return "redirect:/";
 	}
 	
@@ -252,9 +256,10 @@ public class UserController {
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
 	public String myPageView(Model model, HttpSession session){
 		log.info("execute UserController mypageView");
-		model.addAttribute("id", session.getAttribute("id"));
-		model.addAttribute("name", session.getAttribute("name"));
-		model.addAttribute("email", session.getAttribute("email"));
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		model.addAttribute("include", "/view/user/mypage.ftl");
 		return "view/board/frame";
 	}
@@ -262,6 +267,10 @@ public class UserController {
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
 	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController changePassword");
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/update";
@@ -274,20 +283,12 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD);
 			return "redirect:/update";
 		}
-		int idx = (int)session.getAttribute("idx");
-		if(IsValid.isNotValidInts(idx)){
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
+		User user = userService.findUserForIdx(idx);
+		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		User user = userService.findUserForIdx(idx);
-		if(IsValid.isNotValidObjects(user)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", message.USER_FAIL_UPDATE);
-			return "view/board/frame";
-		}
-		model.addAttribute("id", user.getId());
-		model.addAttribute("name", user.getName());
-		model.addAttribute("email", user.getEmail());
 		
 		OkCheck ok = userService.changePassword(idx, password, changePassword);
 		rea.addFlashAttribute("message", ok.getMessage());
@@ -297,16 +298,16 @@ public class UserController {
 	@RequestMapping(value="/leave")
 	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
 		}
 		String id = (String)session.getAttribute("id");
-		int idx = (int)session.getAttribute("idx");
-		if(StringUtils.isEmpty(id) || IsValid.isNotValidInts(idx)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
-		}
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
 		User user = userService.loginCheck(id, password);
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", message.USER_NO_USER);
@@ -345,19 +346,20 @@ public class UserController {
 	@RequestMapping(value="/updateView", method=RequestMethod.POST)
 	public String updateView(@RequestParam(required=false) String updatePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController updateView");
-		int idx = (int)session.getAttribute("idx");
-		if(IsValid.isNotValidInts(idx)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", message.USER_FAIL_UPDATE);
-			return "view/board/frame";
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
 		}
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
 		if(StringUtils.isEmpty(updatePassword) || !userService.passwordCheck(idx, updatePassword)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
 		}
-		model.addAttribute("id", session.getAttribute("id"));
-		model.addAttribute("name", session.getAttribute("name"));
-		model.addAttribute("email", session.getAttribute("email"));
+		User user = userService.findUserForIdx(idx);
+		if(IsValid.isNotValidObjects(user)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		model.addAttribute("include", "/view/user/update.ftl");
 		return "view/board/frame";
 	}
@@ -365,6 +367,10 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
 		log.info("execute UserController update");
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		if(IsValid.isNotValidObjects(ufile)){
 			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
 			return "view/user/join";
@@ -387,13 +393,13 @@ public class UserController {
 		}
 		String name = user.getName();
 		String email = user.getEmail();
-		int idx = (int)session.getAttribute("idx");
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
 		if(!common.isEmail(email)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", message.USER_NO_EMAIL_FORMAT);
 			return "view/board/frame";
 		}
-		if(StringUtils.isEmpty(name) || IsValid.isNotValidInts(idx)){
+		if(StringUtils.isEmpty(name)){
 			model.addAttribute("include", "/view/user/update.ftl");
 			model.addAttribute("message", message.USER_FAIL_UPDATE);
 			return "view/board/frame";
@@ -429,5 +435,19 @@ public class UserController {
 	public String interceptorView(){
 		log.info("execute UserController interceptorView");
 		return "common/interceptorPage";
+	}
+	
+	private boolean sessionComparedToDB(HttpSession session){
+		log.info("sessionComparedToDB Method");
+		String loginYn = IsValid.isValidObjects(session.getAttribute("loginYn"))?(String)session.getAttribute("loginYn"):"";
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
+		String id = IsValid.isValidObjects(session.getAttribute("id"))?(String)session.getAttribute("id"):"";
+		String name = IsValid.isValidObjects(session.getAttribute("name"))?(String)session.getAttribute("name"):"";
+		String email = IsValid.isValidObjects(session.getAttribute("email"))?(String)session.getAttribute("email"):"";
+		User user = userService.findUserForIdx(idx);
+		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(id, user.getId())
+				|| !StringUtils.equals(name, user.getName()) || !StringUtils.equals(email, user.getEmail())
+				|| !StringUtils.equals(loginYn, "Y"))
+				?false:true;
 	}
 }

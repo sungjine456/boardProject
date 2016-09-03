@@ -63,12 +63,12 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.USER_NO_LOGIN, is("로그인 후 이용해 주세요."));
 		Assert.assertThat(message.USER_NO_ID, is("아이디를 입력해주세요."));
 		Assert.assertThat(message.USER_NO_EMAIL, is("이메일을 입력해주세요."));
-		Assert.assertThat(message.USER_NO_PASSWORD, is("패스워드를 입력해주세요."));
-		Assert.assertThat(message.USER_NO_UPDATE_PASSWORD, is("수정할 패스워드를 입력해주세요."));
+		Assert.assertThat(message.USER_NO_PASSWORD, is("비밀번호를 입력해주세요."));
+		Assert.assertThat(message.USER_NO_UPDATE_PASSWORD, is("수정할 비밀번호를 입력해주세요."));
 		Assert.assertThat(message.USER_PASSWORD_SAME_UPDATE_PASSWORD, is("비밀번호와 비밀번호 수정이 다르게 입력해주세요."));
 		Assert.assertThat(message.USER_WRONG_ID_OR_WRONG_PASSWORD, is("아이디 혹은 비밀번호가 틀렸습니다."));
-		Assert.assertThat(message.USER_RE_PASSWORD, is("패스워드를 다시 입력해주세요."));
-		Assert.assertThat(message.USER_RE_UPDATE_PASSWORD, is("수정할 패스워드를 다시 입력해주세요."));
+		Assert.assertThat(message.USER_RE_PASSWORD, is("비밀번호를 다시 입력해주세요."));
+		Assert.assertThat(message.USER_RE_UPDATE_PASSWORD, is("수정할 비밀번호를 다시 입력해주세요."));
 		Assert.assertThat(message.USER_ALREADY_JOIN, is("이미 가입되어 있는 회원입니다."));
 		Assert.assertThat(message.USER_ALREADY_JOIN_ID, is("이미 가입되어 있는 아이디입니다."));
 		Assert.assertThat(message.USER_ALREADY_JOIN_EMAIL, is("이미 가입되어 있는 이메일입니다."));

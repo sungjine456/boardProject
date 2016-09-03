@@ -71,7 +71,10 @@ public class UserServiceImpl implements UserService {
 		// user에 쓰레기값 넣기위한 암호화
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId) || !autoLogout(user, loginId)){
+		if(StringUtils.isNotEmpty(loginId)){
+			autoLogout(user, loginId);
+		}
+		if(IsValid.isNotValidObjects(user)){
 			return false;
 		}
 		user.setEmail(garbage);
