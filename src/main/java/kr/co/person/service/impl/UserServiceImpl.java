@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
 		}
 		User user = userRepository.findByEmail(email); 
 		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck(message.USER_FAIL_TRANSlATE_PASSWORD, false);
+			return new OkCheck(message.USER_WRONG_EMAIL, false);
 		}
 		String random = "";
 		for(int i = 0; i < 6; i++){
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
 		}
 		String password = common.passwordEncryption(random);
 		if(StringUtils.isEmpty(password)){
-			return new OkCheck(message.USER_FAIL_TRANSlATE_PASSWORD, false);
+			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
 		}
 		log.info("passwordEncryption function success");
 		user.setPassword(password);

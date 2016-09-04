@@ -43,12 +43,12 @@ public class BoardServiceImple implements BoardService {
 			return new OkCheck(message.BOARD_NO_CONTENT, false);
 		}
 		if(IsValid.isNotValidInts(userIdx)){
-			return new OkCheck(message.USER_NO_USER, false);
+			return new OkCheck(message.USER_WRONG_USER, false);
 		}
 		DateTime date = new DateTime();
 		User user = userRepository.findOne(userIdx);
 		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck(message.USER_NO_USER, false);
+			return new OkCheck(message.USER_WRONG_USER, false);
 		}
 		Board board = new Board(title, content, user, date, date);
 		boardRepository.save(board);
