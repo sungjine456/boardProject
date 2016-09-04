@@ -97,7 +97,7 @@
 									<label>비밀번호 : </label> 
 								</th>
 								<td>
-									<input id="updatePassword" class="form-control" name="updatePassword" type="password"/>
+									<input id="updatePassword" class="form-control" name="password" type="password"/>
 								</td>
 							</tr>
 							<tr>

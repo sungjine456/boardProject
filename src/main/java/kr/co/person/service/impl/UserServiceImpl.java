@@ -36,12 +36,18 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidObjects(user)){
 			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
-		user.setName(common.cleanXss(user.getName()));
+		String name = common.cleanXss(user.getName());
 		String id = common.cleanXss(user.getId());
 		String password = user.getPassword();
 		String email = user.getEmail();
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
+		}
+		if(StringUtils.isEmpty(name)){
+			return new OkCheck(message.USER_NO_NAME, false);
+		}
+		if(StringUtils.isEmpty(email)){
+			return new OkCheck(message.USER_NO_EMAIL, false);
 		}
 		if(!common.isEmail(email)){
 			return new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
@@ -56,6 +62,8 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
+		user.setId(id);
+		user.setName(name);
 		user.setPassword(password);
 		DateTime date = new DateTime();
 		user.setRegDate(date);
@@ -72,7 +80,15 @@ public class UserServiceImpl implements UserService {
 		String garbage = common.passwordEncryption("Garbage");
 		User user = userRepository.findOne(idx);
 		if(StringUtils.isNotEmpty(loginId)){
-			autoLogout(user, loginId);
+			if(autoLoginCheck(user, loginId)){
+				if(!autoLogout(user, loginId)){
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
 		if(IsValid.isNotValidObjects(user)){
 			return false;
@@ -117,8 +133,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User loginCheck(String id, String password) {
-		log.info("execute UserServiceImpl loginCheck");
+	public User joinCheck(String id, String password) {
+		log.info("execute UserServiceImpl joinCheck");
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return null;
 		}
@@ -135,7 +151,10 @@ public class UserServiceImpl implements UserService {
 	public OkCheck translatePassword(String email) {
 		log.info("execute UserServiceImpl translatePassword");
 		if(StringUtils.isEmpty(email)){
-			return new OkCheck(message.USER_FAIL_TRANSlATE_PASSWORD, false);
+			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
+		}
+		if(!common.isEmail(email)){
+			return new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		}
 		User user = userRepository.findByEmail(email); 
 		if(IsValid.isNotValidObjects(user)){

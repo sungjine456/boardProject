@@ -31,8 +31,8 @@ public class UserServiceTest {
     private DateTime date = new DateTime();
 
 	@Test
-	public void testLoginCheck(){
-		user = userService.loginCheck("sungjin", "123123");
+	public void testJoinCheck(){
+		user = userService.joinCheck("sungjin", "123123");
 		Assert.assertEquals("sungjin", user.getId());
 	}
 	

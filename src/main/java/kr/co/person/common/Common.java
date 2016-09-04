@@ -12,6 +12,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,9 @@ public class Common {
 	}
 	
 	public boolean isEmail(String email) {
+		if(StringUtils.isEmpty(email)){
+			return false;
+		}
 		return Pattern.compile("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$").matcher(email).matches();
     }
     
@@ -98,6 +102,9 @@ public class Common {
     }
     
     public String cleanXss(String str){
+    	if(StringUtils.isEmpty(str)){
+    		return "";
+    	}
     	str = str.replaceAll("&", "&amp;");
     	str = str.replaceAll("%2F", "");
     	str = str.replaceAll("\"","&#34;");
