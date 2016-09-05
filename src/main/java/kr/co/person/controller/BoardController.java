@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class BoardController {
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		Page<Board> pages = boardService.findAll(pageable);
 		if(IsValid.isNotValidObjects(pages)){
-			return "view/user/login";
+			return "view/board/frame";
 		}
 		int maxPage = pages.getTotalPages();
 		if(lastPage > maxPage){
@@ -84,13 +85,8 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
+	public String boardWrite(@Valid Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
-		if(IsValid.isNotValidObjects(board)){
-			model.addAttribute("message", message.BOARD_WRONG_BOARD);
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
-		}
 		if(IsValid.isNotValidObjects(editImage)){
 			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
 			model.addAttribute("include", "main/write.ftl");
@@ -111,33 +107,19 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		if(se.equals("\\")){
-			se += se;
-		}
-		String[] paths = imgPath.split(se);
-		String title = board.getTitle().trim();
+		String title = board.getTitle();
 		String content = board.getContent();
-		String contentTrim = content.replaceAll("&nbsp;", " ");
-		String filePath = paths[0];
-		String kindPath = paths[1];
-		String fileName = paths[2];
-		if(StringUtils.isEmpty(title)){
+		if(StringUtils.isEmpty(title) || StringUtils.isEmpty(title.trim())){
 			model.addAttribute("message", message.BOARD_NO_TITLE);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		if(StringUtils.isEmpty(content) || StringUtils.isEmpty(contentTrim.trim())){
+		if(StringUtils.isEmpty(content)){
 			model.addAttribute("message", message.BOARD_NO_CONTENT);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		log.info("===================================");
-		log.info(imgPath);
-		log.info(content);
-		content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+filePath+se+kindPath+se+fileName+">");
-		log.info(content);
-		log.info("===================================");
-		OkCheck ok = boardService.write(common.cleanXss(title), content, (int)session.getAttribute("idx"));
+		OkCheck ok = boardService.write(common.cleanXss(title.trim()), content, (int)session.getAttribute("idx"));
 		if(!ok.isBool()){
 			model.addAttribute("message", ok.getMessage());
 			model.addAttribute("include", "main/write.ftl");
