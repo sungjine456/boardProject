@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -47,12 +48,8 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
+	public String join(@Valid User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
-		if(IsValid.isNotValidObjects(user)){
-			model.addAttribute("message", message.USER_FAIL_JOIN);
-			return "view/user/join";
-		}
 		if(IsValid.isNotValidObjects(file)){
 			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
 			return "view/user/join";
@@ -165,15 +162,15 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
+	public String login(@Valid User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
 		log.info("execute UserController login");
-		if(IsValid.isNotValidObjects(user)){
-			model.addAttribute("message", message.USER_FAIL_LOGIN);
+		String id = user.getId();
+		String password = user.getPassword();
+		if(IsValid.isNotValidObjects(id, password)){
+			model.addAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
 			return "view/user/login";
 		}
-		String id = common.cleanXss(user.getId());
-		String password = user.getPassword();
-		user = userService.joinCheck(id, password);
+		user = userService.joinCheck(common.cleanXss(id), password);
 		if(IsValid.isValidObjects(user)){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("idx", user.getIdx());
@@ -355,7 +352,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) MultipartFile ufile, User user, Model model, HttpSession session){
+	public String update(@RequestParam(required=false) MultipartFile ufile, @Valid User user, Model model, HttpSession session){
 		log.info("execute UserController update");
 		if(!sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
@@ -375,11 +372,6 @@ public class UserController {
 		String se = File.separator;
 		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
 			imgPath = common.createImg(ufile, ext, id, se, "user");
-		}
-		if(IsValid.isNotValidObjects(user)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", message.USER_FAIL_UPDATE);
-			return "view/board/frame";
 		}
 		String name = user.getName();
 		String email = user.getEmail();

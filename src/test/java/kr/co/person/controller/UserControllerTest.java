@@ -196,6 +196,11 @@ public class UserControllerTest {
     
     @Test
     public void testLogin() throws Exception{
+    	mock.perform(post("/"))
+    		.andExpect(status().isOk())
+    		.andExpect(view().name("view/user/login"))
+    		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
+    	
     	mock.perform(
     		post("/")
 				.param("id", "sungjin"))
@@ -503,8 +508,7 @@ public class UserControllerTest {
         
     	mock.perform(
     		fileUpload("/update")
-    			.sessionAttr("loginYn", "Y")
-    			.param("id", "test"))
+    			.sessionAttr("loginYn", "Y"))
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
