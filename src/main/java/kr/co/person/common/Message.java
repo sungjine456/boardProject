@@ -7,7 +7,6 @@ public class Message {
 	public final String BOARD_NO_BOARD;
 	public final String BOARD_NO_TITLE;
 	public final String BOARD_NO_CONTENT;
-	public final String BOARD_WRONG_BOARD;
 	public final String BOARD_SUCCESS_WRITE;
 	public final String BOARD_SUCCESS_UPDATE;
 	public final String BOARD_FAIL_UPDATE;
@@ -15,7 +14,6 @@ public class Message {
 	public final String BOARD_LIKE_CANCLE;
 	
 	public final String COMMENT_NO_COMMENT;
-	public final String COMMENT_WRONG_COMMENT;
 	public final String COMMENT_RE_COMMENT;
 	public final String COMMENT_NO_REPLY;
 	
@@ -57,7 +55,6 @@ public class Message {
 		BOARD_NO_BOARD = messageSource.getMessage("board.noBoard", null, null);
 		BOARD_NO_TITLE = messageSource.getMessage("board.noTitle", null, null);
 		BOARD_NO_CONTENT = messageSource.getMessage("board.noContent", null, null);
-		BOARD_WRONG_BOARD = messageSource.getMessage("board.wrongContent", null, null);
 		BOARD_SUCCESS_WRITE = messageSource.getMessage("board.successWrite", null, null);
 		BOARD_SUCCESS_UPDATE = messageSource.getMessage("board.successUpdate", null, null);
 		BOARD_FAIL_UPDATE = messageSource.getMessage("board.failUpdate", null, null);
@@ -65,7 +62,6 @@ public class Message {
 		BOARD_LIKE_CANCLE = messageSource.getMessage("board.likeCancle", null, null);
 		
 		COMMENT_NO_COMMENT = messageSource.getMessage("comment.noComment", null, null);
-		COMMENT_WRONG_COMMENT = messageSource.getMessage("comment.wrongComment", null, null);
 		COMMENT_RE_COMMENT = messageSource.getMessage("comment.reComment", null, null);
 		COMMENT_NO_REPLY = messageSource.getMessage("comment.noReply", null, null);
 		
