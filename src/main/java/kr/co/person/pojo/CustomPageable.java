@@ -1,10 +1,14 @@
 package kr.co.person.pojo;
 
+import java.io.Serializable;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
-public class CustomPageable implements Pageable {
+public class CustomPageable implements Pageable, Serializable {
+	
+	private static final long serialVersionUID = -2545804271584732766L;
 	
 	private int page;
 	private int size;

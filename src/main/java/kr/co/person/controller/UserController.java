@@ -50,10 +50,6 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(@Valid User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
-		if(IsValid.isNotValidObjects(file)){
-			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
-			return "view/user/join";
-		}
 		String email = user.getEmail();
 		if(StringUtils.isEmpty(email)){
 			model.addAttribute("message", message.USER_NO_EMAIL);
@@ -357,10 +353,6 @@ public class UserController {
 		if(!sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
-		}
-		if(IsValid.isNotValidObjects(ufile)){
-			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
-			return "view/user/join";
 		}
 		String[] strArray = ufile.getOriginalFilename().split("\\.");
 		String ext = "";

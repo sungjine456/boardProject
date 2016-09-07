@@ -3,7 +3,7 @@ var commentReply = {
 	replyComment : $(".replyComment"),
 	replyEvent : function(event){
 		var target = $(event.target);
-		var idx = target.attr("idx");
+		var idx = target.data('idx');
 		var replyComment = $("#replyComment"+idx);
 		var replyForm = $("#commentReplyForm"+idx);
 		if(replyComment.val() == ""){
@@ -14,19 +14,19 @@ var commentReply = {
 	},
 	remainingEvent : function(event){
 		var target = $(event.target);
-		var idx = target.attr("idx");
+		var idx = target.data('idx');
 		var replyCommentLengthCount = $("#replyCommentLengthCount" + idx);
-		var maximumCount = Number(replyCommentLengthCount.attr("maxCount"));
+		var maximumCount = Number(replyCommentLengthCount.data("maxcount"));
 		
 	    var now = maximumCount - target.val().length;
 	    if (now < 0) {
-	    	func(target, maximumCount);
+	    	changeCountNum(target, maximumCount);
 	        alert('글자 입력수를 초과하였습니다.');
 	        now = 0;
 	    }
 	    replyCommentLengthCount.text(now);
 	},
-	func : function(target, maximumCount){
+	changeCountNum : function(target, maximumCount){
 		var str = target.val();
 		target.val(str.substr(0, maximumCount));
 	},

@@ -87,26 +87,6 @@ public class BoardController {
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
 	public String boardWrite(@Valid Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
-		if(IsValid.isNotValidObjects(editImage)){
-			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
-		}
-		String[] strArray = editImage.getOriginalFilename().split("\\.");
-		String ext = "";
-		if(strArray.length == 2){
-			ext = strArray[1];
-		}
-		String imgPath = "";
-		String se = File.separator;
-		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			imgPath = common.createImg(editImage, ext, (String)session.getAttribute("id"), se, "board");
-		}
-		if(StringUtils.isEmpty(imgPath)){
-			model.addAttribute("message", message.FILE_FAIL_UPLOAD);
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
-		}
 		String title = board.getTitle();
 		String content = board.getContent();
 		if(StringUtils.isEmpty(title) || StringUtils.isEmpty(title.trim())){
@@ -114,10 +94,27 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		if(StringUtils.isEmpty(content)){
+		if(StringUtils.isEmpty(content) || StringUtils.isEmpty(content.trim())){
 			model.addAttribute("message", message.BOARD_NO_CONTENT);
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
+		}
+		String[] strArray = editImage.getOriginalFilename().split("\\.");
+		if(strArray.length == 2){
+			String ext = strArray[1];
+			String imgPath = "";
+			String se = File.separator;
+			if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
+				imgPath = common.createImg(editImage, ext, (String)session.getAttribute("id"), se, "board");
+			} 
+			if(se.equals("\\")){
+				 se += se;
+			}
+			String[] paths = imgPath.split(se);
+	        String filePath = paths[0];
+	        String kindPath = paths[1];
+	        String fileName = paths[2];
+			content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+filePath+se+kindPath+se+fileName+">");
 		}
 		OkCheck ok = boardService.write(common.cleanXss(title.trim()), content, (int)session.getAttribute("idx"));
 		if(!ok.isBool()){

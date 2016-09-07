@@ -7,7 +7,7 @@ var editer = {
 	editCenterSort : $("#editCenterSort"),
 	editRightSort : $("#editRightSort"),
 	editImage : $("#editImage"),
-	func : function(){
+	initEditer : function(){
 		this.frame.contentWindow.document.designMode = "on";
 	},
 	editEvent : function(command){
@@ -43,6 +43,6 @@ var editer = {
 	}
 }
 
-window.onload = editer.func();
+window.onload = editer.initEditer();
 
 editer.init();

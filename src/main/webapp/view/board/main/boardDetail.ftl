@@ -7,7 +7,7 @@
 		</div>
 	<#else>
 		<span id="likeSpan">
-			<a id="likeCount" style="font-size:10px; padding-right:10px;" userIdx=${idx}>${like} (${likeCount})</a>
+			<a id="likeCount" style="font-size:10px; padding-right:10px;" data-useridx="${idx}">${like} (${likeCount})</a>
 		</span>
 	</#if>
 	<table class="table table-hover">
@@ -35,7 +35,7 @@
 			<tr>
 				<td style="padding-left: 5%; width: 90%">
 					<input type="text" id="writeComment" class="form-control" name="comment"/>
-					<DIV style="float:right">남은 글자수: <SPAN id="commentLengthCount" maxCount="200">200</SPAN></DIV>
+					<DIV style="float:right">남은 글자수: <SPAN id="commentLengthCount" data-maxCount="200">200</SPAN></DIV>
 				</td>
 				<td>
 					<button type="button" id="commentBtn" class="btn btn-primary">댓글</button>
@@ -57,10 +57,10 @@
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
 							<div style="float:right; padding-right: 3%;">
 			<#if comment.writer.idx == idx>
-								<input class="commentUpdateBtn a-btn" type="button" value="수정" comment="${comment.comment}" idx="${comment.idx}"/>
+								<input class="commentUpdateBtn a-btn" type="button" value="수정" data-comment="${comment.comment}" data-idx="${comment.idx}"/>
 								<span>&nbsp;/&nbsp;</span>
 			</#if>
-								<input class="commentReplyBtn a-btn" idx="${comment.idx}" type="button" value="답글">
+								<input class="commentReplyBtn a-btn" data-idx="${comment.idx}" type="button" value="답글">
 							</div>
 							<br>
 							<div>

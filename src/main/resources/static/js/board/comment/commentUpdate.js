@@ -3,7 +3,7 @@ var commentUpdate = {
 	updateComment : $(".updateComment"),
 	updateEvent : function(event){
 		var target = $(event.target);
-		var idx = target.attr("idx");
+		var idx = target.data('idx');
 		var form = $("#commentUpdateForm"+idx);
 		var updateComment = $("#updateComment"+idx);
 		if(updateComment.val() == ""){
@@ -14,19 +14,19 @@ var commentUpdate = {
 	},
 	remainingEvent : function(event){
 		var target = $(event.target);
-		var idx = target.attr("idx");
+		var idx = target.data('idx');
 		var updateCommentLengthCount = $("#updateCommentLengthCount" + idx);
-		var maximumCount = Number(updateCommentLengthCount.attr("maxCount"));
+		var maximumCount = Number(updateCommentLengthCount.data("maxcount"));
 		
 	    var now = maximumCount - target.val().length;
 	    if (now < 0) {
-	    	func(target, maximumCount);
+	    	changeCountNum(target, maximumCount);
 	        alert('글자 입력수를 초과하였습니다.');
 	        now = 0;
 	    }
 	    updateCommentLengthCount.text(now);
 	},
-	func : function(target, maximumCount){
+	changeCountNum : function(target, maximumCount){
 		var str = target.val();
 		target.val(str.substr(0, maximumCount));
 	},

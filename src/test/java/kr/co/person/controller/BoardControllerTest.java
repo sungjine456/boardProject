@@ -84,24 +84,6 @@ public class BoardControllerTest {
     @Test
     public void testBoardWrite() throws Exception {
     	MockMultipartFile isFile = new MockMultipartFile("editImage", "none.png", null, "bar".getBytes());
-    	MockMultipartFile isNotFile = new MockMultipartFile("editImage", null, null, "bar".getBytes());
-    	
-    	mock.perform(
-    		fileUpload("/boardWrite")
-    			.session(mockSession))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
-    		.andExpect(model().attribute("message", message.FILE_FAIL_UPLOAD))
-    		.andExpect(model().attribute("include", "main/write.ftl"));
-    	
-    	mock.perform(
-    		fileUpload("/boardWrite")
-    			.file(isNotFile)
-    			.session(mockSession))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
-    		.andExpect(model().attribute("message", message.FILE_FAIL_UPLOAD))
-    		.andExpect(model().attribute("include", "main/write.ftl"));
     	
     	mock.perform(
     		fileUpload("/boardWrite")

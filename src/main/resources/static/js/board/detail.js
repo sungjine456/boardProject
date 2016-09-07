@@ -20,12 +20,12 @@ var detail = {
 	},
 	commentUpdateEvent : function(event){
 		var target = $(event.target);
-		var idx = target.attr("idx");
+		var idx = target.data("idx");
 		var span = $("#commentSpan"+idx);
 		$.ajax({
 			url : "/updateCommentView",
 			type : "POST",
-			data : {"comment" : target.attr("comment"), "boardNum" : detail.boardNum.val(), "idx" : idx},
+			data : {"comment" : target.data("comment"), "boardNum" : detail.boardNum.val(), "idx" : idx},
 			success : function(data){
 				span.html(data);
 			},
@@ -38,7 +38,7 @@ var detail = {
 	},
 	commentReplyEvent : function(event){
 		var target = $(event.target);
-		var idx = target.attr("idx");
+		var idx = target.data("idx");
 		var span = $("#replySpan"+idx);
 		$.ajax({
 			url : "/replyView",
@@ -55,14 +55,14 @@ var detail = {
 		});
 	},
 	likeCountEvent : function(){
-		var userIdx = this.likeCount.attr("userIdx");
+		var userIdx = this.likeCount.data("useridx");
 		$.ajax({
 			url : "/boardLikeCount",
 			type : "POST",
 			data : {"boardIdx" : detail.boardNum.val(), "userIdx" : userIdx},
 			dataType : "JSON",
 			success : function(data){
-				detail.likeCount.attr("userIdx", userIdx);
+				detail.likeCount.data("useridx", userIdx);
 				detail.likeCount.text(data.like+" ("+data.likeCount+")");
 			},
 			error : function(x, e){
@@ -73,7 +73,7 @@ var detail = {
 		});
 	},
 	remainingEvent : function(){
-        var maximumCount = this.commentLengthCount.attr("maxCount") * 1;
+        var maximumCount = this.commentLengthCount.data("maxcount") * 1;
         
         var now = maximumCount - this.writeComment.val().length;
         if (now < 0) {

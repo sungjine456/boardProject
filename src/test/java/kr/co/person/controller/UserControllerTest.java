@@ -70,22 +70,12 @@ public class UserControllerTest {
     public void testJoin() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
         String se = File.separator;
-        
-    	mock.perform(
-			fileUpload("/join")
-				.param("id", "test")
-				.param("password", "123456")
-				.contentType(MediaType.MULTIPART_FORM_DATA))
-    		.andExpect(status().isOk())
-    		.andExpect(model().attribute("message", message.FILE_FAIL_UPLOAD))
-    		.andExpect(view().name("view/user/join"));
     	
     	mock.perform(
 			fileUpload("/join")
 				.file(file)
 				.param("id", "test")
-				.param("password", "123456")
-				.contentType(MediaType.MULTIPART_FORM_DATA))
+				.param("password", "123456"))
     		.andExpect(status().isOk())
     		.andExpect(model().attribute("message", message.USER_NO_EMAIL))
     		.andExpect(view().name("view/user/join"));
@@ -95,8 +85,7 @@ public class UserControllerTest {
     			.file(file)
     			.param("id", "test")
     			.param("password", "123456")
-    			.param("email", "aaa")
-    			.contentType(MediaType.MULTIPART_FORM_DATA))
+    			.param("email", "aaa"))
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("message", message.USER_NO_EMAIL_FORMAT))
 			.andExpect(view().name("view/user/join"));
@@ -107,8 +96,7 @@ public class UserControllerTest {
     			.param("id", "test")
     			.param("name", "test")
     			.param("password", "123456")
-    			.param("email", "aaaads@naver.com")
-    			.contentType(MediaType.MULTIPART_FORM_DATA))
+    			.param("email", "aaaads@naver.com"))
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.USER_SUCCESS_JOIN))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))
@@ -512,14 +500,6 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
-    	mock.perform(
-    		fileUpload("/update")
-    			.session(mockSession)
-    			.param("id", "test"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/join"))
-			.andExpect(model().attribute("message", message.FILE_FAIL_UPLOAD));
     	
     	mock.perform(
     		fileUpload("/update")
