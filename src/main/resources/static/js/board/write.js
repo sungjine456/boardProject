@@ -10,7 +10,7 @@ var write = {
 			this.title.focus();
 			return;
 		}
-		if($.trim(this.title.val()) == ""){
+		if(commonJs.spaceRemove(this.title.val()) == ""){
 			alert("제목을 다시 입력해주세요.");
 			this.title.val("");
 			this.title.focus();
@@ -25,8 +25,9 @@ var write = {
 			alert("내용을 입력해주세요.");
 			return;
 		}
-		if(this.content.val().trim() == ""){
+		if(editer.editerSpaceRemove(this.content.val()) == ""){
 			alert("내용을 다시 입력해주세요.");
+			this.content.focus();
 			return;
 		}
 		this.writeForm.submit();

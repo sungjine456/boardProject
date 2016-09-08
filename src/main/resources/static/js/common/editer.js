@@ -31,6 +31,9 @@ var editer = {
 		});
 		reader.readAsDataURL(editImage.files[0]);
 	},
+	editerSpaceRemove : function(str){
+		return str.replace(/\s|<div>|<br>|<\/div>/g, ''); 
+	},
 	init : function(){
 		var self = this;
 		self.editFontBold.click(function(){self.editEvent('bold')});
