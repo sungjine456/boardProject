@@ -138,19 +138,28 @@ public class Common {
     	return cookie;
     }
     
-    public String createImg(MultipartFile file, String ext, String id, String se, String kind) {
-		Date date = new Date();
-		String fileName = id + "_" + date.getTime() + "." + ext;
-		String filePath = "C:"+se+"boardProject"+se+"img"+se+kind;
-		String imgPath = "img"+se+kind+se+fileName;
-		File dayFile = new File(filePath);
-		if(!dayFile.exists()){
-		   dayFile.mkdirs();
+    public String createImg(MultipartFile file, String id, String kind) {
+    	String[] strArray = file.getOriginalFilename().split("\\.");
+		String ext = "";
+		if(strArray.length == 2){
+			ext = strArray[1];
 		}
-		try {
-			file.transferTo(new File(filePath + se + fileName));
-		} catch(Exception e) {
-			e.printStackTrace(); 
+		String imgPath = "";
+		String se = File.separator;
+		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
+			Date date = new Date();
+			String fileName = id + "_" + date.getTime() + "." + ext;
+			String filePath = "C:"+se+"boardProject"+se+"img"+se+kind;
+			imgPath = "img"+se+kind+se+fileName;
+			File dayFile = new File(filePath);
+			if(!dayFile.exists()){
+			   dayFile.mkdirs();
+			}
+			try {
+				file.transferTo(new File(filePath + se + fileName));
+			} catch(Exception e) {
+				e.printStackTrace(); 
+			}
 		}
 		return imgPath;
 	}

@@ -99,14 +99,10 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		String[] strArray = editImage.getOriginalFilename().split("\\.");
-		if(strArray.length == 2){
-			String ext = strArray[1];
-			String imgPath = "";
+		
+		if(editImage.getOriginalFilename().split("\\.").length == 2){
+			String imgPath = common.createImg(editImage, (String)session.getAttribute("id"), "board");
 			String se = File.separator;
-			if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-				imgPath = common.createImg(editImage, ext, (String)session.getAttribute("id"), se, "board");
-			} 
 			if(se.equals("\\")){
 				 se += se;
 			}

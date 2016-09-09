@@ -59,16 +59,8 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_EMAIL_FORMAT);
 			return "view/user/join";
 		}
-		String[] strArray = file.getOriginalFilename().split("\\.");
-		String ext = "";
-		if(strArray.length == 2){
-			ext = strArray[1];
-		}
-		String imgPath = "";
+		String imgPath = common.createImg(file, user.getId(), "user");
 		String se = File.separator;
-		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			imgPath = common.createImg(file, ext, user.getId(), se, "user");
-		}
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "img"+se+"user"+se+"default.png";
 		}
@@ -354,16 +346,10 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		String[] strArray = ufile.getOriginalFilename().split("\\.");
-		String ext = "";
-		if(strArray.length == 2){
-			ext = strArray[1];
-		}
-		String imgPath = "";
-		String id = (String)session.getAttribute("id");
+		String imgPath = common.createImg(ufile, user.getId(), "user");
 		String se = File.separator;
-		if(StringUtils.equalsIgnoreCase(ext, "gif") || StringUtils.equalsIgnoreCase(ext, "jpg") || StringUtils.equalsIgnoreCase(ext, "jpeg") || StringUtils.equalsIgnoreCase(ext, "png")){
-			imgPath = common.createImg(ufile, ext, id, se, "user");
+		if(StringUtils.isEmpty(imgPath)){
+			imgPath = "img"+se+"user"+se+"default.png";
 		}
 		String name = user.getName();
 		String email = user.getEmail();
@@ -384,7 +370,7 @@ public class UserController {
 			return "view/board/frame";
 		}
 		name = common.cleanXss(name);
-		if(StringUtils.isNotEmpty(ext)){
+		if(ufile.getSize() != 0){
 			if(userService.update(idx, name, email, imgPath)){
 				session.setAttribute("name", name);
 				session.setAttribute("email", email);
