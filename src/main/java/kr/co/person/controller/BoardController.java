@@ -8,7 +8,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import kr.co.person.annotation.IsValidBoard;
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
@@ -85,7 +85,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(@Valid Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
+	public String boardWrite(@IsValidBoard Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
 		String title = board.getTitle();
 		String content = board.getContent();
@@ -217,7 +217,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
-	public String boardUpdate(@Valid Board board, RedirectAttributes rea){
+	public String boardUpdate(@IsValidBoard Board board, RedirectAttributes rea){
 		log.info("execute BoardController boardUpdate");
 		int num = board.getIdx();
 		String title = board.getTitle();
@@ -250,7 +250,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
+	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @IsValidBoard Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -277,7 +277,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
-	public String updateCommentView(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model){
+	public String updateCommentView(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @IsValidBoard Comment comment, Model model){
 		log.info("execute BoardController updateCommentView");
 		model.addAttribute("boardNum", boardNum);
 		model.addAttribute("comment", comment.getComment());
@@ -331,7 +331,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeReply", method=RequestMethod.POST)
-	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
+	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @IsValidBoard Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -364,7 +364,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardLikeCount", method=RequestMethod.POST)
-	public @ResponseBody Map<String, String> addBoardLikeCount(@Valid BoardLikeCount boardLikeCount){
+	public @ResponseBody Map<String, String> addBoardLikeCount(@IsValidBoard BoardLikeCount boardLikeCount){
 		log.info("execute BoardController addBoardLikeCount");
 		Map<String, String> map = new HashMap<String, String>();
 		int boardIdx = boardLikeCount.getBoardIdx();

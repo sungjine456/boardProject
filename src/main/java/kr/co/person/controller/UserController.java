@@ -8,7 +8,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import kr.co.person.annotation.IsValidUser;
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
@@ -48,7 +48,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@Valid User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
+	public String join(@IsValidUser User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String email = user.getEmail();
 		if(StringUtils.isEmpty(email)){
@@ -150,7 +150,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@Valid User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
+	public String login(@IsValidUser User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
 		log.info("execute UserController login");
 		String id = user.getId();
 		String password = user.getPassword();
@@ -190,12 +190,12 @@ public class UserController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
-		if(!sessionComparedToDB(session)){
+		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
+		User user = userService.findUserForIdx(idx);
+		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		User user = userService.findUserForIdx(idx);
 		String loginId = "";
 		Cookie[] cookies = req.getCookies();
 		if(IsValid.isValidArrays(cookies)){
@@ -340,7 +340,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) MultipartFile ufile, @Valid User user, Model model, HttpSession session){
+	public String update(@RequestParam(required=false) MultipartFile ufile, @IsValidUser User user, Model model, HttpSession session){
 		log.info("execute UserController update");
 		if(!sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
