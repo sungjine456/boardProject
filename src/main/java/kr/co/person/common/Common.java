@@ -15,11 +15,16 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.person.pojo.OkCheck;
+
 @Component
 public class Common {
+	@Autowired Message message;
+	
 	public String passwordEncryption(String str){
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
@@ -52,11 +57,15 @@ public class Common {
 		}
 	}
 	
-	public boolean isEmail(String email) {
+	public OkCheck isEmail(String email) {
 		if(StringUtils.isEmpty(email)){
-			return false;
+			return new OkCheck(message.USER_NO_EMAIL, false);
 		}
-		return Pattern.compile("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$").matcher(email).matches();
+		if(Pattern.compile("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$").matcher(email).matches()){
+			return new OkCheck("", true);
+		} else {
+			return new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
+		}
     }
     
 	private Key AES256Util(String key) throws Exception {

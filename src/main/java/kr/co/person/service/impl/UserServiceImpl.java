@@ -46,11 +46,9 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(name)){
 			return new OkCheck(message.USER_NO_NAME, false);
 		}
-		if(StringUtils.isEmpty(email)){
-			return new OkCheck(message.USER_NO_EMAIL, false);
-		}
-		if(!common.isEmail(email)){
-			return new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
+		OkCheck emailCheck = common.isEmail(email);
+		if(!emailCheck.isBool()){
+			return new OkCheck(emailCheck.getMessage(), false);
 		}
 		User findUser = userRepository.findById(id);
 		if(IsValid.isValidObjects(findUser)){
@@ -121,12 +119,11 @@ public class UserServiceImpl implements UserService {
 		}
 		User findUserByEmail = userRepository.findByEmail(email);
 		if(IsValid.isValidObjects(findUserByEmail)){
-			String emailVal = findUserByEmail.getEmail();
-			return (emailVal != null && common.isEmail(email))
+			return (findUserByEmail.getEmail() != null && common.isEmail(email).isBool())
 					?new OkCheck(message.USER_ALREADY_JOIN_EMAIL, false)
 					:new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		} else {
-			return (common.isEmail(email))
+			return (common.isEmail(email).isBool())
 					?new OkCheck(message.USER_AVAILABLE_EMAIL, true)
 					:new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		}
@@ -150,11 +147,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck translatePassword(String email) {
 		log.info("execute UserServiceImpl translatePassword");
-		if(StringUtils.isEmpty(email)){
-			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
-		}
-		if(!common.isEmail(email)){
-			return new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
+		OkCheck emailCheck = common.isEmail(email);
+		if(!emailCheck.isBool()){
+			return new OkCheck(emailCheck.getMessage(), false);
 		}
 		User user = userRepository.findByEmail(email); 
 		if(IsValid.isNotValidObjects(user)){
@@ -267,7 +262,7 @@ public class UserServiceImpl implements UserService {
 	public boolean update(int idx, String name, String email, String imgPath) {
 		log.info("execute UserServiceImpl update 4param");
 		String se = File.separator;
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email).isBool()){
 			return false;
 		}
 		User user = userRepository.findOne(idx);
@@ -291,7 +286,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean update(int idx, String name, String email) {
 		log.info("execute UserService update 3param");
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email).isBool()){
 			return false;
 		}
 		User user = userRepository.findOne(idx);

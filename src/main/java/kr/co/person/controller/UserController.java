@@ -51,12 +51,9 @@ public class UserController {
 	public String join(@IsValidUser User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String email = user.getEmail();
-		if(StringUtils.isEmpty(email)){
-			model.addAttribute("message", message.USER_NO_EMAIL);
-			return "view/user/join";
-		}
-		if(!common.isEmail(email)){
-			model.addAttribute("message", message.USER_NO_EMAIL_FORMAT);
+		OkCheck emailCheck = common.isEmail(email);
+		if(!emailCheck.isBool()){
+			model.addAttribute("message", emailCheck.getMessage());
 			return "view/user/join";
 		}
 		String imgPath = common.createImg(file, user.getId(), "user");
@@ -354,14 +351,10 @@ public class UserController {
 		String name = user.getName();
 		String email = user.getEmail();
 		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		if(StringUtils.isEmpty(email)){
+		OkCheck emailCheck = common.isEmail(email);
+		if(!emailCheck.isBool()){
 			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", message.USER_NO_EMAIL);
-			return "view/board/frame";
-		}
-		if(!common.isEmail(email)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", message.USER_NO_EMAIL_FORMAT);
+			model.addAttribute("message", emailCheck.getMessage());
 			return "view/board/frame";
 		}
 		if(StringUtils.isEmpty(name)){
