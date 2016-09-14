@@ -65,11 +65,7 @@ public class UserController {
 		OkCheck ok = userService.join(user);
 		if(ok.isBool()){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("idx", user.getIdx());
-			session.setAttribute("id", user.getId());
-			session.setAttribute("name", user.getName());
-			session.setAttribute("email", user.getEmail());
-			session.setAttribute("img", user.getImg());
+			session.setAttribute("user", user);
 			rea.addFlashAttribute("message", ok.getMessage());
 			return "redirect:/board";
 		} else {
@@ -136,11 +132,7 @@ public class UserController {
 		User user = userService.findUserForId(id);
 		if(IsValid.isValidObjects(user) && userService.autoLoginCheck(user, loginId)){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("idx", user.getIdx());
-			session.setAttribute("id", user.getId());
-			session.setAttribute("name", user.getName());
-			session.setAttribute("email", user.getEmail());
-			session.setAttribute("img", user.getImg());
+			session.setAttribute("user", user);
 			return "redirect:/board";
 		}
 		return "view/user/login";
@@ -158,11 +150,7 @@ public class UserController {
 		user = userService.joinCheck(common.cleanXss(id), password);
 		if(IsValid.isValidObjects(user)){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("idx", user.getIdx());
-			session.setAttribute("id", user.getId());
-			session.setAttribute("name", user.getName());
-			session.setAttribute("email", user.getEmail());
-			session.setAttribute("img", user.getImg());
+			session.setAttribute("user", user);
 			if(StringUtils.equals(idSave, "ckeck")){
 				String loginId = common.cookieValueEncryption(new DateTime().toString()); 
 				if(!userService.autoLogin(user, loginId)){
@@ -187,8 +175,11 @@ public class UserController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		User user = userService.findUserForIdx(idx);
+		if(!sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
+		User user = (User)session.getAttribute("user");
 		if(IsValid.isNotValidObjects(user)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
@@ -213,10 +204,7 @@ public class UserController {
 	    res.addCookie(common.removeCookie("psvd"));
 	    res.addCookie(common.removeCookie("psvlgnd"));
 	    session.setAttribute("loginYn", "N");
-		session.removeAttribute("idx");
-		session.removeAttribute("id");
-		session.removeAttribute("name");
-		session.removeAttribute("email");
+		session.removeAttribute("user");
 	    rea.addFlashAttribute("message", message.USER_LOGOUT);
 		return "redirect:/";
 	}
@@ -267,9 +255,7 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD);
 			return "redirect:/update";
 		}
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		
-		OkCheck ok = userService.changePassword(idx, password, changePassword);
+		OkCheck ok = userService.changePassword(((User)session.getAttribute("user")).getIdx(), password, changePassword);
 		rea.addFlashAttribute("message", ok.getMessage());
 		return "redirect:/mypage";
 	}
@@ -285,10 +271,10 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
 		}
-		String id = (String)session.getAttribute("id");
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		User user = userService.joinCheck(id, password);
-		if(IsValid.isNotValidObjects(user) || user.getIdx() != idx){
+		User user = (User)session.getAttribute("user");
+		int idx = user.getIdx();
+		User joinCheck = userService.joinCheck(user.getId(), password);
+		if(IsValid.isNotValidObjects(joinCheck) || joinCheck.getIdx() != idx){
 			model.addAttribute("message", message.USER_WRONG_USER);
 			return "view/user/login";
 		}
@@ -310,10 +296,7 @@ public class UserController {
 		    }
 		}
 		session.setAttribute("loginYn", "N");
-		session.removeAttribute("idx");
-		session.removeAttribute("id");
-		session.removeAttribute("name");
-		session.removeAttribute("email");
+		session.removeAttribute("user");
 	    res.addCookie(common.removeCookie("psvd"));
 	    res.addCookie(common.removeCookie("psvlgnd"));
 	    rea.addFlashAttribute("message", message.USER_SUCCESS_LEAVE);
@@ -327,8 +310,8 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		if(StringUtils.isEmpty(password) || !userService.passwordCheck(idx, password)){
+		if(StringUtils.isEmpty(password) 
+				|| !userService.passwordCheck(((User)session.getAttribute("user")).getIdx(), password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
 		}
@@ -350,7 +333,8 @@ public class UserController {
 		}
 		String name = user.getName();
 		String email = user.getEmail();
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
+		User sessionUser = (User)session.getAttribute("user"); 
+		int idx = sessionUser.getIdx();
 		OkCheck emailCheck = common.isEmail(email);
 		if(!emailCheck.isBool()){
 			model.addAttribute("include", "/view/user/update.ftl");
@@ -363,11 +347,12 @@ public class UserController {
 			return "view/board/frame";
 		}
 		name = common.cleanXss(name);
+		sessionUser.setName(name);
+		sessionUser.setEmail(email);
 		if(ufile.getSize() != 0){
 			if(userService.update(idx, name, email, imgPath)){
-				session.setAttribute("name", name);
-				session.setAttribute("email", email);
-				session.setAttribute("img", imgPath);
+				sessionUser.setImg(imgPath);
+				session.setAttribute("user", sessionUser);
 				model.addAttribute("include", "/view/user/mypage.ftl");
 				model.addAttribute("message", message.USER_SUCCESS_UPDATE);
 			} else {
@@ -376,8 +361,7 @@ public class UserController {
 			}
 		} else {
 			if(userService.update(idx, name, email)){
-				session.setAttribute("name", name);
-				session.setAttribute("email", email);
+				session.setAttribute("user", sessionUser);
 				model.addAttribute("include", "/view/user/mypage.ftl");
 				model.addAttribute("message", message.USER_SUCCESS_UPDATE);
 			} else {
@@ -397,13 +381,13 @@ public class UserController {
 	private boolean sessionComparedToDB(HttpSession session){
 		log.info("sessionComparedToDB Method");
 		String loginYn = IsValid.isValidObjects(session.getAttribute("loginYn"))?(String)session.getAttribute("loginYn"):"";
-		int idx = IsValid.isValidObjects(session.getAttribute("idx"))?(int)session.getAttribute("idx"):0;
-		String id = IsValid.isValidObjects(session.getAttribute("id"))?(String)session.getAttribute("id"):"";
-		String name = IsValid.isValidObjects(session.getAttribute("name"))?(String)session.getAttribute("name"):"";
-		String email = IsValid.isValidObjects(session.getAttribute("email"))?(String)session.getAttribute("email"):"";
-		User user = userService.findUserForIdx(idx);
-		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(id, user.getId())
-				|| !StringUtils.equals(name, user.getName()) || !StringUtils.equals(email, user.getEmail())
+		User sessionUser = IsValid.isValidObjects(session.getAttribute("user"))?(User)session.getAttribute("user"):null;
+		if(sessionUser == null){
+			return false;
+		}
+		User user = userService.findUserForIdx(sessionUser.getIdx());
+		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
+				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
 				|| !StringUtils.equals(loginYn, "Y"))
 				?false:true;
 	}

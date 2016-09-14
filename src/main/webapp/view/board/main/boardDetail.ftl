@@ -1,6 +1,6 @@
 <div class="container">
 	<span style="font-size:30px;">${board.title}</span>
-	<#if board.user.idx == idx>
+	<#if board.user.idx == user.idx>
 		<span style="font-size:10px; padding-right:10px;">${like} (${likeCount})</span>
 		<div style="float:right">
 			<button type="button" id="boardUpdateBtn" class="btn btn-primary">내용 수정</button>
@@ -56,7 +56,7 @@
 						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate.toString("yyyy.MM.dd HH:mm")}</span>
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
 							<div style="float:right; padding-right: 3%;">
-			<#if comment.writer.idx == idx>
+			<#if comment.writer.idx == user.idx>
 								<input class="commentUpdateBtn a-btn" type="button" value="수정" data-comment="${comment.comment}" data-idx="${comment.idx}"/>
 								<span>&nbsp;/&nbsp;</span>
 			</#if>

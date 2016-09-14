@@ -18,7 +18,7 @@
 					<label>아이디 : </label>
 				</th>
 				<td>
-					${id}
+					${user.id}
 				</td>
 			</tr>
 			<tr>
@@ -26,7 +26,7 @@
 					<label for="email">이메일 : </label>
 				</th>
 				<td>
-					<input type="text" id="email" class="form-control" name="email" value="${email}" autofocus/>
+					<input type="text" id="email" class="form-control" name="email" value="${user.email}" autofocus/>
 				</td>
 			</tr>
 			<tr>
@@ -34,7 +34,7 @@
 					<label for="name">이름 : </label>
 				</th>
 				<td>
-					<input type="text" id="name" class="form-control" name="name" value="${name}"/>
+					<input type="text" id="name" class="form-control" name="name" value="${user.name}"/>
 				</td>
 			</tr>
 			</tr>
@@ -43,7 +43,7 @@
 				</td>
 				<td>
 					<div id="preview">
-						<img src="${img}" width="200px" height="200px"/>
+						<img src="${user.img}" width="200px" height="200px"/>
 					</div>
 					<input type="file" id="ufile" name="ufile"/>
 				</td>

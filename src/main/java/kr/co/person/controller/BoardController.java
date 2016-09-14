@@ -34,6 +34,7 @@ import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
+import kr.co.person.domain.User;
 import kr.co.person.pojo.BoardLikeCount;
 import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
@@ -101,7 +102,7 @@ public class BoardController {
 		}
 		
 		if(editImage.getOriginalFilename().split("\\.").length == 2){
-			String imgPath = common.createImg(editImage, (String)session.getAttribute("id"), "board");
+			String imgPath = common.createImg(editImage, ((User)session.getAttribute("user")).getId(), "board");
 			String se = File.separator;
 			if(se.equals("\\")){
 				 se += se;
@@ -112,7 +113,7 @@ public class BoardController {
 	        String fileName = paths[2];
 			content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+filePath+se+kindPath+se+fileName+">");
 		}
-		OkCheck ok = boardService.write(common.cleanXss(title.trim()), content, (int)session.getAttribute("idx"));
+		OkCheck ok = boardService.write(common.cleanXss(title.trim()), content, ((User)session.getAttribute("user")).getIdx());
 		if(!ok.isBool()){
 			model.addAttribute("message", ok.getMessage());
 			model.addAttribute("include", "main/write.ftl");
@@ -136,7 +137,7 @@ public class BoardController {
 			    new Sort.Order(Direction.ASC, "step")));
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
-		int userIdx = (int)session.getAttribute("idx");
+		int userIdx = ((User)session.getAttribute("user")).getIdx();
 
 		Board board = boardService.findBoardForIdx(boardNum);
 		BoardLike boardLike = boardService.getBoardLike(boardNum, userIdx);
@@ -267,7 +268,7 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), boardNum)){
+		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
@@ -354,7 +355,7 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), (int)session.getAttribute("idx"), boardNum)){
+		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";

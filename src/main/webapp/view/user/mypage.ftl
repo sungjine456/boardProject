@@ -17,7 +17,7 @@
 				<label>아이디 : </label>
 			</th>
 			<td>
-				${id}
+				${user.id}
 			</td>
 		</tr>
 		<tr>
@@ -25,7 +25,7 @@
 				<label>이메일 : </label>
 			</th>
 			<td>
-				${email}
+				${user.email}
 			</td>
 		</tr>
 		<tr>
@@ -33,7 +33,7 @@
 				<label>이름 : </label>
 			</th>
 			<td>
-				${name}
+				${user.name}
 			</td>
 		</tr>
 		<tr>
@@ -42,7 +42,7 @@
 				<label>이미지 : </label>
 			</td>
 			<td>
-				<img src="${img}" width="200" height="250"/>
+				<img src="${user.img}" width="200" height="250"/>
 			</td>
 		<tr>
 			<td>

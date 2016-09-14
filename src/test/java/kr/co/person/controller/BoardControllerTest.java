@@ -31,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
+import kr.co.person.domain.User;
 import kr.co.person.service.BoardService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -52,11 +53,13 @@ public class BoardControllerTest {
     	mock = MockMvcBuilders.webAppContextSetup(wac).build();
     	mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     	mockSession.setAttribute("loginYn", "Y");
-    	mockSession.setAttribute("idx", 1);
-    	mockSession.setAttribute("id", "sungjin");
-    	mockSession.setAttribute("img", "defaul.png");
-    	mockSession.setAttribute("name", "hong");
-    	mockSession.setAttribute("email", "sungjin@naver.com");
+    	User user = new User();
+    	user.setIdx(1);
+    	user.setId("sungjin");
+    	user.setName("hong");
+    	user.setImg("defaul.png");
+    	user.setEmail("sungjin@naver.com");
+    	mockSession.setAttribute("user", user);
     }
 
     @Test

@@ -1,8 +1,17 @@
 package kr.co.person.controller;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.io.File;
 import java.util.UUID;
@@ -31,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
+import kr.co.person.domain.User;
 import kr.co.person.service.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -52,11 +62,13 @@ public class UserControllerTest {
     	mock = MockMvcBuilders.webAppContextSetup(wac).build();
     	mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     	mockSession.setAttribute("loginYn", "Y");
-    	mockSession.setAttribute("idx", 1);
-    	mockSession.setAttribute("id", "sungjin");
-    	mockSession.setAttribute("img", "defaul.png");
-    	mockSession.setAttribute("name", "hong");
-    	mockSession.setAttribute("email", "sungjin@naver.com");
+    	User user = new User();
+    	user.setIdx(1);
+    	user.setId("sungjin");
+    	user.setName("hong");
+    	user.setImg("defaul.png");
+    	user.setEmail("sungjin@naver.com");
+    	mockSession.setAttribute("user", user);
     }
 	
     @Test
@@ -69,7 +81,6 @@ public class UserControllerTest {
     @Test
     public void testJoin() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
-        String se = File.separator;
     	
     	mock.perform(
 			fileUpload("/join")
@@ -100,10 +111,7 @@ public class UserControllerTest {
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.USER_SUCCESS_JOIN))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))
-			.andExpect(request().sessionAttribute("id", "test"))
-			.andExpect(request().sessionAttribute("name", "test"))
-			.andExpect(request().sessionAttribute("email", "aaaads@naver.com"))
-			.andExpect(request().sessionAttribute("img", "img"+se+"user"+se+"default.png"))
+			.andExpect(request().sessionAttribute("user", is(notNullValue())))
 			.andExpect(redirectedUrl("/board"));
     }
     
@@ -351,9 +359,11 @@ public class UserControllerTest {
     		.andExpect(flash().attribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD))
     		.andExpect(redirectedUrl("/update"));
     	
+    	User user = (User)mockSession.getAttribute("user");
+    	user.setIdx(5);
+    	mockSession.setAttribute("user", user);
     	mock.perform(
     		post("/changePassword")
-	    		.sessionAttr("idx", 5)
 				.session(mockSession)
     			.param("password", "123123")
     			.param("changePassword", "123456"))
@@ -361,23 +371,26 @@ public class UserControllerTest {
 	    	.andExpect(view().name("view/user/login"))
 	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
     	
+    	user = (User)mockSession.getAttribute("user");
+    	user.setIdx(1);
+    	user.setId("test");
+    	mockSession.setAttribute("user", user);
+    	
     	mock.perform(
     		post("/changePassword")
-    			.sessionAttr("loginYn", "Y")
-    			.sessionAttr("idx", 1)
-    			.sessionAttr("id", "test")
-    			.sessionAttr("img", "defaul.png")
-    			.sessionAttr("name", "test")
-    			.sessionAttr("email", "test@naver.com")
+    			.session(mockSession)
     			.param("password", "123123")
     			.param("changePassword", "123456"))
 	    	.andExpect(status().isOk())
 	    	.andExpect(view().name("view/user/login"))
 	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+    	
+    	user = (User)mockSession.getAttribute("user");
+    	user.setId("sungjin");
+    	mockSession.setAttribute("user", user);
 
     	mock.perform(
     		post("/changePassword")
-    			.sessionAttr("idx", 1)
     			.session(mockSession)
     			.param("password", "123123")
     			.param("changePassword", "123456"))
@@ -424,15 +437,6 @@ public class UserControllerTest {
     	mock.perform(
     		get("/leave")
     			.session(mockSession)
-    			.sessionAttr("id", "test")
-    			.param("password", "123123"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-
-    	mock.perform(
-    		get("/leave")
-    			.session(mockSession)
     			.sessionAttr("id", "sungjin")
     			.param("password", "123123")
     			.cookie(new Cookie("psvlgnd", "adasdasd")))
@@ -456,10 +460,7 @@ public class UserControllerTest {
     	mock.perform(
     		post("/updateView")
 	    		.sessionAttr("loginYn", "Y")
-				.sessionAttr("id", "test")
-				.sessionAttr("img", "defaul.png")
-				.sessionAttr("name", "test")
-				.sessionAttr("email", "test@naver.com"))
+				.sessionAttr("user", new User()))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/user/login"))
     		.andExpect(model().attribute("message", message.USER_NO_LOGIN));
