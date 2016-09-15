@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.io.File;
 import java.util.UUID;
 
 import javax.servlet.http.Cookie;
@@ -66,7 +65,7 @@ public class UserControllerTest {
     	user.setIdx(1);
     	user.setId("sungjin");
     	user.setName("hong");
-    	user.setImg("defaul.png");
+    	user.setImg("default.png");
     	user.setEmail("sungjin@naver.com");
     	mockSession.setAttribute("user", user);
     }
@@ -491,9 +490,7 @@ public class UserControllerTest {
     
     @Test
     public void testUpdate() throws Exception {
-    	MockMultipartFile isNotFile = new MockMultipartFile("ufile", null, null, "bar".getBytes());
-    	MockMultipartFile isFile = new MockMultipartFile("ufile", "none.png", null, "bar".getBytes());
-        String se = File.separator;
+    	MockMultipartFile isNotFile = new MockMultipartFile("ufile", "bar".getBytes());
         
     	mock.perform(
     		fileUpload("/update")
@@ -532,7 +529,39 @@ public class UserControllerTest {
 			.andExpect(redirectedUrl("/mypage"))
 			.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
 			.andExpect(request().sessionAttribute("user", is(notNullValue())));
-    	
+    }
+    
+    @Test
+    public void testUpdateSuccessParam3() throws Exception{
+    	MvcResult result = mock.perform(
+        		fileUpload("/update")
+        			.file(new MockMultipartFile("ufile", "b".getBytes()))
+        			.session(mockSession)
+        			.param("id", "test")
+        			.param("email", "test@naver.com")
+        			.param("name", "test"))
+    	    	.andExpect(status().isFound())
+    	    	.andExpect(redirectedUrl("/mypage"))
+    	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
+    			.andReturn();
+        	
+        	User user = (User)result.getRequest().getSession().getAttribute("user");
+        	int idx = user.getIdx();
+        	String id = user.getId();
+        	String name = user.getName();
+        	String email = user.getEmail();
+        	String img = user.getImg();
+        	Assert.assertThat(idx, is(1));
+        	Assert.assertThat(id, is("sungjin"));
+        	Assert.assertThat(name, is("test"));
+        	Assert.assertThat(email, is("test@naver.com"));
+        	Assert.assertThat("default.png", is(img.substring(9)));
+    }
+    
+    @Test
+    public void testUpdateSuccessParam4() throws Exception{
+    	MockMultipartFile isFile = new MockMultipartFile("ufile", "none.png", null, "bar".getBytes());
+        
     	MvcResult result = mock.perform(
     		fileUpload("/update")
     			.file(isFile)
@@ -555,7 +584,7 @@ public class UserControllerTest {
     	Assert.assertThat(id, is("sungjin"));
     	Assert.assertThat(name, is("test"));
     	Assert.assertThat(email, is("test@naver.com"));
-    	Assert.assertThat("img"+se+"user"+se, is(img.substring(0, 9)));
+    	Assert.assertThat("test", is(img.substring(9, 13)));
     }
     
     @Test

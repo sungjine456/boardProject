@@ -356,7 +356,7 @@ public class UserController {
 			}
 		} else {
 			if(userService.update(idx, name, email)){
-				isSuccessUpdate = false;
+				isSuccessUpdate = true;
 			}
 		}
 		if(isSuccessUpdate){
