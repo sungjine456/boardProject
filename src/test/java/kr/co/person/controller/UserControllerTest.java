@@ -507,9 +507,9 @@ public class UserControllerTest {
     			.file(isNotFile)
     			.session(mockSession)
     			.param("id", "test"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/board/frame"))
-			.andExpect(model().attribute("message", message.USER_NO_EMAIL));
+	    	.andExpect(status().isFound())
+			.andExpect(redirectedUrl("/updateView"))
+			.andExpect(flash().attribute("message", message.USER_NO_EMAIL));
 
     	mock.perform(
 			fileUpload("/update")
@@ -517,9 +517,9 @@ public class UserControllerTest {
     			.session(mockSession)
     			.param("id", "test")
     			.param("email", "test@naver.com"))
-			.andExpect(status().isOk())
-			.andExpect(view().name("view/board/frame"))
-			.andExpect(model().attribute("message", message.USER_NO_NAME));
+			.andExpect(status().isFound())
+			.andExpect(redirectedUrl("/updateView"))
+			.andExpect(flash().attribute("message", message.USER_NO_NAME));
     	
     	mock.perform(
 			fileUpload("/update")
@@ -528,12 +528,10 @@ public class UserControllerTest {
     			.param("id", "test")
     			.param("email", "test@naver.com")
     			.param("name", "test"))
-			.andExpect(status().isOk())
-			.andExpect(view().name("view/board/frame"))
-			.andExpect(model().attribute("include", "/view/user/mypage.ftl"))
-			.andExpect(model().attribute("message", message.USER_SUCCESS_UPDATE))
-			.andExpect(request().sessionAttribute("name", "test"))
-			.andExpect(request().sessionAttribute("email", "test@naver.com"));
+			.andExpect(status().isFound())
+			.andExpect(redirectedUrl("/mypage"))
+			.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
+			.andExpect(request().sessionAttribute("user", is(notNullValue())));
     	
     	MvcResult result = mock.perform(
     		fileUpload("/update")
@@ -542,15 +540,21 @@ public class UserControllerTest {
     			.param("id", "test")
     			.param("email", "test@naver.com")
     			.param("name", "test"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/board/frame"))
-	    	.andExpect(model().attribute("include", "/view/user/mypage.ftl"))
-	    	.andExpect(model().attribute("message", message.USER_SUCCESS_UPDATE))
-	    	.andExpect(request().sessionAttribute("name", "test"))
-			.andExpect(request().sessionAttribute("email", "test@naver.com"))
+	    	.andExpect(status().isFound())
+	    	.andExpect(redirectedUrl("/mypage"))
+	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
 			.andReturn();
     	
-    	String img = (String)result.getRequest().getSession().getAttribute("img");
+    	User user = (User)result.getRequest().getSession().getAttribute("user");
+    	int idx = user.getIdx();
+    	String id = user.getId();
+    	String name = user.getName();
+    	String email = user.getEmail();
+    	String img = user.getImg();
+    	Assert.assertThat(idx, is(1));
+    	Assert.assertThat(id, is("sungjin"));
+    	Assert.assertThat(name, is("test"));
+    	Assert.assertThat(email, is("test@naver.com"));
     	Assert.assertThat("img"+se+"user"+se, is(img.substring(0, 9)));
     }
     

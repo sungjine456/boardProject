@@ -320,56 +320,52 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) MultipartFile ufile, @IsValidUser User user, Model model, HttpSession session){
+	public String update(@RequestParam(required=false) MultipartFile ufile, @IsValidUser User updateUser, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController update");
 		if(!sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		String imgPath = common.createImg(ufile, user.getId(), "user");
+		String imgPath = common.createImg(ufile, updateUser.getId(), "user");
 		String se = File.separator;
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "img"+se+"user"+se+"default.png";
 		}
-		String name = user.getName();
-		String email = user.getEmail();
-		User sessionUser = (User)session.getAttribute("user"); 
-		int idx = sessionUser.getIdx();
+		String name = updateUser.getName();
+		String email = updateUser.getEmail();
+		
 		OkCheck emailCheck = common.isEmail(email);
 		if(!emailCheck.isBool()){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", emailCheck.getMessage());
-			return "view/board/frame";
+			rea.addFlashAttribute("message", emailCheck.getMessage());
+			return "redirect:/updateView";
 		}
 		if(StringUtils.isEmpty(name)){
-			model.addAttribute("include", "/view/user/update.ftl");
-			model.addAttribute("message", message.USER_NO_NAME);
-			return "view/board/frame";
+			rea.addFlashAttribute("message", message.USER_NO_NAME);
+			return "redirect:/updateView";
 		}
 		name = common.cleanXss(name);
-		sessionUser.setName(name);
-		sessionUser.setEmail(email);
+		User user = (User)session.getAttribute("user");
+		int idx = user.getIdx();
+		user.setName(name);
+		user.setEmail(email);
+		boolean isSuccessUpdate = false;
 		if(ufile.getSize() != 0){
 			if(userService.update(idx, name, email, imgPath)){
-				sessionUser.setImg(imgPath);
-				session.setAttribute("user", sessionUser);
-				model.addAttribute("include", "/view/user/mypage.ftl");
-				model.addAttribute("message", message.USER_SUCCESS_UPDATE);
-			} else {
-				model.addAttribute("include", "/view/user/update.ftl");
-				model.addAttribute("message", message.USER_FAIL_UPDATE);
+				isSuccessUpdate = true;
+				user.setImg(imgPath);
 			}
 		} else {
 			if(userService.update(idx, name, email)){
-				session.setAttribute("user", sessionUser);
-				model.addAttribute("include", "/view/user/mypage.ftl");
-				model.addAttribute("message", message.USER_SUCCESS_UPDATE);
-			} else {
-				model.addAttribute("include", "/view/user/update.ftl");
-				model.addAttribute("message", message.USER_FAIL_UPDATE);
+				isSuccessUpdate = false;
 			}
 		}
-		return "view/board/frame";
+		if(isSuccessUpdate){
+			rea.addFlashAttribute("message", message.USER_SUCCESS_UPDATE);
+			return "redirect:/mypage";
+		} else {
+			rea.addFlashAttribute("message", message.USER_FAIL_UPDATE);
+			return "redirect:/updateView";
+		}
 	}
 	
 	@RequestMapping("/interceptorView")
