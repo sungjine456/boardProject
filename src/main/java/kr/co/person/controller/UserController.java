@@ -14,7 +14,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,14 +35,16 @@ import kr.co.person.service.UserService;
 public class UserController {
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	
-	@Value("${keyValue}") private String ENCRYPTION_KEY;
 	@Autowired private UserService userService;
 	@Autowired private Common common;
 	@Autowired private Message message;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
-	public String joinView(){
+	public String joinView(HttpSession session){
 		log.info("execute UserController joinView");
+		if(sessionComparedToDB(session)){
+			return "redirect:/board";
+		}
 		return "view/user/join";
 	}
 	
@@ -122,7 +123,7 @@ public class UserController {
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvd", key)){
-					id = common.cookieAesDecode(ENCRYPTION_KEY, val);
+					id = common.cookieAesDecode(val);
 				}
 				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
@@ -157,7 +158,7 @@ public class UserController {
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
-				String enKeyId = common.cookieAesEncode(ENCRYPTION_KEY, id);
+				String enKeyId = common.cookieAesEncode(id);
 				if(StringUtils.isEmpty(enKeyId)){
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
@@ -180,10 +181,6 @@ public class UserController {
 			return "view/user/login";
 		}
 		User user = (User)session.getAttribute("user");
-		if(IsValid.isNotValidObjects(user)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
-		}
 		String loginId = "";
 		Cookie[] cookies = req.getCookies();
 		if(IsValid.isValidArrays(cookies)){

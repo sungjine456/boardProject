@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,7 @@ import kr.co.person.pojo.OkCheck;
 
 @Component
 public class Common {
+	@Value("${keyValue}") private String ENCRYPTION_KEY_OF_COOKIE;
 	@Autowired Message message;
 	
 	public String passwordEncryption(String str){
@@ -68,9 +70,9 @@ public class Common {
 		}
     }
     
-	private Key AES256Util(String key) throws Exception {
+	private Key AES256Util() throws Exception {
         byte[] keyBytes = new byte[16];
-        byte[] b = key.getBytes("UTF-8");
+        byte[] b = ENCRYPTION_KEY_OF_COOKIE.getBytes("UTF-8");
         int len = b.length;
         if(len > keyBytes.length)
             len = keyBytes.length;
@@ -80,10 +82,10 @@ public class Common {
         return keySpec;
     }
  
-    public String cookieAesEncode(String key, String str){
-    	String iv = key.substring(0, 16);
+    public String cookieAesEncode(String str){
+    	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	try{
-    		Key keySpec = AES256Util(key);
+    		Key keySpec = AES256Util();
 	        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
 	        c.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(iv.getBytes()));
 	 
@@ -94,12 +96,12 @@ public class Common {
     	}
     }
  
-    public String cookieAesDecode(String key, String str){
-    	String iv = key.substring(0, 16);
+    public String cookieAesDecode(String str){
+    	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	Cipher c;
     	byte[] byteStr;
     	try{
-	    	Key keySpec = AES256Util(key);
+	    	Key keySpec = AES256Util();
 	    	c = Cipher.getInstance("AES/CBC/PKCS5Padding");
 	        c.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(iv.getBytes("UTF-8")));
 	 

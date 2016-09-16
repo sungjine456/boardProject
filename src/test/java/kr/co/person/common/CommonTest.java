@@ -40,10 +40,9 @@ public class CommonTest {
 	
 	@Test
 	public void testAes(){
-		String key = "personProjectByJin";
-		String en = common.cookieAesEncode(key, "sungjin");
+		String en = common.cookieAesEncode("sungjin");
 		Assert.assertThat(en, is(not("sungjin")));
-		String de = common.cookieAesDecode(key, en);
+		String de = common.cookieAesDecode(en);
 		Assert.assertThat(de, is("sungjin"));
 	}
 }

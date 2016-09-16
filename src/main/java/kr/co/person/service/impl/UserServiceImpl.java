@@ -39,22 +39,19 @@ public class UserServiceImpl implements UserService {
 		String name = common.cleanXss(user.getName());
 		String id = common.cleanXss(user.getId());
 		String password = user.getPassword();
-		String email = user.getEmail();
+		OkCheck emailCheck = common.isEmail(user.getEmail());
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
 		}
 		if(StringUtils.isEmpty(name)){
 			return new OkCheck(message.USER_NO_NAME, false);
 		}
-		OkCheck emailCheck = common.isEmail(email);
 		if(!emailCheck.isBool()){
 			return new OkCheck(emailCheck.getMessage(), false);
 		}
 		User findUser = userRepository.findById(id);
 		if(IsValid.isValidObjects(findUser)){
-			if(StringUtils.isNotEmpty(findUser.getId())){
-				return new OkCheck(message.USER_ALREADY_JOIN, false);
-			}
+			return new OkCheck(message.USER_ALREADY_JOIN, false);
 		}
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
