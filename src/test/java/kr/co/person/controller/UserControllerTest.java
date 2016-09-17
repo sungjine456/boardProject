@@ -295,8 +295,6 @@ public class UserControllerTest {
     		post("/translatePassword")
     			.param("email", "sungjin@naver.com"))
 	    	.andExpect(status().isFound())
-	    	.andExpect(flash().attributeExists("message"))
-	    	.andExpect(flash().attributeCount(1))
 	    	.andExpect(redirectedUrl("/"));
     }
     

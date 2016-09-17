@@ -5,11 +5,20 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +34,9 @@ import kr.co.person.pojo.OkCheck;
 @Component
 public class Common {
 	@Value("${keyValue}") private String ENCRYPTION_KEY_OF_COOKIE;
-	@Autowired Message message;
+	@Autowired kr.co.person.common.Message message;
+	
+	private final String EMAIL_FROM = "sungjine456@gmail.com";
 	
 	public String passwordEncryption(String str){
 		try{
@@ -174,4 +185,32 @@ public class Common {
 		}
 		return imgPath;
 	}
+    
+    public boolean sendMail(String toEmail, String subject, String message){
+    	Properties props = new Properties();
+    	props.put("mail.smtp.starttls.enable", "true");
+    	props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "465"); 
+
+        Authenticator auth = new Authenticator(){
+            protected PasswordAuthentication getPasswordAuthentication() { 
+                return new PasswordAuthentication(EMAIL_FROM, "fhrmdlswnd1!@"); 
+            }
+        };
+        
+        Session session = Session.getDefaultInstance(props, auth);
+        MimeMessage mimeMessage = new MimeMessage(session); 
+        try{
+	        mimeMessage.setSender(new InternetAddress(EMAIL_FROM)); 
+	        mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); 
+	        mimeMessage.setSubject(subject); 
+	        mimeMessage.setContent(message, "text/plain;charset=UTF-8");
+
+	        Transport.send(mimeMessage);
+        } catch (MessagingException e){
+        	return false;
+        }
+    	return true;
+    }
 }
