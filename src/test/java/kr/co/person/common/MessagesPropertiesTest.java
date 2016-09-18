@@ -76,5 +76,8 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.USER_AVAILABLE_EMAIL, is("가입 가능한 이메일입니다."));
 
 		Assert.assertThat(message.FILE_FAIL_UPLOAD, is("파일 업로드에 실패했습니다."));
+
+		Assert.assertThat(message.MAIL_TRANSLATE_PASSWORD_TITLE, is("비밀번호가 변경되었습니다."));
+		Assert.assertThat(message.MAIL_SUCCESS_TRANSLATE_PASSWORD, is("메일을 확인 해주세요."));
 	}
 }

@@ -215,7 +215,8 @@ public class UserController {
 		}
 		OkCheck ok = userService.translatePassword(email);
 		if(ok.isBool()){
-			common.sendMail("tjdwlsdms100@naver.com", "비밀번호 변경", ok.getMessage());
+			common.sendMail("tjdwlsdms100@naver.com", message.MAIL_TRANSLATE_PASSWORD_TITLE, ok.getMessage());
+			rea.addFlashAttribute("message", message.MAIL_SUCCESS_TRANSLATE_PASSWORD);
 		} else {
 			rea.addFlashAttribute("message", ok.getMessage());
 		}

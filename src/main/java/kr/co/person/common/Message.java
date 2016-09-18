@@ -49,6 +49,9 @@ public class Message {
 	
 	public final String FILE_FAIL_UPLOAD;
 	
+	public final String MAIL_TRANSLATE_PASSWORD_TITLE;
+	public final String MAIL_SUCCESS_TRANSLATE_PASSWORD;
+	
 	public Message(MessageSource messageSource){
 		this.messageSource = messageSource;
 		
@@ -96,6 +99,9 @@ public class Message {
 		USER_AVAILABLE_EMAIL = messageSource.getMessage("user.availableEmail", null, null);
 
 		FILE_FAIL_UPLOAD = messageSource.getMessage("file.failUpload", null, null);
+
+		MAIL_TRANSLATE_PASSWORD_TITLE = messageSource.getMessage("mail.translatePasswordTitle", null, null);
+		MAIL_SUCCESS_TRANSLATE_PASSWORD = messageSource.getMessage("mail.successTranslatePassword", null, null);
 	}
 
 	public MessageSource getMessageSource() {

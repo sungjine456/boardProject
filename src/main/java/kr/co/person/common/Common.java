@@ -5,19 +5,11 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 
@@ -26,6 +18,8 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,9 +28,9 @@ import kr.co.person.pojo.OkCheck;
 @Component
 public class Common {
 	@Value("${keyValue}") private String ENCRYPTION_KEY_OF_COOKIE;
-	@Autowired kr.co.person.common.Message message;
-	
-	private final String EMAIL_FROM = "sungjine456@gmail.com";
+	@Value("${emailId}") private String EMAIL_ID;
+	@Autowired Message message;
+	@Autowired JavaMailSender mailSender;
 	
 	public String passwordEncryption(String str){
 		try{
@@ -186,31 +180,20 @@ public class Common {
 		return imgPath;
 	}
     
-    public boolean sendMail(String toEmail, String subject, String message){
-    	Properties props = new Properties();
-    	props.put("mail.smtp.starttls.enable", "true");
-    	props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "465"); 
+    public boolean sendMail(String toEmail, String title, String content){
+		try {
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-        Authenticator auth = new Authenticator(){
-            protected PasswordAuthentication getPasswordAuthentication() { 
-                return new PasswordAuthentication(EMAIL_FROM, "fhrmdlswnd1!@"); 
-            }
-        };
-        
-        Session session = Session.getDefaultInstance(props, auth);
-        MimeMessage mimeMessage = new MimeMessage(session); 
-        try{
-	        mimeMessage.setSender(new InternetAddress(EMAIL_FROM)); 
-	        mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); 
-	        mimeMessage.setSubject(subject); 
-	        mimeMessage.setContent(message, "text/plain;charset=UTF-8");
+			messageHelper.setFrom(EMAIL_ID);
+			messageHelper.setTo(toEmail);
+			messageHelper.setSubject(title);
+			messageHelper.setText(content);
 
-	        Transport.send(mimeMessage);
-        } catch (MessagingException e){
-        	return false;
-        }
+			mailSender.send(mimeMessage);
+		} catch (Exception e) {
+			return false;
+   	    }
     	return true;
     }
 }
