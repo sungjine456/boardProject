@@ -306,4 +306,14 @@ public class UserServiceImpl implements UserService {
 		}
 		return true;
 	}
+
+	@Override
+	public User accessEmail(String email) {
+		User user = userRepository.findByEmail(email);
+		if(IsValid.isNotValidObjects(user)){
+			return new User();
+		}
+		user.setAccess("Y");
+		return user;
+	}
 }

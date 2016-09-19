@@ -186,4 +186,12 @@ public class UserServiceTest {
 		Assert.assertThat(userService.passwordCheck(1, "654321"), is(false));
 		Assert.assertThat(userService.passwordCheck(3, "654321"), is(false));
 	}
+	
+	@Test
+	public void testAccessEmail(){
+		user = userService.findUserForId("sungjine");
+		Assert.assertThat(user.getAccess(), is("N"));
+		user = userService.accessEmail("sungjine@naver.com");
+		Assert.assertThat(user.getAccess(), is("Y"));
+	}
 }

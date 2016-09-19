@@ -31,6 +31,8 @@ public class User extends CommonEntity {
 	private String email;
 	@Column(name="img")
 	private String img;
+	@Column(name="access")
+	private String access = "N";
 	
 	public User(){
 	}
@@ -79,5 +81,11 @@ public class User extends CommonEntity {
 	}
 	public void setImg(String img) {
 		this.img = img;
+	}
+	public String getAccess() {
+		return access;
+	}
+	public void setAccess(String access) {
+		this.access = access;
 	}
 }

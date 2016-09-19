@@ -19,4 +19,5 @@ public interface UserService {
 	boolean update(int idx, String name, String email, String imgPath);
 	boolean update(int idx, String name, String email);
 	boolean passwordCheck(int idx, String password);
+	User accessEmail(String email);
 }

@@ -67,6 +67,7 @@ public class UserControllerTest {
     	user.setName("hong");
     	user.setImg("default.png");
     	user.setEmail("sungjin@naver.com");
+    	user.setAccess("Y");
     	mockSession.setAttribute("user", user);
     }
 	
@@ -106,12 +107,12 @@ public class UserControllerTest {
     			.param("id", "test")
     			.param("name", "test")
     			.param("password", "123456")
-    			.param("email", "aaaads@naver.com"))
+    			.param("email", "tjdwlsdms100@naver.com"))
 			.andExpect(status().isFound())
-			.andExpect(flash().attribute("message", message.USER_SUCCESS_JOIN))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))
 			.andExpect(request().sessionAttribute("user", is(notNullValue())))
-			.andExpect(redirectedUrl("/board"));
+			.andExpect(flash().attribute("email", "tjdwlsdms100@naver.com"))
+			.andExpect(redirectedUrl("emailAccessAgo"));
     }
     
     @Test
@@ -532,16 +533,16 @@ public class UserControllerTest {
     @Test
     public void testUpdateSuccessParam3() throws Exception{
     	MvcResult result = mock.perform(
-        		fileUpload("/update")
-        			.file(new MockMultipartFile("ufile", "b".getBytes()))
-        			.session(mockSession)
-        			.param("id", "test")
-        			.param("email", "test@naver.com")
-        			.param("name", "test"))
-    	    	.andExpect(status().isFound())
-    	    	.andExpect(redirectedUrl("/mypage"))
-    	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
-    			.andReturn();
+    		fileUpload("/update")
+    			.file(new MockMultipartFile("ufile", "b".getBytes()))
+    			.session(mockSession)
+    			.param("id", "test")
+    			.param("email", "test@naver.com")
+    			.param("name", "test"))
+	    	.andExpect(status().isFound())
+	    	.andExpect(redirectedUrl("/mypage"))
+	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
+			.andReturn();
         	
         	User user = (User)result.getRequest().getSession().getAttribute("user");
         	int idx = user.getIdx();
@@ -583,6 +584,52 @@ public class UserControllerTest {
     	Assert.assertThat(name, is("test"));
     	Assert.assertThat(email, is("test@naver.com"));
     	Assert.assertThat("test", is(img.substring(9, 13)));
+    }
+    
+    @Test
+    public void testEmailAccess() throws Exception {
+    	mock.perform(get("/emailAccess"))
+	    	.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+    	
+    	mock.perform(
+    		get("/emailAccess")
+    			.param("access", "sungjine@naver.com"))
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.MAIL_THANK_YOU_FOR_AGREE))
+			.andExpect(request().sessionAttribute("loginYn", "Y"))
+			.andExpect(request().sessionAttribute("user", is(notNullValue())))
+    		.andExpect(redirectedUrl("board"));
+    }
+    
+    @Test
+    public void testEmailAccessAgo() throws Exception {
+    	mock.perform(get("/emailAccessAgo"))
+	    	.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	
+		mock.perform(
+			get("/emailAccessAgo")
+				.param("email", "sungjine@naver.com"))
+			.andExpect(status().isOk())
+			.andExpect(request().sessionAttribute("email", "sungjine@naver.com"))
+			.andExpect(view().name("view/user/emailAccessAgo"));
+    }
+    
+    @Test
+    public void testEmailAccessRe() throws Exception {
+    	mock.perform(post("/emailAccessRe"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("view/user/login"))
+			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+    	
+    	mock.perform(
+    		post("/emailAccessRe")
+    			.param("email", "sungjine@naver.com"))
+	    	.andExpect(status().isFound())
+			.andExpect(redirectedUrl("emailAccessAgo"));
     }
     
     @Test

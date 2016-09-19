@@ -51,6 +51,8 @@ public class Message {
 	
 	public final String MAIL_TRANSLATE_PASSWORD_TITLE;
 	public final String MAIL_SUCCESS_TRANSLATE_PASSWORD;
+	public final String MAIL_THANK_YOU_FOR_AGREE;
+	public final String MAIL_THANK_YOU_FOR_JOIN;
 	
 	public Message(MessageSource messageSource){
 		this.messageSource = messageSource;
@@ -102,6 +104,8 @@ public class Message {
 
 		MAIL_TRANSLATE_PASSWORD_TITLE = messageSource.getMessage("mail.translatePasswordTitle", null, null);
 		MAIL_SUCCESS_TRANSLATE_PASSWORD = messageSource.getMessage("mail.successTranslatePassword", null, null);
+		MAIL_THANK_YOU_FOR_AGREE = messageSource.getMessage("mail.thankYouForAgree", null, null);
+		MAIL_THANK_YOU_FOR_JOIN = messageSource.getMessage("mail.thankYouForJoin", null, null);
 	}
 
 	public MessageSource getMessageSource() {

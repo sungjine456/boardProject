@@ -67,8 +67,9 @@ public class UserController {
 		if(ok.isBool()){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("user", user);
-			rea.addFlashAttribute("message", ok.getMessage());
-			return "redirect:/board";
+			common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + common.aesEncode(email) + "'>동의</a>");
+			rea.addFlashAttribute("email", email);
+			return "redirect:emailAccessAgo";
 		} else {
 			model.addAttribute("message", ok.getMessage());
 			return "view/user/join";
@@ -123,7 +124,7 @@ public class UserController {
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvd", key)){
-					id = common.cookieAesDecode(val);
+					id = common.aesDecode(val);
 				}
 				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
@@ -140,7 +141,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@IsValidUser User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res){
+	public String login(@IsValidUser User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
 		String id = user.getId();
 		String password = user.getPassword();
@@ -150,6 +151,10 @@ public class UserController {
 		}
 		user = userService.joinCheck(common.cleanXss(id), password);
 		if(IsValid.isValidObjects(user)){
+			if(StringUtils.equals(user.getAccess(), "N")){
+				rea.addFlashAttribute("email", user.getEmail());
+				return "redirect:emailAccessAgo";
+			}
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("user", user);
 			if(StringUtils.equals(idSave, "ckeck")){
@@ -158,7 +163,7 @@ public class UserController {
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
-				String enKeyId = common.cookieAesEncode(id);
+				String enKeyId = common.aesEncode(id);
 				if(StringUtils.isEmpty(enKeyId)){
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
@@ -364,6 +369,42 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_FAIL_UPDATE);
 			return "redirect:/updateView";
 		}
+	}
+	
+	@RequestMapping(value="/emailAccess", method=RequestMethod.GET)
+	public String emailAccess(@RequestParam(required=false) String access, Model model, RedirectAttributes rea, HttpSession session){
+		log.info("execute UserController emailAccess");
+		if(StringUtils.isEmpty(access)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
+		User user = userService.accessEmail(common.aesDecode(access));
+		session.setAttribute("loginYn", "Y");
+		session.setAttribute("user", user);
+		rea.addFlashAttribute("message", message.MAIL_THANK_YOU_FOR_AGREE);
+		return "redirect:board";
+	}
+	
+	@RequestMapping(value="/emailAccessAgo", method=RequestMethod.GET)
+	public String emailAccessAgo(@RequestParam(required=false) String email, Model model, HttpSession session){
+		log.info("execute UserController emailAccessAgo");
+		if(StringUtils.isEmpty(email)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
+		session.setAttribute("email", email);
+		return "view/user/emailAccessAgo";
+	}
+	
+	@RequestMapping(value="/emailAccessRe", method=RequestMethod.POST)
+	public String reEmailAccess(@RequestParam(required=false) String email, Model model){
+		log.info("execute UserController reEmailAccess");
+		if(StringUtils.isEmpty(email)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
+		common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + common.aesEncode(email) + "'>동의</a>");
+		return "redirect:emailAccessAgo";
 	}
 	
 	@RequestMapping("/interceptorView")

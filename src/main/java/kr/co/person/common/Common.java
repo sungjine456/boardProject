@@ -87,7 +87,7 @@ public class Common {
         return keySpec;
     }
  
-    public String cookieAesEncode(String str){
+    public String aesEncode(String str){
     	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	try{
     		Key keySpec = AES256Util();
@@ -101,7 +101,7 @@ public class Common {
     	}
     }
  
-    public String cookieAesDecode(String str){
+    public String aesDecode(String str){
     	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	Cipher c;
     	byte[] byteStr;
@@ -188,7 +188,7 @@ public class Common {
 			messageHelper.setFrom(EMAIL_ID);
 			messageHelper.setTo(toEmail);
 			messageHelper.setSubject(title);
-			messageHelper.setText(content);
+			messageHelper.setText("", content);
 
 			mailSender.send(mimeMessage);
 		} catch (Exception e) {

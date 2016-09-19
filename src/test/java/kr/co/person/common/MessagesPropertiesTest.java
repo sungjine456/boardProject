@@ -79,5 +79,7 @@ public class MessagesPropertiesTest {
 
 		Assert.assertThat(message.MAIL_TRANSLATE_PASSWORD_TITLE, is("비밀번호가 변경되었습니다."));
 		Assert.assertThat(message.MAIL_SUCCESS_TRANSLATE_PASSWORD, is("메일을 확인 해주세요."));
+		Assert.assertThat(message.MAIL_THANK_YOU_FOR_AGREE, is("동의해주셔서 감사합니다."));
+		Assert.assertThat(message.MAIL_THANK_YOU_FOR_JOIN, is("가입해주셔서 감사합니다."));
 	}
 }
