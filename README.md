@@ -17,6 +17,7 @@
 	게시글의 조회수 (cookie를 통한 새로고침으로 조회수 올리는 것 방지)
 	messageSource를 통한 message관리
 	간단한 웹 에디터 만들어보기(볼드체, 정렬(왼쪽, 가운데, 오른쪽))
+	mail검증 절차 & 메일로 비밀번호 재발급
 
 ## 사용기술
 ----
@@ -35,6 +36,7 @@ back end
 	5. MySql
 	6. SLF4J(Logger)
 	7. jUnit(Test)
+	8. javamail
 ```
 ```
 util library

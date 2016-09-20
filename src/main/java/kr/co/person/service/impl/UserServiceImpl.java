@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 		}
 		String name = common.cleanXss(user.getName());
 		String id = common.cleanXss(user.getId());
-		String password = user.getPassword();
+		String password = common.passwordEncryption(user.getPassword());
 		OkCheck emailCheck = common.isEmail(user.getEmail());
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
@@ -49,13 +49,9 @@ public class UserServiceImpl implements UserService {
 		if(!emailCheck.isBool()){
 			return new OkCheck(emailCheck.getMessage(), false);
 		}
-		User findUser = userRepository.findById(id);
-		if(IsValid.isValidObjects(findUser)){
-			return new OkCheck(message.USER_ALREADY_JOIN, false);
-		}
-		password = common.passwordEncryption(password);
-		if(StringUtils.isEmpty(password)){
-			return new OkCheck(message.USER_FAIL_JOIN, false);
+		OkCheck ok = idCheck(id);
+		if(!ok.isBool()){
+			return ok;
 		}
 		user.setId(id);
 		user.setName(name);
@@ -116,7 +112,7 @@ public class UserServiceImpl implements UserService {
 		}
 		User findUserByEmail = userRepository.findByEmail(email);
 		if(IsValid.isValidObjects(findUserByEmail)){
-			return (findUserByEmail.getEmail() != null && common.isEmail(email).isBool())
+			return (common.isEmail(findUserByEmail.getEmail()).isBool())
 					?new OkCheck(message.USER_ALREADY_JOIN_EMAIL, false)
 					:new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
 		} else {
@@ -184,13 +180,10 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidInts(idx)){
 			return new OkCheck(message.USER_NO_LOGIN, false);
 		}
-		if(StringUtils.isEmpty(password)){
-			return new OkCheck(message.USER_NO_PASSWORD, false);
-		}
-		if(StringUtils.isEmpty(changePassword)){
-			return new OkCheck(message.USER_NO_UPDATE_PASSWORD, false);
-		}
 		User user = userRepository.findOne(idx);
+		if(IsValid.isNotValidObjects(user)){
+			return new OkCheck(message.USER_WRONG_USER, false);
+		}
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_NO_PASSWORD, false);
