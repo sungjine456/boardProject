@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.common.Message;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
 
@@ -25,10 +25,10 @@ import kr.co.person.pojo.OkCheck;
 public class UserServiceTest {
 
 	@Autowired private UserService userService;
+	@Autowired private Message message;
 	private User user;
 	// 비밀번호123123을 암호화한 형태
     private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
-    private DateTime date = new DateTime();
 
 	@Test
 	public void testJoinCheck(){
@@ -38,19 +38,19 @@ public class UserServiceTest {
 	
 	@Test
 	public void testIdCheck() {
-		Assert.assertThat(userService.idCheck(null).getMessage(), is("아이디를 입력해주세요."));
-		Assert.assertThat(userService.idCheck("").getMessage(), is("아이디를 입력해주세요."));
-		Assert.assertThat(userService.idCheck("sungjin").getMessage(), is("이미 가입되어 있는 아이디입니다."));
-		Assert.assertThat(userService.idCheck("sungjin123").getMessage(), is("가입 가능한 아이디입니다."));
+		Assert.assertThat(userService.idCheck(null).getMessage(), is(message.USER_NO_ID));
+		Assert.assertThat(userService.idCheck("").getMessage(), is(message.USER_NO_ID));
+		Assert.assertThat(userService.idCheck("sungjin").getMessage(), is(message.USER_ALREADY_JOIN_ID));
+		Assert.assertThat(userService.idCheck("sungjin123").getMessage(), is(message.USER_AVAILABLE_ID));
 	}
 
 	@Test
 	public void testEmailCheck() {
-		Assert.assertThat(userService.emailCheck(null).getMessage(), is("이메일을 입력해주세요."));
-		Assert.assertThat(userService.emailCheck("").getMessage(), is("이메일을 입력해주세요."));
-		Assert.assertThat(userService.emailCheck("tjdwls@naver.com").getMessage(), is("가입 가능한 이메일입니다."));
-		Assert.assertThat(userService.emailCheck("sungjin@naver.com").getMessage(), is("이미 가입되어 있는 이메일입니다."));
-		Assert.assertThat(userService.emailCheck("sungjin").getMessage(), is("올바른 형식의 메일을 입력해주세요."));
+		Assert.assertThat(userService.emailCheck(null).getMessage(), is(message.USER_NO_EMAIL));
+		Assert.assertThat(userService.emailCheck("").getMessage(), is(message.USER_NO_EMAIL));
+		Assert.assertThat(userService.emailCheck("tjdwls@naver.com").getMessage(), is(message.USER_AVAILABLE_EMAIL));
+		Assert.assertThat(userService.emailCheck("sungjin@naver.com").getMessage(), is(message.USER_ALREADY_JOIN_EMAIL));
+		Assert.assertThat(userService.emailCheck("sungjin").getMessage(), is(message.USER_NO_EMAIL_FORMAT));
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class UserServiceTest {
 		Assert.assertThat(user.getPassword(), is(password));
 		OkCheck ok = userService.changePassword(1, "123123", "654321");
 		Assert.assertThat(ok.isBool(), is(true));
-		Assert.assertThat(ok.getMessage(), is("비밀번호 수정이 완료되었습니다."));
+		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_TRANSlATE_PASSWORD));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getPassword(), is("481f6cc0511143ccdd7e2d1b1b94faf0a700a8b49cd13922a70b5ae28acaa8c5personProject"));
 	}
@@ -87,22 +87,24 @@ public class UserServiceTest {
 	@Test
 	public void testJoin(){
 		user = new User();
-		user.setEmail("sungjin1@naver.com");
-		user.setId("sungjin1");
-		user.setName("hong");
-		user.setPassword(password);
-		user.setRegDate(date);
-		user.setUpDate(date);
 		OkCheck ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is("회원가입에 성공하셨습니다."));
-		Assert.assertThat(ok.isBool(), is(true));
+		Assert.assertThat(ok.getMessage(), is(message.USER_WRONG_ID_OR_WRONG_PASSWORD));
 		user.setId("sungjin1");
+		user.setPassword(password);
 		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is("이미 가입되어 있는 회원입니다."));
-		Assert.assertThat(ok.isBool(), is(false));
-		user.setEmail("sungjin@naver.com");
+		Assert.assertThat(ok.getMessage(), is(message.USER_NO_NAME));
+		user.setName("hong");
 		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is("이미 가입되어 있는 회원입니다."));
+		Assert.assertThat(ok.getMessage(), is(message.USER_NO_EMAIL));
+		user.setEmail("sungjin1");
+		ok = userService.join(user);
+		Assert.assertThat(ok.getMessage(), is(message.USER_NO_EMAIL_FORMAT));
+		user.setEmail("sungjin1@naver.com");
+		ok = userService.join(user);
+		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_JOIN));
+		Assert.assertThat(ok.isBool(), is(true));
+		ok = userService.join(user);
+		Assert.assertThat(ok.getMessage(), is(message.USER_ALREADY_JOIN_ID));
 		Assert.assertThat(ok.isBool(), is(false));
 	}
 	

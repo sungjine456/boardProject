@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,14 +33,15 @@ import kr.co.person.domain.Board;
 public class BoardServiceTest {
 
 	@Autowired private BoardService boardService;
+	@Autowired private Message message;
 	private Board board;
 	
 	@Test
 	public void testWrite() {
-		Assert.assertThat(boardService.write("", "content", 1).getMessage(), is("제목을 입력해주세요."));
-		Assert.assertThat(boardService.write("title", "", 1).getMessage(), is("내용을 입력해주세요."));
-		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is("존재하지 않는 회원입니다."));
-		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is("글이 등록 되었습니다."));
+		Assert.assertThat(boardService.write("", "content", 1).getMessage(), is(message.BOARD_NO_TITLE));
+		Assert.assertThat(boardService.write("title", "", 1).getMessage(), is(message.BOARD_NO_CONTENT));
+		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is(message.USER_WRONG_USER));
+		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is(message.BOARD_SUCCESS_WRITE));
 	}
 	
 	@Test

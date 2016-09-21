@@ -2,6 +2,7 @@ package kr.co.person.repository;
 
 import static org.hamcrest.CoreMatchers.*;
 
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +55,20 @@ public class UserRepositoryTest {
     	Assert.assertThat(user.getId(), is("sungjin"));
     	Assert.assertThat(user.getPassword(), is(password));
     	
-    	User user = userRepository.findByEmail("ass@naver.com");
+    	user = userRepository.findByEmail("ass@naver.com");
     	Assert.assertThat(user, is(nullValue()));
+    }
+    
+    @Test
+    public void testSave(){
+    	DateTime date = new DateTime();
+    	Assert.assertThat(userRepository.findById("test"), is(nullValue()));
+    	user = new User("test", "test@naver.com", "123", "test", "img", date ,date);
+    	userRepository.save(user);
+    	user = userRepository.findById("test");
+    	Assert.assertThat("test", is(user.getId()));
+    	Assert.assertThat("test@naver.com", is(user.getEmail()));
+    	Assert.assertThat("123", is(user.getPassword()));
+    	Assert.assertThat("test", is(user.getName()));
     }
 }

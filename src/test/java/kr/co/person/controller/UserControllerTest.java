@@ -79,7 +79,7 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testJoin() throws Exception {
+    public void testJoinNoEmail() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
     	
     	mock.perform(
@@ -90,6 +90,11 @@ public class UserControllerTest {
     		.andExpect(status().isOk())
     		.andExpect(model().attribute("message", message.USER_NO_EMAIL))
     		.andExpect(view().name("view/user/join"));
+    }
+    
+    @Test
+    public void testJoinNoEmailFormet() throws Exception {
+    	MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
     	
     	mock.perform(
     		fileUpload("/join")
@@ -100,6 +105,11 @@ public class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("message", message.USER_NO_EMAIL_FORMAT))
 			.andExpect(view().name("view/user/join"));
+    }
+    
+    @Test
+    public void testJoinSuccess() throws Exception {
+    	MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
     	
     	mock.perform(
     		fileUpload("/join")
@@ -116,14 +126,17 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testIdCheck() throws Exception {
+    public void testIdCheckNoId() throws Exception {
     	mock.perform(
         	post("/join/idCheck")
     			.accept(MediaType.APPLICATION_JSON_VALUE))
     		.andExpect(status().isOk())
     		.andExpect(jsonPath("str", is(message.USER_NO_ID)))
     		.andExpect(jsonPath("bool", is("false")));
-    	
+    }
+    
+    @Test
+    public void testIdCheckAlreadyId() throws Exception {
     	mock.perform(
     		post("/join/idCheck")
     			.param("id", "sungjin")
@@ -131,7 +144,10 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 	    	.andExpect(jsonPath("str", is(message.USER_ALREADY_JOIN_ID)))
 	    	.andExpect(jsonPath("bool", is("false")));
-    	
+    }
+    
+    @Test
+    public void testIdCheckSuccess() throws Exception {
     	mock.perform(
     		post("/join/idCheck")
     			.param("id", "test")
@@ -142,14 +158,17 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testEmailCheck() throws Exception {
+    public void testEmailCheckNoEmail() throws Exception {
     	mock.perform(
     		post("/join/emailCheck")
     			.accept(MediaType.APPLICATION_JSON_VALUE))
     		.andExpect(status().isOk())
     		.andExpect(jsonPath("str", is(message.USER_NO_EMAIL)))
     		.andExpect(jsonPath("bool", is("false")));
-
+    }
+    
+    @Test
+    public void testEmailCheckAleadyEmail() throws Exception {
     	mock.perform(
     		post("/join/emailCheck")
     			.param("email", "sungjin@naver.com")
@@ -157,7 +176,10 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 	    	.andExpect(jsonPath("str", is(message.USER_ALREADY_JOIN_EMAIL)))
 	    	.andExpect(jsonPath("bool", is("false")));
-
+    }
+    
+    @Test
+    public void testEmailCheckSuccess() throws Exception {
     	mock.perform(
     		post("/join/emailCheck")
     			.param("email", "test@naver.com")
@@ -168,13 +190,16 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testLoginView() throws Exception {
+    public void testLoginViewLoginYn() throws Exception {
     	mock.perform(
     		get("/")
     			.sessionAttr("loginYn", "Y"))
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/board"));
-
+    }
+    
+    @Test
+    public void testLoginViewAutoLogin() throws Exception {
     	mock.perform(
     		get("/")
     			.sessionAttr("loginYn", "N")
@@ -182,7 +207,10 @@ public class UserControllerTest {
     			.cookie(new Cookie("psvlgnd", "asdasdasd")))
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testLoginView() throws Exception {
     	mock.perform(
     		get("/")
     			.sessionAttr("loginYn", "N"))
@@ -191,26 +219,35 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testLogin() throws Exception{
+    public void testLoginNoIdAndNoPassword() throws Exception{
     	mock.perform(post("/"))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/user/login"))
     		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
-    	
+    }
+    
+    @Test
+    public void testLoginNoPassword() throws Exception{
     	mock.perform(
     		post("/")
 				.param("id", "sungjin"))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/user/login"))
     		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
-    	
+    }
+    
+    @Test
+    public void testLoginNoId() throws Exception{
     	mock.perform(
     		post("/")
 				.param("password", "123123"))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/user/login"))
     		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
-    	
+    }
+    
+    @Test
+    public void testLoginWrongIdAndWrongPassword() throws Exception{
     	mock.perform(
     		post("/")
 				.param("id", "test")
@@ -218,23 +255,20 @@ public class UserControllerTest {
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/user/login"))
     		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
-
-    	mock.perform(
-    		post("/")
-    			.param("id", "test")
-    			.param("password", "123456")
-    			.param("idSave", "check"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
-
+    }
+    
+    @Test
+    public void testLoginSuccess() throws Exception{
     	mock.perform(
     		post("/")
     			.param("id", "sungjin")
     			.param("password", "123123"))
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testLoginAutoLoginSuccess() throws Exception{
     	mock.perform(
     		post("/")
     			.param("id", "sungjin")
@@ -245,7 +279,7 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testLogout() throws Exception {
+    public void testLogoutWrongSessionIdx() throws Exception {
     	mock.perform(
     		get("/logout")
 	    		.sessionAttr("loginYn", "Y")
@@ -253,7 +287,10 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
+    }
+    
+    @Test
+    public void testLogoutWrongCookie() throws Exception {
     	mock.perform(
     		get("/logout")
 	    		.session(mockSession)
@@ -262,7 +299,10 @@ public class UserControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/board"))
     		.andExpect(flash().attribute("message", message.USER_FAIL_LOGOUT));
-    	
+    }
+    
+    @Test
+    public void testLogoutSuccess() throws Exception {
     	mock.perform(
     		get("/logout")
     			.session(mockSession)
@@ -272,26 +312,35 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testTranslatePassword() throws Exception{
+    public void testTranslatePasswordNoEmail() throws Exception{
     	mock.perform(post("/translatePassword"))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
     		.andExpect(redirectedUrl("/"));
-    	
+    }
+    
+    @Test
+    public void testTranslatePasswordNoEmailFormat() throws Exception{
     	mock.perform(
     		post("/translatePassword")
     			.param("email", "test"))
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.USER_NO_EMAIL_FORMAT))
 			.andExpect(redirectedUrl("/"));
-
+    }
+    
+    @Test
+    public void testTranslatePasswordWrongEmail() throws Exception{
     	mock.perform(
     		post("/translatePassword")
     			.param("email", "test@naver.com"))
 	    	.andExpect(status().isFound())
 	    	.andExpect(flash().attribute("message", message.USER_WRONG_EMAIL))
 	    	.andExpect(redirectedUrl("/"));
-
+    }
+    
+    @Test
+    public void testTranslatePasswordSuccess() throws Exception{
     	mock.perform(
     		post("/translatePassword")
     			.param("email", "sungjin@naver.com"))
@@ -300,14 +349,17 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testMyPageView() throws Exception{
+    public void testMyPageViewSuccess() throws Exception{
     	mock.perform(
     		get("/mypage")
     			.session(mockSession))
     		.andExpect(status().isOk())
     		.andExpect(model().attribute("include", "/view/user/mypage.ftl"))
     		.andExpect(view().name("view/board/frame"));
-
+    }
+    
+    @Test
+    public void testMyPageViewNoSession() throws Exception{
     	mock.perform(
     		get("/mypage")
     			.sessionAttr("loginYn", "Y"))
@@ -317,21 +369,27 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testChangePassword() throws Exception {
+    public void testChangePasswordNoPasswordAndNoUpdatePassword() throws Exception {
     	mock.perform(
     		post("/changePassword")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_PASSWORD))
     		.andExpect(redirectedUrl("/update"));
-    	
+    }
+    
+    @Test
+    public void testChangePasswordNoSession() throws Exception {
     	mock.perform(
     		post("/changePassword")
     			.sessionAttr("loginYn", "Y"))
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
+    }
+    
+    @Test
+    public void testChangePasswordNoUpdatePassword() throws Exception {
     	mock.perform(
     		post("/changePassword")
     			.session(mockSession)
@@ -339,7 +397,10 @@ public class UserControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_UPDATE_PASSWORD))
     		.andExpect(redirectedUrl("/update"));
-    	
+    }
+    
+    @Test
+    public void testChangePasswordNoPassword() throws Exception {
     	mock.perform(
     		post("/changePassword")
     			.session(mockSession)
@@ -347,7 +408,10 @@ public class UserControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_PASSWORD))
     		.andExpect(redirectedUrl("/update"));
-    	
+    }
+    
+    @Test
+    public void testChangePasswordPasswordSameUpdatePassword() throws Exception {
     	mock.perform(
     		post("/changePassword")
     			.session(mockSession)
@@ -356,10 +420,14 @@ public class UserControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD))
     		.andExpect(redirectedUrl("/update"));
-    	
+    }
+    
+    @Test
+    public void testChangePasswordWrongSessionIdx() throws Exception {
     	User user = (User)mockSession.getAttribute("user");
     	user.setIdx(5);
     	mockSession.setAttribute("user", user);
+    	
     	mock.perform(
     		post("/changePassword")
 				.session(mockSession)
@@ -368,8 +436,11 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 	    	.andExpect(view().name("view/user/login"))
 	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
-    	user = (User)mockSession.getAttribute("user");
+    }
+    
+    @Test
+    public void testChangePasswordWrongSessionId() throws Exception {
+    	User user = (User)mockSession.getAttribute("user");
     	user.setIdx(1);
     	user.setId("test");
     	mockSession.setAttribute("user", user);
@@ -382,11 +453,14 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 	    	.andExpect(view().name("view/user/login"))
 	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
-    	user = (User)mockSession.getAttribute("user");
+    }
+    
+    @Test
+    public void testChangePasswordSuccess() throws Exception {
+    	User user = (User)mockSession.getAttribute("user");
     	user.setId("sungjin");
     	mockSession.setAttribute("user", user);
-
+    	
     	mock.perform(
     		post("/changePassword")
     			.session(mockSession)
@@ -398,14 +472,17 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testLeave() throws Exception {
+    public void testLeaveNoPassword() throws Exception {
     	mock.perform(
     		get("/leave")
 	    		.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/mypage"))
     		.andExpect(flash().attribute("message", message.USER_NO_PASSWORD));
-    	
+    }
+    
+    @Test
+    public void testLeaveNoSession() throws Exception {
     	mock.perform(
     		get("/leave")
     			.sessionAttr("loginYn", "Y")
@@ -413,25 +490,10 @@ public class UserControllerTest {
 	    	.andExpect(status().isOk())
 	    	.andExpect(view().name("view/user/login"))
 	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
-    	mock.perform(
-   			get("/leave")
-    			.sessionAttr("loginYn", "Y")
-    			.sessionAttr("id", "sungjin")
-    			.param("password", "123123"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-
-    	mock.perform(
-   			get("/leave")
-    			.sessionAttr("loginYn", "Y")
-    			.sessionAttr("idx", 1)
-    			.param("password", "123123"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-
+    }
+    
+    @Test
+    public void testLeaveWrongCookie() throws Exception {
     	mock.perform(
     		get("/leave")
     			.session(mockSession)
@@ -441,7 +503,10 @@ public class UserControllerTest {
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/mypage"))
 	    	.andExpect(flash().attribute("message", message.USER_FAIL_LEAVE));
-
+    }
+    
+    @Test
+    public void testLeaveSuccess() throws Exception {
     	mock.perform(
     		get("/leave")
     			.session(mockSession)
@@ -462,14 +527,20 @@ public class UserControllerTest {
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/user/login"))
     		.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-
+    }
+    
+    @Test
+    public void testUpdateViewNoPassword() throws Exception{
     	mock.perform(
     		post("/updateView")
     			.session(mockSession))
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/mypage"))
 	    	.andExpect(flash().attribute("message", message.USER_NO_PASSWORD));
-    	
+    }
+    
+    @Test
+    public void testUpdateViewWrongPassword() throws Exception{
     	mock.perform(
     		post("/updateView")
     			.session(mockSession)
@@ -477,7 +548,10 @@ public class UserControllerTest {
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/mypage"))
 	    	.andExpect(flash().attribute("message", message.USER_NO_PASSWORD));
-    	
+    }
+    
+    @Test
+    public void testUpdateViewSuccess() throws Exception{
     	mock.perform(
     		post("/updateView")
 	    		.session(mockSession)
@@ -488,46 +562,39 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testUpdate() throws Exception {
-    	MockMultipartFile isNotFile = new MockMultipartFile("ufile", "bar".getBytes());
-        
+    public void testUpdateNoSession() throws Exception {
     	mock.perform(
     		fileUpload("/update")
+    			.file(new MockMultipartFile("ufile", "b".getBytes()))
     			.sessionAttr("loginYn", "Y"))
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
+    }
+    
+    @Test
+    public void testUpdateNoEmail() throws Exception {
     	mock.perform(
-    		fileUpload("/update")
-    			.file(isNotFile)
+			fileUpload("/update")
+				.file(new MockMultipartFile("ufile", "b".getBytes()))
     			.session(mockSession)
     			.param("id", "test"))
 	    	.andExpect(status().isFound())
 			.andExpect(redirectedUrl("/updateView"))
 			.andExpect(flash().attribute("message", message.USER_NO_EMAIL));
-
+    }
+    
+    @Test
+    public void testUpdateNoName() throws Exception {
     	mock.perform(
 			fileUpload("/update")
-    			.file(isNotFile)
+				.file(new MockMultipartFile("ufile", "b".getBytes()))
     			.session(mockSession)
     			.param("id", "test")
     			.param("email", "test@naver.com"))
 			.andExpect(status().isFound())
 			.andExpect(redirectedUrl("/updateView"))
 			.andExpect(flash().attribute("message", message.USER_NO_NAME));
-    	
-    	mock.perform(
-			fileUpload("/update")
-    			.file(isNotFile)
-    			.session(mockSession)
-    			.param("id", "test")
-    			.param("email", "test@naver.com")
-    			.param("name", "test"))
-			.andExpect(status().isFound())
-			.andExpect(redirectedUrl("/mypage"))
-			.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
-			.andExpect(request().sessionAttribute("user", is(notNullValue())));
     }
     
     @Test
@@ -587,12 +654,15 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testEmailAccess() throws Exception {
+    public void testEmailAccessNoEmail() throws Exception {
     	mock.perform(get("/emailAccess"))
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
+    }
+    
+    @Test
+    public void testEmailAccessSuccess() throws Exception {
     	mock.perform(
     		get("/emailAccess")
     			.param("access", "sungjine@naver.com"))
@@ -604,12 +674,15 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testEmailAccessAgo() throws Exception {
+    public void testEmailAccessAgoNoEmail() throws Exception {
     	mock.perform(get("/emailAccessAgo"))
 	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-	
+    }
+    
+    @Test
+    public void testEmailAccessAgoSuccess() throws Exception {
 		mock.perform(
 			get("/emailAccessAgo")
 				.param("email", "sungjine@naver.com"))
@@ -619,12 +692,15 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testEmailAccessRe() throws Exception {
+    public void testEmailAccessReNoEmail() throws Exception {
     	mock.perform(post("/emailAccessRe"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
 			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
-    	
+    }
+    
+    @Test
+    public void testEmailAccessReSuccess() throws Exception {
     	mock.perform(
     		post("/emailAccessRe")
     			.param("email", "sungjine@naver.com"))
