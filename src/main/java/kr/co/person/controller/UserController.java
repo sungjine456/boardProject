@@ -49,7 +49,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@IsValidUser User user, @RequestParam(required=false) MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
+	public String join(@IsValidUser User user, @RequestParam MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
@@ -323,7 +323,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam(required=false) MultipartFile ufile, @IsValidUser User updateUser, Model model, HttpSession session, RedirectAttributes rea){
+	public String update(@RequestParam MultipartFile ufile, @IsValidUser User updateUser, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController update");
 		if(!sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);

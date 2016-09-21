@@ -33,6 +33,9 @@ public class Common {
 	@Autowired JavaMailSender mailSender;
 	
 	public String passwordEncryption(String str){
+		if(StringUtils.isEmpty(str)){
+			return "";
+		}
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
 			sh.update(str.getBytes()); 
@@ -49,6 +52,9 @@ public class Common {
 	}
 	
 	public String cookieValueEncryption(String str){
+		if(StringUtils.isEmpty(str)){
+			return "";
+		}
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
 			sh.update(str.getBytes()); 
@@ -88,6 +94,9 @@ public class Common {
     }
  
     public String aesEncode(String str){
+    	if(StringUtils.isEmpty(str)){
+			return "";
+		}
     	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	try{
     		Key keySpec = AES256Util();
@@ -102,6 +111,9 @@ public class Common {
     }
  
     public String aesDecode(String str){
+    	if(StringUtils.isEmpty(str)){
+			return "";
+		}
     	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	Cipher c;
     	byte[] byteStr;

@@ -39,7 +39,8 @@ public class UserServiceImpl implements UserService {
 		String name = common.cleanXss(user.getName());
 		String id = common.cleanXss(user.getId());
 		String password = common.passwordEncryption(user.getPassword());
-		OkCheck emailCheck = common.isEmail(user.getEmail());
+		String email = user.getEmail();
+		OkCheck emailCheck = common.isEmail(email);
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
 		}
@@ -49,9 +50,13 @@ public class UserServiceImpl implements UserService {
 		if(!emailCheck.isBool()){
 			return new OkCheck(emailCheck.getMessage(), false);
 		}
-		OkCheck ok = idCheck(id);
-		if(!ok.isBool()){
-			return ok;
+		OkCheck joinCheckId = idCheck(id);
+		OkCheck joinCheckEmail = emailCheck(email);
+		if(!joinCheckId.isBool()){
+			return joinCheckId;
+		}
+		if(!joinCheckEmail.isBool()){
+			return joinCheckEmail;
 		}
 		user.setId(id);
 		user.setName(name);

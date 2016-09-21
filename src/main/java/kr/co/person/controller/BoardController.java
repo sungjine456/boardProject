@@ -86,7 +86,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(@IsValidBoard Board board, @RequestParam(required=false) MultipartFile editImage, Model model, HttpSession session){
+	public String boardWrite(@IsValidBoard Board board, @RequestParam MultipartFile editImage, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
 		String title = board.getTitle();
 		String content = board.getContent();
