@@ -85,41 +85,48 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testBoardWrite() throws Exception {
-    	MockMultipartFile isFile = new MockMultipartFile("editImage", "none.png", null, "bar".getBytes());
-    	
+    public void testBoardWriteNoTitle() throws Exception {
     	mock.perform(
     		fileUpload("/boardWrite")
-    			.file(isFile)
+    			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.session(mockSession))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/board/frame"))
     		.andExpect(model().attribute("message", message.BOARD_NO_TITLE))
     		.andExpect(model().attribute("include", "main/write.ftl"));
-    	
+    }
+    
+    @Test
+    public void testBoardWriteBlankTitle() throws Exception {
     	mock.perform(
     		fileUpload("/boardWrite")
-    			.file(isFile)
+    			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.param("title", "    ")
     			.session(mockSession))
 	    	.andExpect(status().isOk())
 	    	.andExpect(view().name("view/board/frame"))
 	    	.andExpect(model().attribute("message", message.BOARD_NO_TITLE))
 	    	.andExpect(model().attribute("include", "main/write.ftl"));
-    	
+    }
+    
+    @Test
+    public void testBoardWriteNoContent() throws Exception {
     	mock.perform(
     		fileUpload("/boardWrite")
-    			.file(isFile)
+    			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.param("title", "testTitle")
     			.session(mockSession))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/board/frame"))
     		.andExpect(model().attribute("message", message.BOARD_NO_CONTENT))
     		.andExpect(model().attribute("include", "main/write.ftl"));
-
+    }
+    
+    @Test
+    public void testBoardWriteSuccess() throws Exception {
     	mock.perform(
     		fileUpload("/boardWrite")
-    			.file(isFile)
+    			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.param("title", "testTitle")
     			.param("content", "testContent")
     			.session(mockSession))
@@ -128,14 +135,17 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testBoardDetail() throws Exception{
+    public void testBoardDetailNoBoardIdx() throws Exception{
     	mock.perform(
     		get("/boardDetail")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/board"))
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD));
-    	
+    }
+    
+    @Test
+    public void testBoardDetailWrongBoardIdx() throws Exception{
     	mock.perform(
     		get("/boardDetail")
     			.session(mockSession)
@@ -143,7 +153,10 @@ public class BoardControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/board"))
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD));
-    	
+    }
+    
+    @Test
+    public void testBoardDetailSuccess() throws Exception{
     	MvcResult result = mock.perform(
     		get("/boardDetail")
     			.session(mockSession)
@@ -166,14 +179,17 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testBoardUpdateView() throws Exception {
+    public void testBoardUpdateViewNoBoardIdx() throws Exception {
     	mock.perform(
     		get("/boardUpdateView")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
     		.andExpect(redirectedUrl("/board"));
-
+    }
+    
+    @Test
+    public void testBoardUpdateViewWrongBoardIdx() throws Exception {
     	mock.perform(
     		get("/boardUpdateView")
     			.session(mockSession)
@@ -181,7 +197,10 @@ public class BoardControllerTest {
 	    	.andExpect(status().isFound())
 	    	.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
 	    	.andExpect(redirectedUrl("/board"));
-
+    }
+    
+    @Test
+    public void testBoardUpdateViewSuccess() throws Exception {
     	mock.perform(
     		get("/boardUpdateView")
     			.session(mockSession)
@@ -194,14 +213,17 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testBoardUpdate() throws Exception {
+    public void testBoardUpdateNoBoardIdx() throws Exception {
     	mock.perform(
     		post("/boardUpdate")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
     		.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testBoardUpdateNoTitle() throws Exception {
     	mock.perform(
     		post("/boardUpdate")
     			.param("idx", "1")
@@ -209,7 +231,10 @@ public class BoardControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_TITLE))
     		.andExpect(redirectedUrl("/boardUpdateView"));
-    	
+    }
+    
+    @Test
+    public void testBoardUpdateNoContent() throws Exception {
     	mock.perform(
     		post("/boardUpdate")
 	    		.param("idx", "1")
@@ -218,7 +243,10 @@ public class BoardControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_CONTENT))
     		.andExpect(redirectedUrl("/boardUpdateView"));
-    	
+    }
+    
+    @Test
+    public void testBoardUpdateBlankTitle() throws Exception {
     	mock.perform(
     		post("/boardUpdate")
         		.param("idx", "1")
@@ -228,7 +256,10 @@ public class BoardControllerTest {
 	  		.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.BOARD_NO_TITLE))
 			.andExpect(redirectedUrl("/boardUpdateView"));
-
+    }
+    
+    @Test
+    public void testBoardUpdateSuccess() throws Exception {
     	mock.perform(
     		post("/boardUpdate")
     			.param("idx", "1")
@@ -242,14 +273,17 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testWriteComment() throws Exception {
+    public void testWriteCommentNoBoardIdx() throws Exception {
     	mock.perform(
     		post("/writeComment")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
     		.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testWriteCommentWrongBoardIdx() throws Exception {
     	mock.perform(
     		post("/writeComment")
     			.param("boardNum", "8")
@@ -257,7 +291,10 @@ public class BoardControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
     		.andExpect(redirectedUrl("/board"));
-
+    }
+    
+    @Test
+    public void testWriteCommentNoContent() throws Exception {
     	mock.perform(
 			post("/writeComment")
     			.param("boardNum", "1")
@@ -266,7 +303,10 @@ public class BoardControllerTest {
 	    	.andExpect(flash().attribute("message", message.COMMENT_RE_COMMENT))
 	    	.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
-    	
+    }
+    
+    @Test
+    public void testWriteCommentSuccess() throws Exception {
     	mock.perform(
 			post("/writeComment")
     			.param("boardNum", "1")
@@ -293,14 +333,17 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testUpdateComment() throws Exception {
+    public void testUpdateCommentNoBoardIdx() throws Exception {
     	mock.perform(
     		post("/updateComment")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
     		.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testUpdateCommentWrongBoardIdx() throws Exception {
     	mock.perform(
     		post("/updateComment")
     			.param("boardNum", "6")
@@ -308,7 +351,10 @@ public class BoardControllerTest {
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
     		.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testUpdateCommentNoCommentIdx() throws Exception {
     	mock.perform(
     		post("/updateComment")
     			.param("boardNum", "1")
@@ -317,7 +363,10 @@ public class BoardControllerTest {
     		.andExpect(flash().attribute("message", message.COMMENT_NO_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
-    	
+    }
+    
+    @Test
+    public void testUpdateCommentNoComment() throws Exception {
     	mock.perform(
     		post("/updateComment")
     			.param("boardNum", "1")
@@ -327,7 +376,10 @@ public class BoardControllerTest {
     		.andExpect(flash().attribute("message", message.COMMENT_RE_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
-    	
+    }
+    
+    @Test
+    public void testUpdateCommentSuccess() throws Exception {
     	mock.perform(
 			post("/writeComment")
 				.param("boardNum", "1")
@@ -352,14 +404,17 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testWriteReply() throws Exception {
+    public void testWriteReplyNoBoardIdx() throws Exception {
     	mock.perform(
     		post("/writeReply")
     			.session(mockSession))
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
 			.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testWriteReplyWrongBoardIdx() throws Exception {
     	mock.perform(
     		post("/writeReply")
     			.param("boardNum", "6")
@@ -367,7 +422,10 @@ public class BoardControllerTest {
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.BOARD_NO_BOARD))
 			.andExpect(redirectedUrl("/board"));
-    	
+    }
+    
+    @Test
+    public void testWriteReplyNoCommentIdx() throws Exception {
     	mock.perform(
     		post("/writeReply")
     			.param("boardNum", "1")
@@ -376,7 +434,10 @@ public class BoardControllerTest {
     		.andExpect(flash().attribute("message", message.COMMENT_NO_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
-    	
+    }
+    
+    @Test
+    public void testWriteReplyWrongCommentIdx() throws Exception {
     	mock.perform(
     		post("/writeReply")
     			.param("boardNum", "1")
@@ -386,7 +447,10 @@ public class BoardControllerTest {
     		.andExpect(flash().attribute("message", message.COMMENT_RE_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
-    	
+    }
+    
+    @Test
+    public void testWriteReplyNoComment() throws Exception {
     	mock.perform(
     		post("/writeReply")
     			.param("boardNum", "1")
@@ -396,7 +460,10 @@ public class BoardControllerTest {
     		.andExpect(flash().attribute("message", message.COMMENT_RE_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
-    	
+    }
+    
+    @Test
+    public void testWriteReplySuccess() throws Exception {
     	mock.perform(
 			post("/writeReply")
 				.param("boardNum", "1")
@@ -409,7 +476,7 @@ public class BoardControllerTest {
     }
     
     @Test
-    public void testBoardLikeCount() throws Exception {
+    public void testBoardLikeCountLike() throws Exception {
     	mock.perform(
     		post("/boardLikeCount")
     			.param("boardIdx", "1")
@@ -419,17 +486,10 @@ public class BoardControllerTest {
     		.andExpect(status().isOk())
     		.andExpect(jsonPath("like", is("좋아요 취소")))
     		.andExpect(jsonPath("likeCount", is("2")));
-    	
-    	mock.perform(
-    		post("/boardLikeCount")
-    			.param("boardIdx", "1")
-    			.param("userIdx", "1")
-    			.session(mockSession)
-    			.accept(MediaType.APPLICATION_JSON_VALUE))
-    		.andExpect(status().isOk())
-    		.andExpect(jsonPath("like", is("좋아요")))
-    		.andExpect(jsonPath("likeCount", is("1")));
-    	
+    }
+    
+    @Test
+    public void testBoardLikeCountLikeCancel() throws Exception {
     	mock.perform(
     		post("/boardLikeCount")
     			.param("boardIdx", "1")
