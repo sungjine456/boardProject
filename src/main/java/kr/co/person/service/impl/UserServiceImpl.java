@@ -83,8 +83,6 @@ public class UserServiceImpl implements UserService {
 			} else {
 				return false;
 			}
-		} else {
-			return false;
 		}
 		if(IsValid.isNotValidObjects(user)){
 			return false;
@@ -133,12 +131,10 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return null;
 		}
-		log.info("id & password not null");
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
 			return null;
 		}
-		log.info("passwordEncryption function success");
 		return userRepository.findByIdAndPassword(id, password);
 	}
 
@@ -161,7 +157,6 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
 		}
-		log.info("passwordEncryption function success");
 		user.setPassword(password);
 		
 		return new OkCheck("비밀번호가 " + random + "로 수정되었습니다.", true);
@@ -265,7 +260,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		if(StringUtils.isEmpty(imgPath)){
-			imgPath = "C:"+se+"boardProject"+se+"img"+se+"user"+se+"default.png";
+			imgPath = "img"+se+"user"+se+"default.png";
 		} 
 		user.setName(name);
 		user.setEmail(email);
@@ -307,6 +302,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User accessEmail(String email) {
+		log.info("execute UserServiceImpl accessEmail");
 		User user = userRepository.findByEmail(email);
 		if(IsValid.isNotValidObjects(user)){
 			return new User();

@@ -77,13 +77,7 @@ public class BoardServiceImple implements BoardService {
 	@Override
 	public boolean update(int idx, String title, String content) {
 		log.info("execute BoardServiceImpl update");
-		if(IsValid.isNotValidInts(idx)){
-			return false;
-		}
-		if(StringUtils.isEmpty(title)){
-			return false;
-		}
-		if(StringUtils.isEmpty(content)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(title) || StringUtils.isEmpty(content)){
 			return false;
 		}
 		Board board = boardRepository.findOne(idx);

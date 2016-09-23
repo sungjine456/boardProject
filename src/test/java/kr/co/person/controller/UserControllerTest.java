@@ -1,6 +1,6 @@
 package kr.co.person.controller;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
 import kr.co.person.domain.User;
+import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,6 +52,7 @@ public class UserControllerTest {
 	@Mock private UserService userService;
 	@Autowired private Message message;
 	@InjectMocks private UserController userController;
+	@Autowired private UserRepository userRepository;
 	@Autowired private WebApplicationContext wac;
 	private MockMvc mock;
 	private MockHttpSession mockSession;
@@ -516,6 +518,13 @@ public class UserControllerTest {
 			.andExpect(redirectedUrl("/"))
 	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_LEAVE))
 	    	.andExpect(request().sessionAttribute("loginYn", "N"));
+    	
+    	User user = userRepository.findOne(1);
+    	String garbage = "b94c56f6f1cf92d48e021c573b77fa253eca91e579e308473c0536716c8e7bd6personProject";
+    	Assert.assertThat(user.getEmail(), is(garbage));
+		Assert.assertThat(user.getId(), is(garbage));
+		Assert.assertThat(user.getPassword(), is(garbage));
+		Assert.assertThat(user.getName(), is(garbage));
     }
     
     @Test
@@ -611,17 +620,17 @@ public class UserControllerTest {
 	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
 			.andReturn();
         	
-        	User user = (User)result.getRequest().getSession().getAttribute("user");
-        	int idx = user.getIdx();
-        	String id = user.getId();
-        	String name = user.getName();
-        	String email = user.getEmail();
-        	String img = user.getImg();
-        	Assert.assertThat(idx, is(1));
-        	Assert.assertThat(id, is("sungjin"));
-        	Assert.assertThat(name, is("test"));
-        	Assert.assertThat(email, is("test@naver.com"));
-        	Assert.assertThat("default.png", is(img.substring(9)));
+    	User user = (User)result.getRequest().getSession().getAttribute("user");
+    	int idx = user.getIdx();
+    	String id = user.getId();
+    	String name = user.getName();
+    	String email = user.getEmail();
+    	String img = user.getImg();
+    	Assert.assertThat(idx, is(1));
+    	Assert.assertThat(id, is("sungjin"));
+    	Assert.assertThat(name, is("test"));
+    	Assert.assertThat(email, is("test@naver.com"));
+    	Assert.assertThat("default.png", is(img.substring(9)));
     }
     
     @Test

@@ -292,12 +292,10 @@ public class UserController {
 				}
 			}
 		}
-		if(StringUtils.isNotEmpty(loginId)){
-		    if(!userService.leave(idx, loginId)){
-		    	rea.addFlashAttribute("message", message.USER_FAIL_LEAVE);
-				return "redirect:/mypage";
-		    }
-		}
+	    if(!userService.leave(idx, loginId)){
+	    	rea.addFlashAttribute("message", message.USER_FAIL_LEAVE);
+			return "redirect:/mypage";
+	    }
 		session.setAttribute("loginYn", "N");
 		session.removeAttribute("user");
 	    res.addCookie(common.removeCookie("psvd"));

@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -251,7 +252,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @IsValidBoard Comment comment, HttpSession session, RedirectAttributes rea){
+	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -278,7 +279,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
-	public String updateCommentView(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @IsValidBoard Comment comment, Model model){
+	public String updateCommentView(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model){
 		log.info("execute BoardController updateCommentView");
 		model.addAttribute("boardNum", boardNum);
 		model.addAttribute("comment", comment.getComment());
@@ -287,7 +288,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") Comment comment, RedirectAttributes rea){
+	public String updateComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, RedirectAttributes rea){
 		log.info("execute BoardController updateComment");
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -309,12 +310,8 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())){
-			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
-		}
-		if(!commentService.update(idx, common.enter(common.cleanXss(commentSentence)))){
+		if(StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())
+				|| !commentService.update(idx, common.enter(common.cleanXss(commentSentence)))){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
@@ -332,7 +329,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeReply", method=RequestMethod.POST)
-	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @IsValidBoard Comment comment, HttpSession session, RedirectAttributes rea){
+	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);

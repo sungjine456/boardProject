@@ -32,10 +32,7 @@ public class CommentServiceImple implements CommentService {
 	
 	public Page<Comment> findAllCommentByBoard(int boardIdx, Pageable pageable){
 		log.info("execute CommentServiceImple findAllCommentByBoard");
-		if(IsValid.isNotValidObjects(pageable)){
-			return null;
-		}
-		if(IsValid.isNotValidInts(boardIdx)){
+		if(IsValid.isNotValidObjects(pageable) || IsValid.isNotValidInts(boardIdx)){
 			return null;
 		}
 		return commentRepository.findByBoardIdx(boardIdx, pageable);
@@ -44,10 +41,7 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean write(String commentSentence, int userIdx, int boardIdx) {
 		log.info("execute CommentServiceImple write");
-		if(IsValid.isNotValidInts(userIdx, boardIdx)){
-			return false;
-		}
-		if(StringUtils.isEmpty(commentSentence)){
+		if(IsValid.isNotValidInts(userIdx, boardIdx) || StringUtils.isEmpty(commentSentence)){
 			return false;
 		}
 		User writer = userRepository.findOne(userIdx);
@@ -63,14 +57,11 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean update(int idx, String commentSentence) {
 		log.info("execute CommentServiceImple update");
-		if(IsValid.isNotValidInts(idx)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(commentSentence)){
 			return false;
 		}
 		Comment comment = commentRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(comment)){
-			return false;
-		}
-		if(StringUtils.isEmpty(commentSentence)){
 			return false;
 		}
 		comment.setComment(commentSentence);
@@ -82,10 +73,7 @@ public class CommentServiceImple implements CommentService {
 	@Override
 	public boolean replyWrite(int idx, String commentSentence, int userIdx, int boardIdx) {
 		log.info("execute CommentServiceImple replyWrite");
-		if(IsValid.isNotValidInts(idx, userIdx, boardIdx)){
-			return false;
-		}
-		if(StringUtils.isEmpty(commentSentence)){
+		if(IsValid.isNotValidInts(idx, userIdx, boardIdx) || StringUtils.isEmpty(commentSentence)){
 			return false;
 		}
 		Comment comment = commentRepository.findOne(idx);
