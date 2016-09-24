@@ -55,14 +55,12 @@ var detail = {
 		});
 	},
 	likeCountEvent : function(){
-		var userIdx = this.likeCount.data("useridx");
 		$.ajax({
 			url : "/boardLikeCount",
 			type : "POST",
-			data : {"boardIdx" : detail.boardNum.val(), "userIdx" : userIdx},
+			data : {"boardIdx" : detail.boardNum.val()},
 			dataType : "JSON",
 			success : function(data){
-				detail.likeCount.data("useridx", userIdx);
 				detail.likeCount.text(data.like+" ("+data.likeCount+")");
 			},
 			error : function(x, e){

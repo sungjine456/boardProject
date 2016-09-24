@@ -74,6 +74,7 @@ public class BoardControllerTest {
     		.andExpect(model().attributeExists("lastPage"))
     		.andExpect(model().attributeExists("maxPage"));
     }
+    
     @Test
     public void testBoardWriteView() throws Exception {
     	mock.perform(
@@ -115,6 +116,20 @@ public class BoardControllerTest {
     		fileUpload("/boardWrite")
     			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.param("title", "testTitle")
+    			.session(mockSession))
+    		.andExpect(status().isOk())
+    		.andExpect(view().name("view/board/frame"))
+    		.andExpect(model().attribute("message", message.BOARD_NO_CONTENT))
+    		.andExpect(model().attribute("include", "main/write.ftl"));
+    }
+    
+    @Test
+    public void testBoardWriteBlankContent() throws Exception {
+    	mock.perform(
+    		fileUpload("/boardWrite")
+    			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
+    			.param("title", "testTitle")
+    			.param("content", "    ")
     			.session(mockSession))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/board/frame"))
@@ -480,7 +495,6 @@ public class BoardControllerTest {
     	mock.perform(
     		post("/boardLikeCount")
     			.param("boardIdx", "1")
-    			.param("userIdx", "1")
     			.session(mockSession)
     			.accept(MediaType.APPLICATION_JSON_VALUE))
     		.andExpect(status().isOk())
@@ -490,10 +504,17 @@ public class BoardControllerTest {
     
     @Test
     public void testBoardLikeCountLikeCancel() throws Exception {
+    	User user = new User();
+    	user.setIdx(2);
+    	user.setId("sungjin");
+    	user.setName("hong");
+    	user.setImg("defaul.png");
+    	user.setEmail("sungjin@naver.com");
+    	mockSession.setAttribute("user", user);
+    	
     	mock.perform(
     		post("/boardLikeCount")
     			.param("boardIdx", "1")
-    			.param("userIdx", "2")
     			.session(mockSession)
     			.accept(MediaType.APPLICATION_JSON_VALUE))
     		.andExpect(status().isOk())

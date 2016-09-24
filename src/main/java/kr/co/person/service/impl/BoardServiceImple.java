@@ -121,12 +121,12 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public BoardLike getBoardLike(int boardIdx, int userIdx) {
+	public BoardLike getBoardLike(int boardIdx, User user) {
 		log.info("execute BoardServiceImple getBoardLike");
-		if(IsValid.isNotValidInts(boardIdx, userIdx)){
+		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidInts(boardIdx, user.getIdx())){
 			return null;
 		}
-		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
 		if(IsValid.isNotValidObjects(like)){
 			return null;
 		}
@@ -134,18 +134,18 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public boolean addBoardLike(int boardIdx, int userIdx) {
+	public boolean addBoardLike(int boardIdx, User user) {
 		log.info("execute BoardServiceImple addBoardLike");
-		if(IsValid.isNotValidInts(boardIdx, userIdx)){
+		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidInts(boardIdx, user.getIdx())){
 			return false;
 		}
-		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
 		if(IsValid.isValidObjects(like)){
 			return false;
 		}
 		Board board = boardRepository.findOne(boardIdx);
-		User user = userRepository.findOne(userIdx);
-		if(IsValid.isNotValidObjects(board, user)){
+		User userCheck = userRepository.findOne(user.getIdx());
+		if(IsValid.isNotValidObjects(board, userCheck)){
 			return false;
 		}
 		like = new BoardLike(board, user);
@@ -154,12 +154,12 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public boolean removeBoardLike(int boardIdx, int userIdx) {
+	public boolean removeBoardLike(int boardIdx, User user) {
 		log.info("execute BoardServiceImple removeBoardLike");
-		if(IsValid.isNotValidInts(boardIdx, userIdx)){
+		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidInts(boardIdx, user.getIdx())){
 			return false;
 		}
-		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
 		if(IsValid.isNotValidObjects(like)){
 			return false;
 		}

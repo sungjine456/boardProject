@@ -36,7 +36,6 @@ import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
 import kr.co.person.domain.User;
-import kr.co.person.pojo.BoardLikeCount;
 import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.BoardService;
@@ -138,10 +137,9 @@ public class BoardController {
 			    new Sort.Order(Direction.ASC, "step")));
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
-		int userIdx = ((User)session.getAttribute("user")).getIdx();
 
 		Board board = boardService.findBoardForIdx(boardNum);
-		BoardLike boardLike = boardService.getBoardLike(boardNum, userIdx);
+		BoardLike boardLike = boardService.getBoardLike(boardNum, (User)session.getAttribute("user"));
 		long likeCount = boardService.getBoardLikeCount(boardNum);
 		if(IsValid.isNotValidObjects(board) || likeCount < 0){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -362,20 +360,19 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardLikeCount", method=RequestMethod.POST)
-	public @ResponseBody Map<String, String> addBoardLikeCount(@IsValidBoard BoardLikeCount boardLikeCount){
+	public @ResponseBody Map<String, String> addBoardLikeCount(@RequestParam(required=false, defaultValue="0") int boardIdx, HttpSession session){
 		log.info("execute BoardController addBoardLikeCount");
 		Map<String, String> map = new HashMap<String, String>();
-		int boardIdx = boardLikeCount.getBoardIdx();
-		int userIdx = boardLikeCount.getUserIdx();
-		BoardLike boardLike = boardService.getBoardLike(boardIdx, userIdx);
+		User user = (User)session.getAttribute("user");
+		BoardLike boardLike = boardService.getBoardLike(boardIdx, user);
 		int count = boardService.getBoardLikeCount(boardIdx);
 		String likeStr = "";
 		if(IsValid.isNotValidObjects(boardLike)){
-			boardService.addBoardLike(boardIdx, userIdx);
+			boardService.addBoardLike(boardIdx, user);
 			count += 1;
 			likeStr = message.BOARD_LIKE_CANCLE;
 		} else {
-			boardService.removeBoardLike(boardIdx, userIdx);
+			boardService.removeBoardLike(boardIdx, user);
 			count -= 1;
 			likeStr = message.BOARD_LIKE;
 		}

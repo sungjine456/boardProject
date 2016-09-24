@@ -7,7 +7,7 @@
 		</div>
 	<#else>
 		<span id="likeSpan">
-			<a id="likeCount" style="font-size:10px; padding-right:10px;" data-useridx="${idx}">${like} (${likeCount})</a>
+			<a id="likeCount" style="font-size:10px; padding-right:10px;">${like} (${likeCount})</a>
 		</span>
 	</#if>
 	<table class="table table-hover">
