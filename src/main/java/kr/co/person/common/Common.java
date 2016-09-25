@@ -12,6 +12,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -23,7 +24,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.service.UserService;
 
 @Component
 public class Common {
@@ -31,6 +34,7 @@ public class Common {
 	@Value("${emailId}") private String EMAIL_ID;
 	@Autowired Message message;
 	@Autowired JavaMailSender mailSender;
+	@Autowired UserService userService;
 	
 	public String passwordEncryption(String str){
 		if(StringUtils.isEmpty(str)){
@@ -208,4 +212,17 @@ public class Common {
    	    }
     	return true;
     }
+    
+    public boolean sessionComparedToDB(HttpSession session){
+		String loginYn = IsValid.isValidObjects(session.getAttribute("loginYn"))?(String)session.getAttribute("loginYn"):"";
+		User sessionUser = IsValid.isValidObjects(session.getAttribute("user"))?(User)session.getAttribute("user"):null;
+		if(sessionUser == null){
+			return false;
+		}
+		User user = userService.findUserForIdx(sessionUser.getIdx());
+		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
+				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
+				|| !StringUtils.equals(loginYn, "Y"))
+				?false:true;
+	}
 }

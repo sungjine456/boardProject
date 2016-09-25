@@ -42,7 +42,7 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(HttpSession session){
 		log.info("execute UserController joinView");
-		if(sessionComparedToDB(session)){
+		if(common.sessionComparedToDB(session)){
 			return "redirect:/board";
 		}
 		return "view/user/join";
@@ -181,7 +181,7 @@ public class UserController {
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
-		if(!sessionComparedToDB(session)){
+		if(!common.sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
@@ -231,7 +231,7 @@ public class UserController {
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
 	public String myPageView(Model model, HttpSession session){
 		log.info("execute UserController mypageView");
-		if(!sessionComparedToDB(session)){
+		if(!common.sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
@@ -242,7 +242,7 @@ public class UserController {
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
 	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController changePassword");
-		if(!sessionComparedToDB(session)){
+		if(!common.sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
@@ -266,7 +266,7 @@ public class UserController {
 	@RequestMapping(value="/leave")
 	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
-		if(!sessionComparedToDB(session)){
+		if(!common.sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
@@ -307,7 +307,7 @@ public class UserController {
 	@RequestMapping(value="/updateView", method=RequestMethod.POST)
 	public String updateView(@RequestParam(required=false) String password, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController updateView");
-		if(!sessionComparedToDB(session)){
+		if(!common.sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
@@ -323,7 +323,7 @@ public class UserController {
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(@RequestParam MultipartFile ufile, @IsValidUser User updateUser, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController update");
-		if(!sessionComparedToDB(session)){
+		if(!common.sessionComparedToDB(session)){
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
@@ -409,19 +409,5 @@ public class UserController {
 	public String interceptorView(){
 		log.info("execute UserController interceptorView");
 		return "common/interceptorPage";
-	}
-	
-	private boolean sessionComparedToDB(HttpSession session){
-		log.info("sessionComparedToDB Method");
-		String loginYn = IsValid.isValidObjects(session.getAttribute("loginYn"))?(String)session.getAttribute("loginYn"):"";
-		User sessionUser = IsValid.isValidObjects(session.getAttribute("user"))?(User)session.getAttribute("user"):null;
-		if(sessionUser == null){
-			return false;
-		}
-		User user = userService.findUserForIdx(sessionUser.getIdx());
-		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
-				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
-				|| !StringUtils.equals(loginYn, "Y"))
-				?false:true;
 	}
 }

@@ -88,6 +88,10 @@ public class BoardController {
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
 	public String boardWrite(@IsValidBoard Board board, @RequestParam MultipartFile editImage, Model model, HttpSession session){
 		log.info("execute BoardController boardWrite");
+		if(!common.sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		String title = board.getTitle();
 		String content = board.getContent();
 		if(StringUtils.isEmpty(title) || StringUtils.isEmpty(title.trim())){
@@ -100,7 +104,6 @@ public class BoardController {
 			model.addAttribute("include", "main/write.ftl");
 			return "view/board/frame";
 		}
-		
 		if(editImage.getOriginalFilename().split("\\.").length == 2){
 			String imgPath = common.createImg(editImage, ((User)session.getAttribute("user")).getId(), "board");
 			String se = File.separator;
@@ -125,6 +128,10 @@ public class BoardController {
 	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
 	public String boardDetailView(@RequestParam(required=false, defaultValue="0") int boardNum, @RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
+		if(!common.sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
@@ -250,8 +257,12 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
+	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
+		if(!common.sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
@@ -327,8 +338,12 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeReply", method=RequestMethod.POST)
-	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
+	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
+		if(!common.sessionComparedToDB(session)){
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
