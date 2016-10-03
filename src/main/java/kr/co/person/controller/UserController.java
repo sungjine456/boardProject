@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.annotation.IsValidUser;
 import kr.co.person.common.Common;
+import kr.co.person.common.CommonCookie;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
 import kr.co.person.domain.User;
@@ -37,6 +38,7 @@ public class UserController {
 	
 	@Autowired private UserService userService;
 	@Autowired private Common common;
+	@Autowired private CommonCookie commonCookie;
 	@Autowired private Message message;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
@@ -67,7 +69,7 @@ public class UserController {
 		if(ok.isBool()){
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("user", user);
-			common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + common.aesEncode(email) + "'>동의</a>");
+			common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
 			rea.addFlashAttribute("email", email);
 			return "redirect:emailAccessAgo";
 		} else {
@@ -124,7 +126,7 @@ public class UserController {
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvd", key)){
-					id = common.aesDecode(val);
+					id = commonCookie.aesDecode(val);
 				}
 				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
@@ -163,7 +165,7 @@ public class UserController {
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
-				String enKeyId = common.aesEncode(id);
+				String enKeyId = commonCookie.aesEncode(id);
 				if(StringUtils.isEmpty(enKeyId)){
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
@@ -376,7 +378,7 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		User user = userService.accessEmail(common.aesDecode(access));
+		User user = userService.accessEmail(commonCookie.aesDecode(access));
 		session.setAttribute("loginYn", "Y");
 		session.setAttribute("user", user);
 		rea.addFlashAttribute("message", message.MAIL_THANK_YOU_FOR_AGREE);
@@ -401,7 +403,7 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + common.aesEncode(email) + "'>동의</a>");
+		common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
 		return "redirect:emailAccessAgo";
 	}
 	

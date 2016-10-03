@@ -16,3 +16,9 @@ spring:
       jadira:
         usertype:
           autoRegisterUserTypes: true
+          
+mail:
+  host: smtp.gmail.com
+  port: 587
+  protocol: smtp
+  default-encoding: UTF-8

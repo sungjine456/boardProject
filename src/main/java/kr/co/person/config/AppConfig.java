@@ -3,9 +3,7 @@ package kr.co.person.config;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -36,9 +32,6 @@ import kr.co.person.interceptor.LoginInterceptor;
 @EnableWebMvc
 @PropertySource("classpath:key.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {
-	@Value("${emailId}") private String EMAIL_ID;
-	@Value("${emailPassword}") private String EMAIL_PASSWORD;
-	
 	@Bean(name="freemarkerConfig")
 	public FreeMarkerConfigurer freemarkerConfig() {
 		FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
@@ -109,22 +102,4 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
 	}
-	
-	@Bean
-    public JavaMailSender mailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
-        mailSender.setProtocol("smtp");
-        mailSender.setUsername(EMAIL_ID);
-        mailSender.setPassword(EMAIL_PASSWORD);
-        mailSender.setDefaultEncoding("UTF-8");
-        Properties properties = mailSender.getJavaMailProperties();
-        properties.put("mail.debug", true);
-        properties.put("mail.transport.protocol", "smtp");
-        properties.put("mail.smtp.auth", true);
-        properties.put("mail.smtp.starttls.enable", true);
-        mailSender.setJavaMailProperties(properties);
-        return mailSender;
-    }
 }

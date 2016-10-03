@@ -1,7 +1,6 @@
 package kr.co.person.common;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,13 +35,5 @@ public class CommonTest {
 		check = common.isEmail("");
 		Assert.assertThat(check.isBool(), is(false));
 		Assert.assertThat(check.getMessage(), is(message.USER_NO_EMAIL));
-	}
-	
-	@Test
-	public void testAes(){
-		String en = common.aesEncode("sungjin");
-		Assert.assertThat(en, is(not("sungjin")));
-		String de = common.aesDecode(en);
-		Assert.assertThat(de, is("sungjin"));
 	}
 }
