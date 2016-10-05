@@ -14,6 +14,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import kr.co.person.annotation.IsValidUser;
 import kr.co.person.common.Common;
 import kr.co.person.common.CommonCookie;
+import kr.co.person.common.CommonMail;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
 import kr.co.person.domain.User;
@@ -35,11 +38,15 @@ import kr.co.person.service.UserService;
 @Controller
 public class UserController {
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private CommonMail commonMail = new CommonMail();
 	
+	@Autowired private JavaMailSender mailSender;
 	@Autowired private UserService userService;
 	@Autowired private Common common;
 	@Autowired private CommonCookie commonCookie;
 	@Autowired private Message message;
+	
+	@Value("${emailId}") private String EMAIL_ID;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
 	public String joinView(HttpSession session){
@@ -67,9 +74,7 @@ public class UserController {
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
 		if(ok.isBool()){
-			session.setAttribute("loginYn", "Y");
-			session.setAttribute("user", user);
-			common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+			commonMail.sendMail(EMAIL_ID, email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>", mailSender);
 			rea.addFlashAttribute("email", email);
 			return "redirect:emailAccessAgo";
 		} else {
@@ -222,7 +227,7 @@ public class UserController {
 		}
 		OkCheck ok = userService.translatePassword(email);
 		if(ok.isBool()){
-			common.sendMail("tjdwlsdms100@naver.com", message.MAIL_TRANSLATE_PASSWORD_TITLE, ok.getMessage());
+			commonMail.sendMail(EMAIL_ID, "tjdwlsdms100@naver.com", message.MAIL_TRANSLATE_PASSWORD_TITLE, ok.getMessage(), mailSender);
 			rea.addFlashAttribute("message", message.MAIL_SUCCESS_TRANSLATE_PASSWORD);
 		} else {
 			rea.addFlashAttribute("message", ok.getMessage());
@@ -403,7 +408,7 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		common.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+		commonMail.sendMail(EMAIL_ID, email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>", mailSender);
 		return "redirect:emailAccessAgo";
 	}
 	

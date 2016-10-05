@@ -6,16 +6,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +21,7 @@ import kr.co.person.service.UserService;
 
 @Component
 public class Common {
-	@Value("${emailId}") private String EMAIL_ID;
 	@Autowired Message message;
-	@Autowired JavaMailSender mailSender;
 	@Autowired UserService userService;
 	
 	public String passwordEncryption(String str){
@@ -141,23 +135,6 @@ public class Common {
 		}
 		return imgPath;
 	}
-    
-    public boolean sendMail(String toEmail, String title, String content){
-		try {
-			MimeMessage mimeMessage = mailSender.createMimeMessage();
-			MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-
-			messageHelper.setFrom(EMAIL_ID);
-			messageHelper.setTo(toEmail);
-			messageHelper.setSubject(title);
-			messageHelper.setText("", content);
-
-			mailSender.send(mimeMessage);
-		} catch (Exception e) {
-			return false;
-   	    }
-    	return true;
-    }
     
     public boolean sessionComparedToDB(HttpSession session){
 		String loginYn = IsValid.isValidObjects(session.getAttribute("loginYn"))?(String)session.getAttribute("loginYn"):"";
