@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestAsync {
 	private static final Logger log = LoggerFactory.getLogger(TestAsync.class);
+	
 	@Async
     public void print(int count){
 		log.info("start async : " + count);
