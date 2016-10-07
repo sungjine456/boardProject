@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,6 +19,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.LocaleResolver;
@@ -38,10 +41,10 @@ import kr.co.person.interceptor.LoginInterceptor;
 
 @Configuration
 @EnableWebMvc
-@EnableAsync(proxyTargetClass=true)
+@EnableAsync
 @ConfigurationProperties(locations = "classpath:application.yml", prefix="mail")
 @PropertySource("classpath:key.properties")
-public class AppConfig extends WebMvcConfigurerAdapter {
+public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigurer {
 	@Value("${emailId}") private String EMAIL_ID;
 	@Value("${emailPassword}") private String EMAIL_PASSWORD;
 	
@@ -159,5 +162,22 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	}
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
+	}
+	
+	@Override
+	public Executor getAsyncExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(7);
+		executor.setMaxPoolSize(42);
+		executor.setQueueCapacity(11);
+		executor.setThreadNamePrefix("MyExecutor-");
+		executor.initialize();
+		
+		return executor;
+	}
+
+	@Override
+	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+		return new CustomAsyncExceptionHandler();
 	}
 }

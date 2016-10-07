@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class CommonMail {
 	private static final Logger log = LoggerFactory.getLogger(Common.class);
 	
-    @Async("workExecutor")
+    @Async
     public void sendMail(String fromEmail, String toEmail, String title, String content, JavaMailSender mailSender){
 		try {
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
