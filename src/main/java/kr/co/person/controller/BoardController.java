@@ -205,21 +205,21 @@ public class BoardController {
 		return "view/board/frame";
 	}
 	
-	@RequestMapping(value="/boardUpdateView")
-	public String boardUpdateView(@RequestParam(required=false, defaultValue="0") int num, Model model, RedirectAttributes rea){
+	@RequestMapping(value="/boardUpdateView", method=RequestMethod.GET)
+	public String boardUpdateView(@RequestParam(required=false, defaultValue="0") int boardNum, Model model, RedirectAttributes rea){
 		log.info("execute BoardController boardUpdateView");
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(num);
+		Board board = boardService.findBoardForIdx(boardNum);
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		model.addAttribute("include", "main/update.ftl");
 		model.addAttribute("board", board);
-		model.addAttribute("num", num);
+		model.addAttribute("num", boardNum);
 		return "view/board/frame";
 	}
 	

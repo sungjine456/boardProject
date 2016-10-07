@@ -76,7 +76,7 @@ public class UserController {
 		if(ok.isBool()){
 			commonMail.sendMail(EMAIL_ID, email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>", mailSender);
 			rea.addFlashAttribute("email", email);
-			return "redirect:emailAccessAgo";
+			return "redirect:/emailAccessAgo";
 		} else {
 			model.addAttribute("message", ok.getMessage());
 			return "view/user/join";
@@ -160,7 +160,7 @@ public class UserController {
 		if(IsValid.isValidObjects(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
 				rea.addFlashAttribute("email", user.getEmail());
-				return "redirect:emailAccessAgo";
+				return "redirect:/emailAccessAgo";
 			}
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("user", user);
@@ -255,15 +255,15 @@ public class UserController {
 		}
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
-			return "redirect:/update";
+			return "redirect:/mypage";
 		}
 		if(StringUtils.isEmpty(changePassword)){
 			rea.addFlashAttribute("message", message.USER_NO_UPDATE_PASSWORD);
-			return "redirect:/update";
+			return "redirect:/mypage";
 		}
 		if(password.equals(changePassword)){
 			rea.addFlashAttribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD);
-			return "redirect:/update";
+			return "redirect:/mypage";
 		}
 		OkCheck ok = userService.changePassword(((User)session.getAttribute("user")).getIdx(), password, changePassword);
 		rea.addFlashAttribute("message", ok.getMessage());
@@ -345,11 +345,11 @@ public class UserController {
 		OkCheck emailCheck = common.isEmail(email);
 		if(!emailCheck.isBool()){
 			rea.addFlashAttribute("message", emailCheck.getMessage());
-			return "redirect:/updateView";
+			return "redirect:/mypage";
 		}
 		if(StringUtils.isEmpty(name)){
 			rea.addFlashAttribute("message", message.USER_NO_NAME);
-			return "redirect:/updateView";
+			return "redirect:/mypage";
 		}
 		name = common.cleanXss(name);
 		User user = (User)session.getAttribute("user");
@@ -369,11 +369,10 @@ public class UserController {
 		}
 		if(isSuccessUpdate){
 			rea.addFlashAttribute("message", message.USER_SUCCESS_UPDATE);
-			return "redirect:/mypage";
 		} else {
 			rea.addFlashAttribute("message", message.USER_FAIL_UPDATE);
-			return "redirect:/updateView";
 		}
+		return "redirect:/mypage";
 	}
 	
 	@RequestMapping(value="/emailAccess", method=RequestMethod.GET)
@@ -387,29 +386,24 @@ public class UserController {
 		session.setAttribute("loginYn", "Y");
 		session.setAttribute("user", user);
 		rea.addFlashAttribute("message", message.MAIL_THANK_YOU_FOR_AGREE);
-		return "redirect:board";
+		return "redirect:/board";
 	}
 	
 	@RequestMapping(value="/emailAccessAgo", method=RequestMethod.GET)
-	public String emailAccessAgo(@RequestParam(required=false) String email, Model model, HttpSession session){
+	public String emailAccessAgo(){
 		log.info("execute UserController emailAccessAgo");
-		if(StringUtils.isEmpty(email)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
-		}
-		session.setAttribute("email", email);
 		return "view/user/emailAccessAgo";
 	}
 	
 	@RequestMapping(value="/emailAccessRe", method=RequestMethod.POST)
 	public String reEmailAccess(@RequestParam(required=false) String email, Model model){
 		log.info("execute UserController reEmailAccess");
-		if(StringUtils.isEmpty(email)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
+		if(common.isEmail(email).isBool()){
+			model.addAttribute("message", message.USER_NO_EMAIL);
 			return "view/user/login";
 		}
 		commonMail.sendMail(EMAIL_ID, email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>", mailSender);
-		return "redirect:emailAccessAgo";
+		return "redirect:/emailAccessAgo";
 	}
 	
 	@RequestMapping("/interceptorView")

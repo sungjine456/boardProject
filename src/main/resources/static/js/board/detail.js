@@ -9,7 +9,7 @@ var detail = {
 	commentReplyBtn : $("#commentForm .commentReplyBtn"),
 	commentLengthCount : $("#commentLengthCount"),
 	boardUpdateEvent : function(){
-		$(location).attr("href", "/boardUpdateView?boardNum=" + this.num.val());
+		$(location).attr("href", "/boardUpdateView?boardNum=" + this.boardNum.val());
 	},
 	commentEvent : function(){
 		if(this.writeComment.val() == ""){
