@@ -161,12 +161,8 @@ public class UserController {
 			session.setAttribute("user", user);
 			if(StringUtils.equals(idSave, "ckeck")){
 				String loginId = common.cookieValueEncryption(new DateTime().toString()); 
-				if(!userService.autoLogin(user, loginId)){
-					model.addAttribute("message", message.USER_FAIL_LOGIN);
-					return "view/user/login";
-				}
 				String enKeyId = commonCookie.aesEncode(id);
-				if(StringUtils.isEmpty(enKeyId)){
+				if(!userService.autoLogin(user, loginId) || StringUtils.isEmpty(enKeyId)){
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}

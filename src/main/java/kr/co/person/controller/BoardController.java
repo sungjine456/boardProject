@@ -273,15 +273,8 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(StringUtils.isEmpty(commentSentence)){
-			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
-		}
 		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
 		}
 		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";
@@ -305,25 +298,14 @@ public class BoardController {
 		}
 		int idx = comment.getIdx();
 		String commentSentence = comment.getComment();
-		if(IsValid.isNotValidInts(boardNum)){
-			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
-			return "redirect:/board";
-		}
 		Board board = boardService.findBoardForIdx(boardNum);
 		if(IsValid.isNotValidObjects(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValidInts(idx)){
-			rea.addFlashAttribute("message", message.COMMENT_NO_COMMENT);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
-		}
-		if(StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())
 				|| !commentService.update(idx, common.enter(common.cleanXss(commentSentence)))){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
 		}
 		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";
@@ -355,12 +337,7 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValidInts(idx)){
-			rea.addFlashAttribute("message", message.COMMENT_NO_COMMENT);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
-		}
-		if(StringUtils.isEmpty(commentSentence)){
+		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(commentSentence)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";

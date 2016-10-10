@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -123,15 +122,6 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
 	}
-	
-	@Bean(name="workExecutor")
-	  public TaskExecutor taskExecutor() {
-	      ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-	      taskExecutor.setMaxPoolSize(1);
-	      taskExecutor.setQueueCapacity(0);
-	      taskExecutor.afterPropertiesSet();
-	      return taskExecutor;
-	  }
 	
 	@Bean
     public JavaMailSender mailSender() {

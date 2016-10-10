@@ -2,15 +2,19 @@ package kr.co.person.config;
 
 import java.lang.reflect.Method;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 
 public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
+	private static final Logger log = LoggerFactory.getLogger(CustomAsyncExceptionHandler.class);
+	
     @Override
     public void handleUncaughtException(Throwable throwable, Method method, Object... obj) {
-        System.out.println("Exception message - " + throwable.getMessage());
-        System.out.println("Method name - " + method.getName());
+        log.info("Exception message - " + throwable.getMessage());
+        log.info("Method name - " + method.getName());
         for (Object param : obj) {
-            System.out.println("Parameter value - " + param);
+        	log.info("Parameter value - " + param);
         }
     }
 }
