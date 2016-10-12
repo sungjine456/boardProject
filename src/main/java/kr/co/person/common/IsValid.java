@@ -1,5 +1,9 @@
 package kr.co.person.common;
 
+import org.apache.commons.lang3.StringUtils;
+
+import kr.co.person.domain.User;
+
 public class IsValid {
 	public IsValid(){
 	}
@@ -24,8 +28,6 @@ public class IsValid {
 		    		return true;
 		    	}
 			}
-    	} else {
-    		return true;
     	}
     	return false;
 	}
@@ -50,8 +52,6 @@ public class IsValid {
 		    		return true;
 		    	}
 			}
-    	} else {
-    		return true;
     	}
     	return false;
     }
@@ -63,6 +63,8 @@ public class IsValid {
 		    		return false;
 		    	}
     		}
+    	} else {
+    		return false;
     	}
     	return true;
     }
@@ -74,9 +76,37 @@ public class IsValid {
     				return true;
     			}
     		}
-    	} else {
-    		return true;
     	}
     	return false;
+    }
+    
+    public static boolean isValidUser(User user){
+    	if(user != null){
+    		if(StringUtils.isEmpty(user.getEmail()) 
+    				&& StringUtils.isEmpty(user.getId()) 
+    				&& StringUtils.isEmpty(user.getImg()) 
+    				&& StringUtils.isEmpty(user.getName()) 
+    				&& StringUtils.isEmpty(user.getPassword()) && user.getIdx() == 0){
+    			return false;
+    		}
+    	} else {
+    		return false;
+    	}
+    	return true;
+    }
+    
+    public static boolean isNotValidUser(User user){
+    	if(user != null){
+    		if(StringUtils.isEmpty(user.getEmail()) 
+    				&& StringUtils.isEmpty(user.getId()) 
+    				&& StringUtils.isEmpty(user.getImg()) 
+    				&& StringUtils.isEmpty(user.getName()) 
+    				&& StringUtils.isEmpty(user.getPassword()) && user.getIdx() == 0){
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 }

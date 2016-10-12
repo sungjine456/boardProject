@@ -129,11 +129,11 @@ public class UserServiceImpl implements UserService {
 	public User joinCheck(String id, String password) {
 		log.info("execute UserServiceImpl joinCheck");
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
-			return null;
+			return new User();
 		}
 		password = common.passwordEncryption(password);
 		if(StringUtils.isEmpty(password)){
-			return null;
+			return new User();
 		}
 		return userRepository.findByIdAndPassword(id, password);
 	}

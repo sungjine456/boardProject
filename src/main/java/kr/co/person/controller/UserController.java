@@ -152,7 +152,7 @@ public class UserController {
 			return "view/user/login";
 		}
 		user = userService.joinCheck(common.cleanXss(id), password);
-		if(IsValid.isValidObjects(user)){
+		if(IsValid.isValidUser(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
 				rea.addFlashAttribute("email", user.getEmail());
 				return "redirect:/emailAccessAgo";
@@ -275,7 +275,7 @@ public class UserController {
 		User user = (User)session.getAttribute("user");
 		int idx = user.getIdx();
 		User joinCheck = userService.joinCheck(user.getId(), password);
-		if(IsValid.isNotValidObjects(joinCheck) || joinCheck.getIdx() != idx){
+		if(IsValid.isNotValidUser(joinCheck) || joinCheck.getIdx() != idx){
 			model.addAttribute("message", message.USER_WRONG_USER);
 			return "view/user/login";
 		}

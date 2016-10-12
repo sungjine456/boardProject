@@ -1,7 +1,8 @@
 package kr.co.person.common;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BoardProjectApplication.class)
@@ -129,5 +131,27 @@ public class IsValidTest {
 		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], new Object[1], null), is(true));
 		Assert.assertThat(IsValid.isNotValidArrays(new Object[0], new Object[0], new Object[0]), is(true));
 		Assert.assertThat(IsValid.isNotValidArrays(new Object[1], new Object[1], new Object[1]), is(false));
+	}
+	
+	@Test
+	public void testIsValidUser(){
+		DateTime date = new DateTime();
+		User user = null;
+		Assert.assertThat(IsValid.isValidUser(user), is(false));
+		user = new User();
+		Assert.assertThat(IsValid.isValidUser(user), is(false));
+		user = new User("id", "email", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isValidUser(user), is(true));
+	}
+
+	@Test
+	public void testIsNotValidUser(){
+		DateTime date = new DateTime();
+		User user = null;
+		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
+		user = new User();
+		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
+		user = new User("id", "email", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isNotValidUser(user), is(false));
 	}
 }
