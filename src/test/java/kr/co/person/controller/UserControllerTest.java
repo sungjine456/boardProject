@@ -121,10 +121,8 @@ public class UserControllerTest {
     			.param("password", "123456")
     			.param("email", "tjdwlsdms100@naver.com"))
 			.andExpect(status().isFound())
-			.andExpect(request().sessionAttribute("loginYn", "Y"))
-			.andExpect(request().sessionAttribute("user", is(notNullValue())))
 			.andExpect(flash().attribute("email", "tjdwlsdms100@naver.com"))
-			.andExpect(redirectedUrl("emailAccessAgo"));
+			.andExpect(redirectedUrl("/emailAccessAgo"));
     }
     
     @Test
@@ -377,7 +375,7 @@ public class UserControllerTest {
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_PASSWORD))
-    		.andExpect(redirectedUrl("/update"));
+    		.andExpect(redirectedUrl("/mypage"));
     }
     
     @Test
@@ -398,7 +396,7 @@ public class UserControllerTest {
     			.param("password", "123123"))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_UPDATE_PASSWORD))
-    		.andExpect(redirectedUrl("/update"));
+    		.andExpect(redirectedUrl("/mypage"));
     }
     
     @Test
@@ -409,7 +407,7 @@ public class UserControllerTest {
     			.param("changePassword", "123123"))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_PASSWORD))
-    		.andExpect(redirectedUrl("/update"));
+    		.andExpect(redirectedUrl("/mypage"));
     }
     
     @Test
@@ -421,7 +419,7 @@ public class UserControllerTest {
     			.param("changePassword", "123123"))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD))
-    		.andExpect(redirectedUrl("/update"));
+    		.andExpect(redirectedUrl("/mypage"));
     }
     
     @Test
@@ -589,7 +587,7 @@ public class UserControllerTest {
     			.session(mockSession)
     			.param("id", "test"))
 	    	.andExpect(status().isFound())
-			.andExpect(redirectedUrl("/updateView"))
+			.andExpect(redirectedUrl("/mypage"))
 			.andExpect(flash().attribute("message", message.USER_NO_EMAIL));
     }
     
@@ -602,7 +600,7 @@ public class UserControllerTest {
     			.param("id", "test")
     			.param("email", "test@naver.com"))
 			.andExpect(status().isFound())
-			.andExpect(redirectedUrl("/updateView"))
+			.andExpect(redirectedUrl("/mypage"))
 			.andExpect(flash().attribute("message", message.USER_NO_NAME));
     }
     
@@ -679,24 +677,13 @@ public class UserControllerTest {
     		.andExpect(flash().attribute("message", message.MAIL_THANK_YOU_FOR_AGREE))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))
 			.andExpect(request().sessionAttribute("user", is(notNullValue())))
-    		.andExpect(redirectedUrl("board"));
-    }
-    
-    @Test
-    public void testEmailAccessAgoNoEmail() throws Exception {
-    	mock.perform(get("/emailAccessAgo"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+    		.andExpect(redirectedUrl("/board"));
     }
     
     @Test
     public void testEmailAccessAgoSuccess() throws Exception {
-		mock.perform(
-			get("/emailAccessAgo")
-				.param("email", "sungjine@naver.com"))
-			.andExpect(status().isOk())
-			.andExpect(request().sessionAttribute("email", "sungjine@naver.com"))
+    	mock.perform(get("/emailAccessAgo"))
+	    	.andExpect(status().isOk())
 			.andExpect(view().name("view/user/emailAccessAgo"));
     }
     
@@ -705,7 +692,7 @@ public class UserControllerTest {
     	mock.perform(post("/emailAccessRe"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+			.andExpect(model().attribute("message", message.USER_NO_EMAIL));
     }
     
     @Test
@@ -714,7 +701,7 @@ public class UserControllerTest {
     		post("/emailAccessRe")
     			.param("email", "sungjine@naver.com"))
 	    	.andExpect(status().isFound())
-			.andExpect(redirectedUrl("emailAccessAgo"));
+			.andExpect(redirectedUrl("/emailAccessAgo"));
     }
     
     @Test

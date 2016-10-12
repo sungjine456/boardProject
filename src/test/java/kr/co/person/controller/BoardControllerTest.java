@@ -219,7 +219,7 @@ public class BoardControllerTest {
     	mock.perform(
     		get("/boardUpdateView")
     			.session(mockSession)
-    			.param("num", "1"))
+    			.param("boardNum", "1"))
 	    	.andExpect(status().isOk())
 	    	.andExpect(model().attributeExists("include"))
 	    	.andExpect(model().attribute("include", "main/update.ftl"))
@@ -250,14 +250,15 @@ public class BoardControllerTest {
     
     @Test
     public void testBoardUpdateNoContent() throws Exception {
+    	int idx = 1;
     	mock.perform(
     		post("/boardUpdate")
-	    		.param("idx", "1")
+	    		.param("idx", idx + "")
 	    		.param("title", "testTitle")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_CONTENT))
-    		.andExpect(redirectedUrl("/boardUpdateView"));
+    		.andExpect(redirectedUrl("/boardUpdateView?num=" + idx));
     }
     
     @Test
@@ -375,7 +376,7 @@ public class BoardControllerTest {
     			.param("boardNum", "1")
     			.session(mockSession))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.COMMENT_NO_COMMENT))
+    		.andExpect(flash().attribute("message", message.COMMENT_RE_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
     }
@@ -446,7 +447,7 @@ public class BoardControllerTest {
     			.param("boardNum", "1")
     			.session(mockSession))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.COMMENT_NO_COMMENT))
+    		.andExpect(flash().attribute("message", message.COMMENT_RE_COMMENT))
     		.andExpect(model().attribute("boardNum", "1"))
 	    	.andExpect(redirectedUrl("/boardDetail?boardNum=1"));
     }
