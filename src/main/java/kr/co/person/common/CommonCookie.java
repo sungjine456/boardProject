@@ -11,6 +11,8 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import kr.co.person.common.exception.EmptyStringException;
+
 @Component
 public class CommonCookie {
 	@Value("${keyValue}") private String ENCRYPTION_KEY_OF_COOKIE;
@@ -27,9 +29,9 @@ public class CommonCookie {
         return keySpec;
     }
  
-    public String aesEncode(String str){
+    public String aesEncode(String str) throws EmptyStringException {
     	if(StringUtils.isEmpty(str)){
-			return "";
+    		throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
     	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	try{
@@ -44,9 +46,9 @@ public class CommonCookie {
     	}
     }
  
-    public String aesDecode(String str){
+    public String aesDecode(String str) throws EmptyStringException {
     	if(StringUtils.isEmpty(str)){
-			return "";
+    		throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
     	String iv = ENCRYPTION_KEY_OF_COOKIE.substring(0, 16);
     	Cipher c;

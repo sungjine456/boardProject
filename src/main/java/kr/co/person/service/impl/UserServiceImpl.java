@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
+import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
@@ -36,9 +37,16 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidObjects(user)){
 			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
-		String name = common.cleanXss(user.getName());
-		String id = common.cleanXss(user.getId());
-		String password = common.passwordEncryption(user.getPassword());
+		String id = "";
+		String password = "";
+		String name = "";
+		try {
+			id = common.cleanXss(user.getId());
+			password = common.passwordEncryption(user.getPassword());
+			name = common.cleanXss(user.getName());
+		} catch(EmptyStringException e){
+			log.info("execute UserServiceImpl join : " + e.getMessage());
+		}
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
@@ -72,8 +80,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean leave(int idx, String loginId){
 		log.info("execute userServiceImpl leave");
-		// user에 쓰레기값 넣기위한 암호화
-		String garbage = common.passwordEncryption("Garbage");
+		String garbage = "b94c56f6f1cf92d48e021c573b77fa253eca91e579e308473c0536716c8e7bd6personProject";
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(user)){
 			return false;
@@ -131,7 +138,11 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
 			return new User();
 		}
-		password = common.passwordEncryption(password);
+		try {
+			password = common.passwordEncryption(password);
+		} catch(EmptyStringException e){
+			return new User();
+		}
 		if(StringUtils.isEmpty(password)){
 			return new User();
 		}
@@ -153,7 +164,12 @@ public class UserServiceImpl implements UserService {
 		for(int i = 0; i < 6; i++){
 			random += ((int)(Math.random() * 10));
 		}
-		String password = common.passwordEncryption(random);
+		String password = "";
+		try {
+			password = common.passwordEncryption(random);
+		} catch (EmptyStringException e) {
+			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
+		}
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
 		}
@@ -184,13 +200,17 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidObjects(user)){
 			return new OkCheck(message.USER_WRONG_USER, false);
 		}
-		password = common.passwordEncryption(password);
+		try {
+			password = common.passwordEncryption(password);
+			changePassword = common.passwordEncryption(changePassword);
+		} catch (EmptyStringException e) {
+			return new OkCheck(message.USER_RE_PASSWORD, false);
+		}
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_NO_PASSWORD, false);
 		} else if(!password.equals(user.getPassword())){
 			return new OkCheck(message.USER_RE_PASSWORD, false);
 		}
-		changePassword = common.passwordEncryption(changePassword);
 		if(StringUtils.isEmpty(changePassword)){
 			return new OkCheck(message.USER_RE_UPDATE_PASSWORD, false);
 		}
@@ -294,7 +314,12 @@ public class UserServiceImpl implements UserService {
 	public boolean passwordCheck(int idx, String password) {
 		log.info("execute UserServiceImpl passwordCheck");
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(common.passwordEncryption(password), user.getPassword())){
+		try {
+			password = common.passwordEncryption(password);
+		} catch(EmptyStringException e){
+			return false;
+		}
+		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(password, user.getPassword())){
 			return false;
 		}
 		return true;

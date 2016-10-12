@@ -32,6 +32,7 @@ import kr.co.person.annotation.IsValidBoard;
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
+import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
@@ -116,7 +117,14 @@ public class BoardController {
 	        String fileName = paths[2];
 			content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+filePath+se+kindPath+se+fileName+">");
 		}
-		OkCheck ok = boardService.write(common.cleanXss(title.trim()), content, ((User)session.getAttribute("user")).getIdx());
+		try {
+			title = common.cleanXss(title.trim());
+		} catch(EmptyStringException e) {
+			model.addAttribute("message", message.BOARD_NO_TITLE);
+			model.addAttribute("include", "main/write.ftl");
+			return "view/board/frame";
+		}
+		OkCheck ok = boardService.write(title, content, ((User)session.getAttribute("user")).getIdx());
 		if(!ok.isBool()){
 			model.addAttribute("message", ok.getMessage());
 			model.addAttribute("include", "main/write.ftl");
@@ -242,11 +250,21 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
 			return "redirect:/boardUpdateView";
 		}
-		if(StringUtils.isEmpty(content)){
-			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
+		try {
+			title = common.cleanXss(title.trim());
+		} catch(EmptyStringException e) {
+			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
+			rea.addAttribute("num", num);
 			return "redirect:/boardUpdateView";
 		}
-		if(!boardService.update(num, common.cleanXss(title.trim()), common.cleanXss(content))){
+		try {
+			content = common.cleanXss(content);
+		} catch(EmptyStringException e) {
+			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
+			rea.addAttribute("num", num);
+			return "redirect:/boardUpdateView";
+		}
+		if(!boardService.update(num, title, content)){
 			rea.addFlashAttribute("message", message.BOARD_FAIL_UPDATE);
 			rea.addAttribute("num", num);
 			return "redirect:/boardUpdateView";
@@ -273,7 +291,11 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(!commentService.write(common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
+		try {
+			if(!commentService.write(common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
+				rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
+			}
+		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 		}
 		rea.addAttribute("boardNum", boardNum);
@@ -303,8 +325,12 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())
-				|| !commentService.update(idx, common.enter(common.cleanXss(commentSentence)))){
+		try {
+			if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(common.cleanXss(commentSentence)) || StringUtils.isEmpty(commentSentence.trim())
+					|| !commentService.update(idx, common.enter(commentSentence))){
+				rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
+			}
+		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 		}
 		rea.addAttribute("boardNum", boardNum);
@@ -342,10 +368,14 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
+		try {
+			if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
+				rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
+				rea.addAttribute("boardNum", boardNum);
+				return "redirect:/boardDetail";
+			}
+		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
-			rea.addAttribute("boardNum", boardNum);
-			return "redirect:/boardDetail";
 		}
 		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";

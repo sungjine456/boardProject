@@ -29,6 +29,7 @@ import kr.co.person.common.CommonCookie;
 import kr.co.person.common.CommonMail;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
+import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.UserService;
@@ -69,7 +70,12 @@ public class UserController {
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
 		if(ok.isBool()){
-			commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+			try {
+				commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+			} catch(EmptyStringException e) {
+				model.addAttribute("message", message.USER_NO_EMAIL);
+				return "view/user/join";
+			}
 			rea.addFlashAttribute("email", email);
 			return "redirect:/emailAccessAgo";
 		} else {
@@ -88,7 +94,15 @@ public class UserController {
 			
 			return map;
 		}
-		OkCheck ok = userService.idCheck(common.cleanXss(id));
+		try {
+			id = common.cleanXss(id);
+		} catch(EmptyStringException e) {
+			map.put("str", message.USER_NO_ID);
+			map.put("bool", "false");
+			
+			return map;
+		}
+		OkCheck ok = userService.idCheck(id);
 		map.put("str", ok.getMessage());
 		map.put("bool", "" + ok.isBool());
 		
@@ -126,7 +140,11 @@ public class UserController {
 				String key = cookies[i].getName();
 				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvd", key)){
-					id = commonCookie.aesDecode(val);
+					try {
+						id = commonCookie.aesDecode(val);
+					} catch (EmptyStringException e) {
+						return "view/user/login";
+					}
 				}
 				if(StringUtils.equals("psvlgnd", key)){
 					loginId = val;
@@ -151,7 +169,12 @@ public class UserController {
 			model.addAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
 			return "view/user/login";
 		}
-		user = userService.joinCheck(common.cleanXss(id), password);
+		try {
+			user = userService.joinCheck(common.cleanXss(id), password);
+		} catch(EmptyStringException e) {
+			model.addAttribute("message", message.USER_NO_ID);
+			return "view/user/login";
+		}
 		if(IsValid.isValidUser(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
 				rea.addFlashAttribute("email", user.getEmail());
@@ -160,9 +183,19 @@ public class UserController {
 			session.setAttribute("loginYn", "Y");
 			session.setAttribute("user", user);
 			if(StringUtils.equals(idSave, "ckeck")){
-				String loginId = common.cookieValueEncryption(new DateTime().toString()); 
-				String enKeyId = commonCookie.aesEncode(id);
-				if(!userService.autoLogin(user, loginId) || StringUtils.isEmpty(enKeyId)){
+				String loginId = "";
+				try {
+					loginId = common.cookieValueEncryption(new DateTime().toString());
+				} catch(EmptyStringException e) {
+				}
+				String enKeyId = "";
+				try {
+					enKeyId = commonCookie.aesEncode(id);
+				} catch (EmptyStringException e) {
+					model.addAttribute("message", message.USER_FAIL_LOGIN);
+					return "view/user/login";
+				}
+				if(!userService.autoLogin(user, loginId)){
 					model.addAttribute("message", message.USER_FAIL_LOGIN);
 					return "view/user/login";
 				}
@@ -342,7 +375,12 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_NAME);
 			return "redirect:/mypage";
 		}
-		name = common.cleanXss(name);
+		try {
+			name = common.cleanXss(name);
+		} catch(EmptyStringException e) {
+			rea.addFlashAttribute("message", message.USER_NO_NAME);
+			return "redirect:/mypage";
+		}
 		User user = (User)session.getAttribute("user");
 		int idx = user.getIdx();
 		user.setName(name);
@@ -373,7 +411,13 @@ public class UserController {
 			model.addAttribute("message", message.USER_NO_LOGIN);
 			return "view/user/login";
 		}
-		User user = userService.accessEmail(commonCookie.aesDecode(access));
+		User user = null;
+		try {
+			user = userService.accessEmail(commonCookie.aesDecode(access));
+		} catch (EmptyStringException e) {
+			model.addAttribute("message", message.USER_NO_LOGIN);
+			return "view/user/login";
+		}
 		session.setAttribute("loginYn", "Y");
 		session.setAttribute("user", user);
 		rea.addFlashAttribute("message", message.MAIL_THANK_YOU_FOR_AGREE);
@@ -394,7 +438,12 @@ public class UserController {
 			model.addAttribute("message", ok.getMessage());
 			return "view/user/login";
 		}
-		commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+		try {
+			commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+		} catch(EmptyStringException e) {
+			model.addAttribute("message", message.USER_NO_EMAIL);
+			return "view/user/join";
+		}
 		return "redirect:/emailAccessAgo";
 	}
 	

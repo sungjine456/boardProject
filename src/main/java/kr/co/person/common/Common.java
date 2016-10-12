@@ -1,6 +1,7 @@
 package kr.co.person.common;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.UserService;
@@ -24,9 +26,9 @@ public class Common {
 	@Autowired Message message;
 	@Autowired UserService userService;
 	
-	public String passwordEncryption(String str){
+	public String passwordEncryption(String str) throws EmptyStringException {
 		if(StringUtils.isEmpty(str)){
-			return "";
+			throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
@@ -43,9 +45,9 @@ public class Common {
 		}
 	}
 	
-	public String cookieValueEncryption(String str){
+	public String cookieValueEncryption(String str) throws EmptyStringException {
 		if(StringUtils.isEmpty(str)){
-			return "";
+			throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
 		try{
 			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
@@ -73,10 +75,10 @@ public class Common {
 		}
     }
     
-    public String cleanXss(String str){
-    	if(StringUtils.isEmpty(str)){
-    		return "";
-    	}
+    public String cleanXss(String str) throws EmptyStringException {
+		if(StringUtils.isEmpty(str)){
+			throw new EmptyStringException("빈 문자열은 안됩니다.");
+		}
     	str = str.replaceAll("&", "&amp;");
     	str = str.replaceAll("%2F", "");
     	str = str.replaceAll("\"","&#34;");
@@ -129,7 +131,7 @@ public class Common {
 			}
 			try {
 				file.transferTo(new File(filePath + se + fileName));
-			} catch(Exception e) {
+			} catch(IOException e) {
 				e.printStackTrace(); 
 			}
 		}
