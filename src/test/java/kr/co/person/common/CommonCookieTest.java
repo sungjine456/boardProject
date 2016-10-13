@@ -21,7 +21,7 @@ public class CommonCookieTest {
 	
 	@Autowired CommonCookie commonCookie;
 	@Test
-	public void testAes() throws EmptyStringException{
+	public void testAes() throws EmptyStringException, Exception{
 		String en = commonCookie.aesEncode("sungjin");
 		Assert.assertThat(en, is(not("sungjin")));
 		String de = commonCookie.aesDecode(en);

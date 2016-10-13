@@ -1,6 +1,7 @@
 package kr.co.person.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,7 +105,13 @@ public class BoardController {
 			return "redirect:/boardWrite";
 		}
 		if(editImage.getOriginalFilename().split("\\.").length == 2){
-			String imgPath = common.createImg(editImage, ((User)session.getAttribute("user")).getId(), "board");
+			String imgPath = "";
+			try {
+				imgPath = common.createImg(editImage, ((User)session.getAttribute("user")).getId(), "board");
+			} catch (IOException e) {
+				rea.addFlashAttribute("message", message.FILE_FAIL_UPLOAD);
+				return "redirect:/boardWrite";
+			}
 			String se = File.separator;
 			if(se.equals("\\")){
 				 se += se;

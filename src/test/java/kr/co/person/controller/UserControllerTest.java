@@ -671,6 +671,16 @@ public class UserControllerTest {
     }
     
     @Test
+    public void testEmailAccessFail() throws Exception {
+    	mock.perform(
+    		get("/emailAccess")
+    			.param("access", "hMRcmzpoVp0WXLCMP/catK28AAfXZxtkY/ovyD0Baz4="))
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.ACCESS_FAIL_ACCESS))
+    		.andExpect(redirectedUrl("/"));
+    }
+    
+    @Test
     public void testEmailAccessSuccess() throws Exception {
     	String email = commonCookie.aesEncode("sungjine@naver.com");
     	mock.perform(

@@ -26,7 +26,7 @@ public class Common {
 	@Autowired Message message;
 	@Autowired UserService userService;
 	
-	public String passwordEncryption(String str) throws EmptyStringException {
+	public String passwordEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
 		if(StringUtils.isEmpty(str)){
 			throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
@@ -40,12 +40,11 @@ public class Common {
 			}
 			return sb.toString() + "personProject";
 		}catch(NoSuchAlgorithmException e){
-			e.printStackTrace(); 
-			return ""; 
+			throw new NoSuchAlgorithmException();
 		}
 	}
 	
-	public String cookieValueEncryption(String str) throws EmptyStringException {
+	public String cookieValueEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
 		if(StringUtils.isEmpty(str)){
 			throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
@@ -59,8 +58,7 @@ public class Common {
 			}
 			return sb.toString() + "cookiesAutoLogin";
 		}catch(NoSuchAlgorithmException e){
-			e.printStackTrace(); 
-			return ""; 
+			throw new NoSuchAlgorithmException();
 		}
 	}
 	
@@ -112,7 +110,7 @@ public class Common {
     	return cookie;
     }
     
-    public String createImg(MultipartFile file, String id, String kind) {
+    public String createImg(MultipartFile file, String id, String kind) throws IOException {
     	String[] strArray = file.getOriginalFilename().split("\\.");
 		String ext = "";
 		if(strArray.length == 2){
@@ -132,7 +130,7 @@ public class Common {
 			try {
 				file.transferTo(new File(filePath + se + fileName));
 			} catch(IOException e) {
-				e.printStackTrace(); 
+				throw new IOException();
 			}
 		}
 		return imgPath;

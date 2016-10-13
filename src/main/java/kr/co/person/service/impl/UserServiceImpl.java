@@ -1,6 +1,7 @@
 package kr.co.person.service.impl;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserService {
 			name = common.cleanXss(user.getName());
 		} catch(EmptyStringException e){
 			log.info("execute UserServiceImpl join : " + e.getMessage());
+		} catch(NoSuchAlgorithmException e) {
+			return new OkCheck(message.USER_RE_PASSWORD, false);
 		}
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
@@ -142,6 +145,8 @@ public class UserServiceImpl implements UserService {
 			password = common.passwordEncryption(password);
 		} catch(EmptyStringException e){
 			return new User();
+		} catch (NoSuchAlgorithmException e) {
+			return new User();
 		}
 		if(StringUtils.isEmpty(password)){
 			return new User();
@@ -169,6 +174,8 @@ public class UserServiceImpl implements UserService {
 			password = common.passwordEncryption(random);
 		} catch (EmptyStringException e) {
 			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
+		} catch (NoSuchAlgorithmException e) {
+			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
 		}
 		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
@@ -189,6 +196,12 @@ public class UserServiceImpl implements UserService {
 		log.info("execute UserServiceImpl findUserForId");
 		return userRepository.findById(id);
 	}
+	
+	@Override
+	public User findUserForEmail(String email) {
+		log.info("execute UserServiceImpl findUserForEmail");
+		return userRepository.findByEmail(email);
+	}
 
 	@Override
 	public OkCheck changePassword(int idx, String password, String changePassword) {
@@ -204,6 +217,8 @@ public class UserServiceImpl implements UserService {
 			password = common.passwordEncryption(password);
 			changePassword = common.passwordEncryption(changePassword);
 		} catch (EmptyStringException e) {
+			return new OkCheck(message.USER_RE_PASSWORD, false);
+		} catch (NoSuchAlgorithmException e) {
 			return new OkCheck(message.USER_RE_PASSWORD, false);
 		}
 		if(StringUtils.isEmpty(password)){
@@ -317,6 +332,8 @@ public class UserServiceImpl implements UserService {
 		try {
 			password = common.passwordEncryption(password);
 		} catch(EmptyStringException e){
+			return false;
+		} catch (NoSuchAlgorithmException e) {
 			return false;
 		}
 		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(password, user.getPassword())){

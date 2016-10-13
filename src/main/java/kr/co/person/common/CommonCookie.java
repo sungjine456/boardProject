@@ -29,7 +29,7 @@ public class CommonCookie {
         return keySpec;
     }
  
-    public String aesEncode(String str) throws EmptyStringException {
+    public String aesEncode(String str) throws EmptyStringException, Exception {
     	if(StringUtils.isEmpty(str)){
     		throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
@@ -42,11 +42,11 @@ public class CommonCookie {
 	        byte[] encrypted = c.doFinal(str.getBytes("UTF-8"));
 	        return new String(Base64.encodeBase64(encrypted));
     	} catch(Exception e){
-    		return "";
+    		throw new Exception();
     	}
     }
  
-    public String aesDecode(String str) throws EmptyStringException {
+    public String aesDecode(String str) throws EmptyStringException, Exception {
     	if(StringUtils.isEmpty(str)){
     		throw new EmptyStringException("빈 문자열은 안됩니다.");
 		}
@@ -61,7 +61,7 @@ public class CommonCookie {
 	        byteStr = Base64.decodeBase64(str.getBytes());
 	        return new String(c.doFinal(byteStr),"UTF-8");
     	} catch(Exception e){
-    		return "";
+    		throw new Exception();
     	}
     }
 }

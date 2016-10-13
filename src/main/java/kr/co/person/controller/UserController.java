@@ -1,9 +1,12 @@
 package kr.co.person.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +65,13 @@ public class UserController {
 			rea.addFlashAttribute("message", emailCheck.getMessage());
 			return "redirect:/join";
 		}
-		String imgPath = common.createImg(file, user.getId(), "user");
+		String imgPath = "";
+		try {
+			imgPath = common.createImg(file, user.getId(), "user");
+		} catch (IOException e) {
+			rea.addFlashAttribute("message", message.FILE_FAIL_UPLOAD);
+			return "redirect:/join";
+		}
 		String se = File.separator;
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "img"+se+"user"+se+"default.png";
@@ -71,8 +80,14 @@ public class UserController {
 		OkCheck ok = userService.join(user);
 		if(ok.isBool()){
 			try {
-				commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+				commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
 			} catch(EmptyStringException e) {
+				rea.addFlashAttribute("message", message.USER_RE_EMAIL);
+				return "redirect:/join";
+			} catch(MessagingException e) {
+				rea.addFlashAttribute("message", message.MAIL_FAIL_SEND);
+				return "redirect:/join";
+			} catch(Exception e){
 				rea.addFlashAttribute("message", message.USER_RE_EMAIL);
 				return "redirect:/join";
 			}
@@ -144,6 +159,8 @@ public class UserController {
 						id = commonCookie.aesDecode(val);
 					} catch (EmptyStringException e) {
 						return "view/user/login";
+					} catch (Exception e){
+						return "view/user/join";
 					}
 				}
 				if(StringUtils.equals("psvlgnd", key)){
@@ -187,11 +204,19 @@ public class UserController {
 				try {
 					loginId = common.cookieValueEncryption(new DateTime().toString());
 				} catch(EmptyStringException e) {
+					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
+					return "redirect:/";
+				} catch(NoSuchAlgorithmException e) {
+					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
+					return "redirect:/";
 				}
 				String enKeyId = "";
 				try {
 					enKeyId = commonCookie.aesEncode(id);
 				} catch (EmptyStringException e) {
+					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
+					return "redirect:/";
+				} catch (Exception e){
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
 				}
@@ -251,7 +276,12 @@ public class UserController {
 		}
 		OkCheck ok = userService.translatePassword(email);
 		if(ok.isBool()){
-			commonMail.sendMail(email, message.MAIL_TRANSLATE_PASSWORD_TITLE, ok.getMessage());
+			try {
+				commonMail.sendMail(email, message.MAIL_TRANSLATE_PASSWORD_TITLE, ok.getMessage());
+			} catch (MessagingException e) {
+				rea.addFlashAttribute("message", message.MAIL_FAIL_SEND);
+				return "redirect:/";
+			}
 			rea.addFlashAttribute("message", message.MAIL_SUCCESS_TRANSLATE_PASSWORD);
 		} else {
 			rea.addFlashAttribute("message", ok.getMessage());
@@ -358,7 +388,13 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		String imgPath = common.createImg(ufile, updateUser.getId(), "user");
+		String imgPath = "";
+		try {
+			imgPath = common.createImg(ufile, updateUser.getId(), "user");
+		} catch (IOException e) {
+			rea.addFlashAttribute("message", message.FILE_FAIL_UPLOAD);
+			return "redirect:/";
+		}
 		String se = File.separator;
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "img"+se+"user"+se+"default.png";
@@ -411,10 +447,28 @@ public class UserController {
 			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
 			return "redirect:/";
 		}
-		User user = null;
+		String email = "";
 		try {
-			user = userService.accessEmail(commonCookie.aesDecode(access));
+			email = commonCookie.aesDecode(access);
 		} catch (EmptyStringException e) {
+			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+			return "redirect:/";
+		} catch (Exception e){
+			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+			return "redirect:/";
+		}
+		User user = userService.findUserForEmail(email);
+		if(IsValid.isNotValidUser(user)){
+			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+			return "redirect:/";
+		}
+		if(StringUtils.equals(user.getAccess(), "Y")){
+			session.setAttribute("loginYn", "Y");
+			session.setAttribute("user", user);
+			return "redirect:/board";
+		}
+		user = userService.accessEmail(email);
+		if(IsValid.isNotValidUser(user)){
 			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
 			return "redirect:/";
 		}
@@ -442,6 +496,12 @@ public class UserController {
 			commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
 		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
+			return "redirect:/";
+		} catch(MessagingException e){
+			rea.addFlashAttribute("message", message.MAIL_FAIL_SEND);
+			return "redirect:/";
+		} catch(Exception e){
+			rea.addFlashAttribute("message", message.USER_RE_EMAIL);
 			return "redirect:/";
 		}
 		return "redirect:/emailAccessAgo";
