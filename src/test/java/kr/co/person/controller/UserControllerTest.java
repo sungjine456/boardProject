@@ -38,6 +38,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.common.CommonCookie;
 import kr.co.person.common.Message;
 import kr.co.person.domain.User;
 import kr.co.person.repository.UserRepository;
@@ -51,6 +52,7 @@ public class UserControllerTest {
 	
 	@Mock private UserService userService;
 	@Autowired private Message message;
+	@Autowired private CommonCookie commonCookie;
 	@InjectMocks private UserController userController;
 	@Autowired private UserRepository userRepository;
 	@Autowired private WebApplicationContext wac;
@@ -89,9 +91,9 @@ public class UserControllerTest {
 				.file(file)
 				.param("id", "test")
 				.param("password", "123456"))
-    		.andExpect(status().isOk())
-    		.andExpect(model().attribute("message", message.USER_NO_EMAIL))
-    		.andExpect(view().name("view/user/join"));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
+    		.andExpect(redirectedUrl("/join"));
     }
     
     @Test
@@ -104,9 +106,9 @@ public class UserControllerTest {
     			.param("id", "test")
     			.param("password", "123456")
     			.param("email", "aaa"))
-			.andExpect(status().isOk())
-			.andExpect(model().attribute("message", message.USER_NO_EMAIL_FORMAT))
-			.andExpect(view().name("view/user/join"));
+			.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_EMAIL_FORMAT))
+			.andExpect(redirectedUrl("/join"));
     }
     
     @Test
@@ -221,9 +223,9 @@ public class UserControllerTest {
     @Test
     public void testLoginNoIdAndNoPassword() throws Exception{
     	mock.perform(post("/"))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/user/login"))
-    		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -231,9 +233,9 @@ public class UserControllerTest {
     	mock.perform(
     		post("/")
 				.param("id", "sungjin"))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/user/login"))
-    		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -241,9 +243,9 @@ public class UserControllerTest {
     	mock.perform(
     		post("/")
 				.param("password", "123123"))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/user/login"))
-    		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -252,9 +254,9 @@ public class UserControllerTest {
     		post("/")
 				.param("id", "test")
 				.param("password", "123456"))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/user/login"))
-    		.andExpect(model().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -284,9 +286,9 @@ public class UserControllerTest {
     		get("/logout")
 	    		.sessionAttr("loginYn", "Y")
 	    		.sessionAttr("idx", 5))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+			.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -363,9 +365,9 @@ public class UserControllerTest {
     	mock.perform(
     		get("/mypage")
     			.sessionAttr("loginYn", "Y"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+			.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -383,9 +385,9 @@ public class UserControllerTest {
     	mock.perform(
     		post("/changePassword")
     			.sessionAttr("loginYn", "Y"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+			.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -433,9 +435,9 @@ public class UserControllerTest {
 				.session(mockSession)
     			.param("password", "123123")
     			.param("changePassword", "123456"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+	    	.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+	    	.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -450,9 +452,9 @@ public class UserControllerTest {
     			.session(mockSession)
     			.param("password", "123123")
     			.param("changePassword", "123456"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+	    	.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+	    	.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -487,9 +489,9 @@ public class UserControllerTest {
     		get("/leave")
     			.sessionAttr("loginYn", "Y")
     			.param("password", "123123"))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/user/login"))
-	    	.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+	    	.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+	    	.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -531,9 +533,9 @@ public class UserControllerTest {
     		post("/updateView")
 	    		.sessionAttr("loginYn", "Y")
 				.sessionAttr("user", new User()))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/user/login"))
-    		.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+    		.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -574,9 +576,9 @@ public class UserControllerTest {
     		fileUpload("/update")
     			.file(new MockMultipartFile("ufile", "b".getBytes()))
     			.sessionAttr("loginYn", "Y"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+			.andExpect(redirectedUrl("/"));
     }
     
     @Test
@@ -661,20 +663,21 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testEmailAccessNoEmail() throws Exception {
+    public void testEmailAccessNoAccess() throws Exception {
     	mock.perform(get("/emailAccess"))
-	    	.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_LOGIN));
+	    	.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.ACCESS_FAIL_ACCESS))
+			.andExpect(redirectedUrl("/"));
     }
     
     @Test
     public void testEmailAccessSuccess() throws Exception {
+    	String email = commonCookie.aesEncode("sungjine@naver.com");
     	mock.perform(
     		get("/emailAccess")
-    			.param("access", "sungjine@naver.com"))
+    			.param("access", email))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.MAIL_THANK_YOU_FOR_AGREE))
+    		.andExpect(flash().attribute("message", message.ACCESS_THANK_YOU_FOR_AGREE))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))
 			.andExpect(request().sessionAttribute("user", is(notNullValue())))
     		.andExpect(redirectedUrl("/board"));
@@ -690,9 +693,9 @@ public class UserControllerTest {
     @Test
     public void testEmailAccessReNoEmail() throws Exception {
     	mock.perform(post("/emailAccessRe"))
-			.andExpect(status().isOk())
-			.andExpect(view().name("view/user/login"))
-			.andExpect(model().attribute("message", message.USER_NO_EMAIL));
+			.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
+			.andExpect(redirectedUrl("/"));
     }
     
     @Test

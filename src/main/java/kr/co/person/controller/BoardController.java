@@ -87,23 +87,21 @@ public class BoardController {
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
-	public String boardWrite(@IsValidBoard Board board, @RequestParam MultipartFile editImage, Model model, HttpSession session){
+	public String boardWrite(@IsValidBoard Board board, @RequestParam MultipartFile editImage, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController boardWrite");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/boardWrite";
 		}
 		String title = board.getTitle();
 		String content = board.getContent();
 		if(StringUtils.isEmpty(title) || StringUtils.isEmpty(title.trim())){
-			model.addAttribute("message", message.BOARD_NO_TITLE);
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
+			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
+			return "redirect:/boardWrite";
 		}
 		if(StringUtils.isEmpty(content) || StringUtils.isEmpty(content.trim())){
-			model.addAttribute("message", message.BOARD_NO_CONTENT);
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
+			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
+			return "redirect:/boardWrite";
 		}
 		if(editImage.getOriginalFilename().split("\\.").length == 2){
 			String imgPath = common.createImg(editImage, ((User)session.getAttribute("user")).getId(), "board");
@@ -120,15 +118,13 @@ public class BoardController {
 		try {
 			title = common.cleanXss(title.trim());
 		} catch(EmptyStringException e) {
-			model.addAttribute("message", message.BOARD_NO_TITLE);
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
+			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
+			return "redirect:/boardWrite";
 		}
 		OkCheck ok = boardService.write(title, content, ((User)session.getAttribute("user")).getIdx());
 		if(!ok.isBool()){
-			model.addAttribute("message", ok.getMessage());
-			model.addAttribute("include", "main/write.ftl");
-			return "view/board/frame";
+			rea.addFlashAttribute("message", ok.getMessage());
+			return "redirect:/boardWrite";
 		}
 		return "redirect:/board";
 	}

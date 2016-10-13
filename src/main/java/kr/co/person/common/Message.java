@@ -39,6 +39,7 @@ public class Message {
 	public final String USER_WRONG_ID_OR_WRONG_PASSWORD;
 	public final String USER_WRONG_EMAIL;
 	public final String USER_WRONG_USER;
+	public final String USER_RE_EMAIL;
 	public final String USER_RE_PASSWORD;
 	public final String USER_RE_UPDATE_PASSWORD;
 	public final String USER_ALREADY_JOIN;
@@ -51,8 +52,11 @@ public class Message {
 	
 	public final String MAIL_TRANSLATE_PASSWORD_TITLE;
 	public final String MAIL_SUCCESS_TRANSLATE_PASSWORD;
-	public final String MAIL_THANK_YOU_FOR_AGREE;
-	public final String MAIL_THANK_YOU_FOR_JOIN;
+	public final String MAIL_FAIL_SEND;
+	
+	public final String ACCESS_FAIL_ACCESS;
+	public final String ACCESS_THANK_YOU_FOR_AGREE;
+	public final String ACCESS_THANK_YOU_FOR_JOIN;
 	
 	public Message(MessageSource messageSource){
 		this.messageSource = messageSource;
@@ -92,6 +96,7 @@ public class Message {
 		USER_WRONG_ID_OR_WRONG_PASSWORD = messageSource.getMessage("user.wrongIdOrWrongPassword", null, null);
 		USER_WRONG_EMAIL = messageSource.getMessage("user.wrongEmail", null, null);
 		USER_WRONG_USER = messageSource.getMessage("user.wrongUser", null, null);
+		USER_RE_EMAIL = messageSource.getMessage("user.reEmail", null, null);
 		USER_RE_PASSWORD = messageSource.getMessage("user.rePassword", null, null);
 		USER_RE_UPDATE_PASSWORD = messageSource.getMessage("user.reUpdatePassword", null, null);
 		USER_ALREADY_JOIN = messageSource.getMessage("user.alreadyJoin", null, null);
@@ -104,8 +109,11 @@ public class Message {
 
 		MAIL_TRANSLATE_PASSWORD_TITLE = messageSource.getMessage("mail.translatePasswordTitle", null, null);
 		MAIL_SUCCESS_TRANSLATE_PASSWORD = messageSource.getMessage("mail.successTranslatePassword", null, null);
-		MAIL_THANK_YOU_FOR_AGREE = messageSource.getMessage("mail.thankYouForAgree", null, null);
-		MAIL_THANK_YOU_FOR_JOIN = messageSource.getMessage("mail.thankYouForJoin", null, null);
+		MAIL_FAIL_SEND = messageSource.getMessage("mail.failSend", null, null);
+
+		ACCESS_FAIL_ACCESS = messageSource.getMessage("access.failAccess", null, null);
+		ACCESS_THANK_YOU_FOR_AGREE = messageSource.getMessage("access.thankYouForAgree", null, null);
+		ACCESS_THANK_YOU_FOR_JOIN = messageSource.getMessage("access.thankYouForJoin", null, null);
 	}
 
 	public MessageSource getMessageSource() {

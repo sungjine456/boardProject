@@ -54,13 +54,13 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@IsValidUser User user, @RequestParam MultipartFile file, Model model, HttpSession session, RedirectAttributes rea){
+	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
 		if(!emailCheck.isBool()){
-			model.addAttribute("message", emailCheck.getMessage());
-			return "view/user/join";
+			rea.addFlashAttribute("message", emailCheck.getMessage());
+			return "redirect:/join";
 		}
 		String imgPath = common.createImg(file, user.getId(), "user");
 		String se = File.separator;
@@ -73,14 +73,14 @@ public class UserController {
 			try {
 				commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
 			} catch(EmptyStringException e) {
-				model.addAttribute("message", message.USER_NO_EMAIL);
-				return "view/user/join";
+				rea.addFlashAttribute("message", message.USER_RE_EMAIL);
+				return "redirect:/join";
 			}
 			rea.addFlashAttribute("email", email);
 			return "redirect:/emailAccessAgo";
 		} else {
-			model.addAttribute("message", ok.getMessage());
-			return "view/user/join";
+			rea.addFlashAttribute("message", ok.getMessage());
+			return "redirect:/join";
 		}
 	}
 	
@@ -127,7 +127,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String loginView(Model model, HttpSession session, HttpServletRequest req){
+	public String loginView(HttpSession session, HttpServletRequest req){
 		log.info("execute UserController loginView");
 		if(IsValid.isValidObjects(session.getAttribute("loginYn")) && session.getAttribute("loginYn").equals("Y")){
 			return "redirect:/board";
@@ -161,19 +161,19 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@IsValidUser User user, @RequestParam(required=false) String idSave, Model model, HttpSession session, HttpServletResponse res, RedirectAttributes rea){
+	public String login(@IsValidUser User user, @RequestParam(required=false) String idSave, HttpSession session, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
 		String id = user.getId();
 		String password = user.getPassword();
 		if(IsValid.isNotValidObjects(id, password)){
-			model.addAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
+			return "redirect:/";
 		}
 		try {
 			user = userService.joinCheck(common.cleanXss(id), password);
 		} catch(EmptyStringException e) {
-			model.addAttribute("message", message.USER_NO_ID);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_ID);
+			return "redirect:/";
 		}
 		if(IsValid.isValidUser(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
@@ -192,29 +192,29 @@ public class UserController {
 				try {
 					enKeyId = commonCookie.aesEncode(id);
 				} catch (EmptyStringException e) {
-					model.addAttribute("message", message.USER_FAIL_LOGIN);
-					return "view/user/login";
+					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
+					return "redirect:/";
 				}
 				if(!userService.autoLogin(user, loginId)){
-					model.addAttribute("message", message.USER_FAIL_LOGIN);
-					return "view/user/login";
+					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
+					return "redirect:/";
 				}
 			    res.addCookie(common.addCookie("psvd", enKeyId));
 			    res.addCookie(common.addCookie("psvlgnd", loginId));
 			}
 			return "redirect:/board";
 		} else {
-			model.addAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
+			return "redirect:/";
 		}
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
-	public String logout(HttpSession session, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
+	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		User user = (User)session.getAttribute("user");
 		String loginId = "";
@@ -260,22 +260,22 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/mypage", method=RequestMethod.GET)
-	public String myPageView(Model model, HttpSession session){
+	public String myPageView(Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		model.addAttribute("include", "/view/user/mypage.ftl");
 		return "view/board/frame";
 	}
 	
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
-	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, Model model, HttpSession session, RedirectAttributes rea){
+	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController changePassword");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
@@ -295,11 +295,11 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/leave")
-	public String leave(@RequestParam(required=false) String password, Model model, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
+	public String leave(@RequestParam(required=false) String password, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
@@ -309,8 +309,8 @@ public class UserController {
 		int idx = user.getIdx();
 		User joinCheck = userService.joinCheck(user.getId(), password);
 		if(IsValid.isNotValidUser(joinCheck) || joinCheck.getIdx() != idx){
-			model.addAttribute("message", message.USER_WRONG_USER);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_WRONG_USER);
+			return "redirect:/";
 		}
 		String loginId = "";
 		Cookie[] cookies = req.getCookies();
@@ -339,8 +339,8 @@ public class UserController {
 	public String updateView(@RequestParam(required=false) String password, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController updateView");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		if(StringUtils.isEmpty(password) 
 				|| !userService.passwordCheck(((User)session.getAttribute("user")).getIdx(), password)){
@@ -352,11 +352,11 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public String update(@RequestParam MultipartFile ufile, @IsValidUser User updateUser, Model model, HttpSession session, RedirectAttributes rea){
+	public String update(@RequestParam MultipartFile ufile, @IsValidUser User updateUser, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController update");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		String imgPath = common.createImg(ufile, updateUser.getId(), "user");
 		String se = File.separator;
@@ -405,22 +405,22 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/emailAccess", method=RequestMethod.GET)
-	public String emailAccess(@RequestParam(required=false) String access, Model model, RedirectAttributes rea, HttpSession session){
+	public String emailAccess(@RequestParam(required=false) String access, RedirectAttributes rea, HttpSession session){
 		log.info("execute UserController emailAccess");
 		if(StringUtils.isEmpty(access)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+			return "redirect:/";
 		}
 		User user = null;
 		try {
 			user = userService.accessEmail(commonCookie.aesDecode(access));
 		} catch (EmptyStringException e) {
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+			return "redirect:/";
 		}
 		session.setAttribute("loginYn", "Y");
 		session.setAttribute("user", user);
-		rea.addFlashAttribute("message", message.MAIL_THANK_YOU_FOR_AGREE);
+		rea.addFlashAttribute("message", message.ACCESS_THANK_YOU_FOR_AGREE);
 		return "redirect:/board";
 	}
 	
@@ -431,18 +431,18 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/emailAccessRe", method=RequestMethod.POST)
-	public String reEmailAccess(@RequestParam(required=false) String email, Model model){
+	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea){
 		log.info("execute UserController reEmailAccess : " + email);
 		OkCheck ok = common.isEmail(email);
 		if(!ok.isBool()){
-			model.addAttribute("message", ok.getMessage());
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
+			return "redirect:/";
 		}
 		try {
-			commonMail.sendMail(email, message.MAIL_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+			commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
 		} catch(EmptyStringException e) {
-			model.addAttribute("message", message.USER_NO_EMAIL);
-			return "view/user/join";
+			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
+			return "redirect:/";
 		}
 		return "redirect:/emailAccessAgo";
 	}

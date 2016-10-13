@@ -91,10 +91,9 @@ public class BoardControllerTest {
     		fileUpload("/boardWrite")
     			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.session(mockSession))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
-    		.andExpect(model().attribute("message", message.BOARD_NO_TITLE))
-    		.andExpect(model().attribute("include", "main/write.ftl"));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.BOARD_NO_TITLE))
+    		.andExpect(redirectedUrl("/boardWrite"));
     }
     
     @Test
@@ -104,10 +103,9 @@ public class BoardControllerTest {
     			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.param("title", "    ")
     			.session(mockSession))
-	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/board/frame"))
-	    	.andExpect(model().attribute("message", message.BOARD_NO_TITLE))
-	    	.andExpect(model().attribute("include", "main/write.ftl"));
+	    	.andExpect(status().isFound())
+	    	.andExpect(flash().attribute("message", message.BOARD_NO_TITLE))
+	    	.andExpect(redirectedUrl("/boardWrite"));
     }
     
     @Test
@@ -117,10 +115,9 @@ public class BoardControllerTest {
     			.file(new MockMultipartFile("editImage", "none.png", null, "bar".getBytes()))
     			.param("title", "testTitle")
     			.session(mockSession))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
-    		.andExpect(model().attribute("message", message.BOARD_NO_CONTENT))
-    		.andExpect(model().attribute("include", "main/write.ftl"));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.BOARD_NO_CONTENT))
+    		.andExpect(redirectedUrl("/boardWrite"));
     }
     
     @Test
@@ -131,10 +128,9 @@ public class BoardControllerTest {
     			.param("title", "testTitle")
     			.param("content", "    ")
     			.session(mockSession))
-    		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
-    		.andExpect(model().attribute("message", message.BOARD_NO_CONTENT))
-    		.andExpect(model().attribute("include", "main/write.ftl"));
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.BOARD_NO_CONTENT))
+    		.andExpect(redirectedUrl("/boardWrite"));
     }
     
     @Test

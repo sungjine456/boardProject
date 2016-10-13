@@ -67,6 +67,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.USER_WRONG_ID_OR_WRONG_PASSWORD, is("아이디 혹은 비밀번호가 틀렸습니다."));
 		Assert.assertThat(message.USER_WRONG_EMAIL, is("존재하지 않는 이메일입니다."));
 		Assert.assertThat(message.USER_WRONG_USER, is("존재하지 않는 회원입니다."));
+		Assert.assertThat(message.USER_RE_EMAIL, is("이메일을 다시 입력해주세요."));
 		Assert.assertThat(message.USER_RE_PASSWORD, is("비밀번호를 다시 입력해주세요."));
 		Assert.assertThat(message.USER_RE_UPDATE_PASSWORD, is("수정할 비밀번호를 다시 입력해주세요."));
 		Assert.assertThat(message.USER_ALREADY_JOIN, is("이미 가입되어 있는 회원입니다."));
@@ -79,7 +80,10 @@ public class MessagesPropertiesTest {
 
 		Assert.assertThat(message.MAIL_TRANSLATE_PASSWORD_TITLE, is("비밀번호가 변경되었습니다."));
 		Assert.assertThat(message.MAIL_SUCCESS_TRANSLATE_PASSWORD, is("메일을 확인 해주세요."));
-		Assert.assertThat(message.MAIL_THANK_YOU_FOR_AGREE, is("동의해주셔서 감사합니다."));
-		Assert.assertThat(message.MAIL_THANK_YOU_FOR_JOIN, is("가입해주셔서 감사합니다."));
+		Assert.assertThat(message.MAIL_FAIL_SEND, is("메일 전송에 실패했습니다."));
+		
+		Assert.assertThat(message.ACCESS_FAIL_ACCESS, is("동의에 실패하셨습니다."));
+		Assert.assertThat(message.ACCESS_THANK_YOU_FOR_AGREE, is("동의해주셔서 감사합니다."));
+		Assert.assertThat(message.ACCESS_THANK_YOU_FOR_JOIN, is("가입해주셔서 감사합니다."));
 	}
 }
