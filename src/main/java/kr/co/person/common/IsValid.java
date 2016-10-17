@@ -2,6 +2,7 @@ package kr.co.person.common;
 
 import org.apache.commons.lang3.StringUtils;
 
+import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 
 public class IsValid {
@@ -102,6 +103,32 @@ public class IsValid {
     				&& StringUtils.isEmpty(user.getImg()) 
     				&& StringUtils.isEmpty(user.getName()) 
     				&& StringUtils.isEmpty(user.getPassword()) && user.getIdx() == 0){
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    public static boolean isValidBoard(Board board){
+    	if(board != null){
+    		if(StringUtils.isEmpty(board.getContent()) 
+    				&& StringUtils.isEmpty(board.getTitle()) 
+    				&& board.getIdx() == 0){
+    			return false;
+    		}
+    	} else {
+    		return false;
+    	}
+    	return true;
+    }
+    
+    public static boolean isNotValidBoard(Board board){
+    	if(board != null){
+    		if(StringUtils.isEmpty(board.getContent()) 
+    				&& StringUtils.isEmpty(board.getTitle()) 
+    				&& board.getIdx() == 0){
     			return true;
     		} else {
     			return false;

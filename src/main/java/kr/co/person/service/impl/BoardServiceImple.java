@@ -69,7 +69,7 @@ public class BoardServiceImple implements BoardService {
 	public Board findBoardForIdx(int idx) {
 		log.info("execute BoardServiceImpl findBoardForIdx");
 		if(IsValid.isNotValidInts(idx)){
-			return null;
+			return new Board();
 		}
 		return boardRepository.findOne(idx);
 	}

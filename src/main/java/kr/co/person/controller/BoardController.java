@@ -159,7 +159,7 @@ public class BoardController {
 		Board board = boardService.findBoardForIdx(boardNum);
 		BoardLike boardLike = boardService.getBoardLike(boardNum, (User)session.getAttribute("user"));
 		long likeCount = boardService.getBoardLikeCount(boardNum);
-		if(IsValid.isNotValidObjects(board) || likeCount < 0){
+		if(IsValid.isNotValidBoard(board) || likeCount < 0){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -224,7 +224,7 @@ public class BoardController {
 			return "redirect:/board";
 		}
 		Board board = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidObjects(board)){
+		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -245,7 +245,7 @@ public class BoardController {
 			return "redirect:/board";
 		}
 		Board findBoard = boardService.findBoardForIdx(num);
-		if(IsValid.isNotValidObjects(findBoard)){
+		if(IsValid.isNotValidBoard(findBoard)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -290,7 +290,7 @@ public class BoardController {
 		}
 		String commentSentence = comment.getComment();
 		Board board = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidObjects(board)){
+		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -324,7 +324,7 @@ public class BoardController {
 		int idx = comment.getIdx();
 		String commentSentence = comment.getComment();
 		Board board = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidObjects(board)){
+		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -362,7 +362,7 @@ public class BoardController {
 		String commentSentence = comment.getComment();
 		int idx = comment.getIdx();
 		Board board = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidObjects(board)){
+		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}

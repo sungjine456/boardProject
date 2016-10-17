@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -153,5 +154,27 @@ public class IsValidTest {
 		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
 		user = new User("id", "email", "password", "name", "img", date, date);
 		Assert.assertThat(IsValid.isNotValidUser(user), is(false));
+	}
+	
+	@Test
+	public void testIsValidBoard(){
+		DateTime date = new DateTime();
+		Board board = null;
+		Assert.assertThat(IsValid.isValidBoard(board), is(false));
+		board = new Board();
+		Assert.assertThat(IsValid.isValidBoard(board), is(false));
+		board = new Board("title", "content", new User(), date, date);
+		Assert.assertThat(IsValid.isValidBoard(board), is(true));
+	}
+	
+	@Test
+	public void testIsNotValidBoard(){
+		DateTime date = new DateTime();
+		Board board = null;
+		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
+		board = new Board();
+		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
+		board = new Board("title", "content", new User(), date, date);
+		Assert.assertThat(IsValid.isNotValidBoard(board), is(false));
 	}
 }
