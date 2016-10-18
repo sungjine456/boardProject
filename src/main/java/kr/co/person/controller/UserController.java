@@ -182,8 +182,12 @@ public class UserController {
 		log.info("execute UserController login");
 		String id = user.getId();
 		String password = user.getPassword();
-		if(IsValid.isNotValidObjects(id, password)){
-			rea.addFlashAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
+		if(StringUtils.isEmpty(id)){
+			rea.addFlashAttribute("message", message.USER_NO_ID);
+			return "redirect:/";
+		}
+		if(StringUtils.isEmpty(password)){
+			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/";
 		}
 		try {

@@ -224,7 +224,7 @@ public class UserControllerTest {
     public void testLoginNoIdAndNoPassword() throws Exception{
     	mock.perform(post("/"))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(flash().attribute("message", message.USER_NO_ID))
     		.andExpect(redirectedUrl("/"));
     }
     
@@ -234,7 +234,7 @@ public class UserControllerTest {
     		post("/")
 				.param("id", "sungjin"))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(flash().attribute("message", message.USER_NO_PASSWORD))
     		.andExpect(redirectedUrl("/"));
     }
     
@@ -244,7 +244,7 @@ public class UserControllerTest {
     		post("/")
 				.param("password", "123123"))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD))
+    		.andExpect(flash().attribute("message", message.USER_NO_ID))
     		.andExpect(redirectedUrl("/"));
     }
     

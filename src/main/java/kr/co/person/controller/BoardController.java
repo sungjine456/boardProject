@@ -92,7 +92,7 @@ public class BoardController {
 		log.info("execute BoardController boardWrite");
 		if(!common.sessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
-			return "redirect:/boardWrite";
+			return "redirect:/";
 		}
 		String title = board.getTitle();
 		String content = board.getContent();
@@ -104,10 +104,15 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
 			return "redirect:/boardWrite";
 		}
+		User user = (User)session.getAttribute("user");
+		if(IsValid.isNotValidUser(user)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		if(editImage.getOriginalFilename().split("\\.").length == 2){
 			String imgPath = "";
 			try {
-				imgPath = common.createImg(editImage, ((User)session.getAttribute("user")).getId(), "board");
+				imgPath = common.createImg(editImage, user.getId(), "board");
 			} catch (IOException e) {
 				rea.addFlashAttribute("message", message.FILE_FAIL_UPLOAD);
 				return "redirect:/boardWrite";
@@ -128,7 +133,7 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
 			return "redirect:/boardWrite";
 		}
-		OkCheck ok = boardService.write(title, content, ((User)session.getAttribute("user")).getIdx());
+		OkCheck ok = boardService.write(title, content, user.getIdx());
 		if(!ok.isBool()){
 			rea.addFlashAttribute("message", ok.getMessage());
 			return "redirect:/boardWrite";
@@ -140,8 +145,8 @@ public class BoardController {
 	public String boardDetailView(@RequestParam(required=false, defaultValue="0") int boardNum, @RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -156,8 +161,13 @@ public class BoardController {
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 
+		User user = (User)session.getAttribute("user");
+		if(IsValid.isNotValidUser(user)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		Board board = boardService.findBoardForIdx(boardNum);
-		BoardLike boardLike = boardService.getBoardLike(boardNum, (User)session.getAttribute("user"));
+		BoardLike boardLike = boardService.getBoardLike(boardNum, user);
 		long likeCount = boardService.getBoardLikeCount(boardNum);
 		if(IsValid.isNotValidBoard(board) || likeCount < 0){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -217,8 +227,12 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardUpdateView", method=RequestMethod.GET)
-	public String boardUpdateView(@RequestParam(required=false, defaultValue="0") int boardNum, Model model, RedirectAttributes rea){
+	public String boardUpdateView(@RequestParam(required=false, defaultValue="0") int boardNum, Model model, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardUpdateView");
+		if(!common.sessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
@@ -235,8 +249,12 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
-	public String boardUpdate(@IsValidBoard Board board, RedirectAttributes rea){
+	public String boardUpdate(@IsValidBoard Board board, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardUpdate");
+		if(!common.sessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		int num = board.getIdx();
 		String title = board.getTitle();
 		String content = board.getContent();
@@ -278,11 +296,11 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
-	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model, HttpSession session, RedirectAttributes rea){
+	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -290,12 +308,17 @@ public class BoardController {
 		}
 		String commentSentence = comment.getComment();
 		Board board = boardService.findBoardForIdx(boardNum);
+		User user = (User)session.getAttribute("user");
 		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
+		if(IsValid.isNotValidUser(user)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		try {
-			if(!commentService.write(common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
+			if(!commentService.write(common.enter(common.cleanXss(commentSentence)), user.getIdx(), boardNum)){
 				rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 			}
 		} catch(EmptyStringException e) {
@@ -315,8 +338,12 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
-	public String updateComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, RedirectAttributes rea){
+	public String updateComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController updateComment");
+		if(!common.sessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
@@ -352,8 +379,8 @@ public class BoardController {
 	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
 		if(!common.sessionComparedToDB(session)){
-			model.addAttribute("message", message.USER_NO_LOGIN);
-			return "view/user/login";
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
 		}
 		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
@@ -362,6 +389,7 @@ public class BoardController {
 		String commentSentence = comment.getComment();
 		int idx = comment.getIdx();
 		Board board = boardService.findBoardForIdx(boardNum);
+		User user = (User)session.getAttribute("user");
 		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
@@ -371,8 +399,12 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
+		if(IsValid.isNotValidUser(user)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		try {
-			if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), ((User)session.getAttribute("user")).getIdx(), boardNum)){
+			if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), user.getIdx(), boardNum)){
 				rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
 				rea.addAttribute("boardNum", boardNum);
 				return "redirect:/boardDetail";
