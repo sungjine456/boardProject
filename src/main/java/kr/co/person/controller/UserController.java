@@ -205,19 +205,14 @@ public class UserController {
 			session.setAttribute("user", user);
 			if(StringUtils.equals(idSave, "ckeck")){
 				String loginId = "";
+				String enKeyId = "";
 				try {
 					loginId = common.cookieValueEncryption(new DateTime().toString());
+					enKeyId = commonCookie.aesEncode(id);
 				} catch(EmptyStringException e) {
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
 				} catch(NoSuchAlgorithmException e) {
-					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
-					return "redirect:/";
-				}
-				String enKeyId = "";
-				try {
-					enKeyId = commonCookie.aesEncode(id);
-				} catch (EmptyStringException e) {
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
 				} catch (Exception e){
@@ -392,6 +387,10 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
+		if(IsValid.isNotValidUser(updateUser)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		String imgPath = "";
 		try {
 			imgPath = common.createImg(ufile, updateUser.getId(), "user");
@@ -490,7 +489,7 @@ public class UserController {
 	
 	@RequestMapping(value="/emailAccessRe", method=RequestMethod.POST)
 	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea){
-		log.info("execute UserController reEmailAccess : " + email);
+		log.info("execute UserController reEmailAccess");
 		OkCheck ok = common.isEmail(email);
 		if(!ok.isBool()){
 			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
