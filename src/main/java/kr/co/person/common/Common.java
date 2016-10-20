@@ -148,4 +148,17 @@ public class Common {
 				|| !StringUtils.equals(loginYn, "Y"))
 				?false:true;
 	}
+    
+    public boolean adminSessionComparedToDB(HttpSession session){
+		String loginYn = IsValid.isValidObjects(session.getAttribute("loginYn"))?(String)session.getAttribute("loginYn"):"";
+		User sessionUser = IsValid.isValidObjects(session.getAttribute("user"))?(User)session.getAttribute("user"):null;
+		if(sessionUser == null){
+			return false;
+		}
+		User user = userService.findUserForIdx(sessionUser.getIdx());
+		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
+				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
+				|| ((sessionUser.getAdmin().equals(user.getAdmin()))?user.getAdmin():"N").equals("N") || !StringUtils.equals(loginYn, "Y"))
+				?false:true;
+	}
 }

@@ -33,6 +33,8 @@ public class User extends CommonEntity {
 	private String img;
 	@Column(name="access")
 	private String access = "N";
+	@Column(name="admin_yn")
+	private String admin = "N";
 	
 	public User(){
 	}
@@ -87,5 +89,11 @@ public class User extends CommonEntity {
 	}
 	public void setAccess(String access) {
 		this.access = access;
+	}
+	public String getAdmin() {
+		return admin;
+	}
+	public void setAdmin(String admin) {
+		this.admin = admin;
 	}
 }
