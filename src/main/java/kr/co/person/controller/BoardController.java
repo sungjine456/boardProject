@@ -81,7 +81,11 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/boardWrite", method=RequestMethod.GET)
-	public String boardWriteView(Model model){
+	public String boardWriteView(Model model, HttpSession session, RedirectAttributes rea){
+		if(!common.sessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		log.info("execute BoardController boardWriteView");
 		model.addAttribute("include", "main/write.ftl");
 		return "view/board/frame";

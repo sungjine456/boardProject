@@ -25,8 +25,8 @@ import kr.co.person.service.BoardService;
 
 @Service
 @Transactional
-public class BoardServiceImple implements BoardService {
-	private static final Logger log = LoggerFactory.getLogger(BoardServiceImple.class);
+public class BoardServiceImpl implements BoardService {
+	private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
 	@Autowired private BoardRepository boardRepository;
 	@Autowired private UserRepository userRepository;

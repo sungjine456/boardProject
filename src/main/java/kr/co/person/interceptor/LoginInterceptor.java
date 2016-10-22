@@ -15,16 +15,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
     	log.info("interceptor excute");
     	String url = req.getRequestURI();
-    	if(url != null && (url.equals("/test") || url.equals("/") || url.matches("/join[/a-zA-Z]{0,15}") || url.equals("/translatePassword") || url.equals("/interceptorView") || url.matches("/error[0-9]{0,3}")) || url.matches("/emailAccess[a-zA-Z]{0,5}")|| url.matches("/admin[a-zA-Z]{0,10}")){
+    	if(url != null && (url.equals("/test") || url.equals("/") || url.matches("/join[/a-zA-Z]{0,15}") || url.equals("/translatePassword") || url.equals("/interceptorView") || url.matches("/error[0-9]{0,3}")) || url.matches("/emailAccess[a-zA-Z]{0,5}")|| url.matches("/admin[/a-zA-Z]{0,10}")){
     		log.info("interceptor no login required excute");
     		return true;
     	}
     	HttpSession session = req.getSession();
-		if(session.getAttribute("loginYn") == null || session.getAttribute("loginYn").equals("N")){
+		if(session.getAttribute("loginYn") != null && session.getAttribute("loginYn").equals("Y")){
 			log.info("interceptor login required excute");
-			res.sendRedirect("/interceptorView");
-			return false;
+			return true;
 		}
-		return true;
+		res.sendRedirect("/interceptorView");
+		return false;
     }
 }

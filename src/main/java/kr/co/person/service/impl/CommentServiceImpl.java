@@ -23,8 +23,8 @@ import kr.co.person.service.CommentService;
 
 @Service
 @Transactional
-public class CommentServiceImple implements CommentService {
-	private static final Logger log = LoggerFactory.getLogger(CommentServiceImple.class);
+public class CommentServiceImpl implements CommentService {
+	private static final Logger log = LoggerFactory.getLogger(CommentServiceImpl.class);
 
 	@Autowired private CommentRepository commentRepository;
 	@Autowired private BoardRepository boardRepository;

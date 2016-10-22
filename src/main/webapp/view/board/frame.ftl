@@ -8,7 +8,7 @@
 			</#if>
 			<#assign include = include!"/view/board/main/board.ftl">
 		</script>
-		<title>Person Board Projec</title>
+		<title>Person Board Project</title>
 		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
 		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="css/common/common.css">
@@ -24,7 +24,7 @@
 			<div id="middle">
 				<#include include>
 			</div>
-		<div>
+		</div>
 		<script type="text/javascript" src="js/boot/bootstrap.min.js"></script>
 	</body>
 </html>
