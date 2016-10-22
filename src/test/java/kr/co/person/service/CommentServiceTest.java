@@ -45,8 +45,8 @@ public class CommentServiceTest {
 	@Test
 	public void testWrite(){
 		Assert.assertThat(commentService.write("comment write test", 1, 3), is(false));
-		Assert.assertThat(commentService.write("comment write test", 3, 1), is(false));
-		Assert.assertThat(commentService.write("comment write test", 3, 3), is(false));
+		Assert.assertThat(commentService.write("comment write test", 100, 1), is(false));
+		Assert.assertThat(commentService.write("comment write test", 100, 100), is(false));
 		Assert.assertThat(commentService.write("comment write test", 0, 0), is(false));
 		Assert.assertThat(commentService.write("", 1, 1), is(false));
 		Assert.assertThat(commentService.write(null, 1, 1), is(false));

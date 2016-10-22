@@ -59,7 +59,7 @@ public class AdminControllerTest {
     	mockSession.setAttribute("user", user);
     	
     	mock.perform(
-			get("/adminView")
+			get("/adminView/users")
     			.session(mockSession))
 	    	.andExpect(status().isFound())
 			.andExpect(redirectedUrl("/"))
@@ -69,9 +69,10 @@ public class AdminControllerTest {
     @Test
     public void testAdminView() throws Exception {
     	mock.perform(
-			get("/adminView")
+			get("/adminView/users")
     			.session(mockSession))
 	    	.andExpect(status().isOk())
-	    	.andExpect(view().name("view/admin/adminView"));
+	    	.andExpect(model().attribute("include", "/view/admin/adminView.ftl"))
+	    	.andExpect(view().name("view/board/frame"));
     }
 }

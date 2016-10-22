@@ -6,13 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
 import kr.co.person.common.Message;
-import kr.co.person.domain.User;
+import kr.co.person.service.AdminService;
 
 @Controller
 public class AdminController {
@@ -20,16 +21,17 @@ public class AdminController {
 	
 	@Autowired private Common common;
 	@Autowired private Message message;
+	@Autowired private AdminService adminService;
 	
-	@RequestMapping(value="/adminView", method=RequestMethod.GET)
-	public String adminView(HttpSession session, RedirectAttributes rea){
+	@RequestMapping(value="/adminView/users", method=RequestMethod.GET)
+	public String adminView(HttpSession session, Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminView");
-		log.info(((User)session.getAttribute("user")).getAdmin());
 		if(!common.adminSessionComparedToDB(session)){
-			log.info("?");
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		return "view/admin/adminView";
+		model.addAttribute("users", adminService.findUserAll());
+		model.addAttribute("include", "/view/admin/adminView.ftl");
+		return "view/board/frame";
 	}
 }

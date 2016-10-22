@@ -145,7 +145,7 @@ public class UserServiceTest {
 		Assert.assertEquals(user.getRegDate(), user.getUpDate());
 		Assert.assertThat(userService.update(1, "hyun", "", ""), is(false));
 		Assert.assertThat(userService.update(1, "", "hyun@naver.com", ""), is(false));
-		Assert.assertThat(userService.update(3, "hyun", "hyun@naver.com", ""), is(false));
+		Assert.assertThat(userService.update(100, "hyun", "hyun@naver.com", ""), is(false));
 		Assert.assertThat(userService.update(1, "hyun", "hyun@naver.com", ""), is(true));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getUpDate(), is(not(user.getRegDate())));
@@ -164,7 +164,7 @@ public class UserServiceTest {
 		Assert.assertThat(userService.autoLogin(null, ""), is(false));
 		Assert.assertThat(userService.autoLogin(null, "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(2), ""), is(false));
-		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(3), "asdasdasd"), is(false));
+		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(100), "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), ""), is(false));
 		Assert.assertThat(userService.autoLogin(userService.findUserForIdx(1), "asdasdasd"), is(true));
 	}
@@ -184,9 +184,9 @@ public class UserServiceTest {
 	@Test
 	public void testPasswordCheck(){
 		Assert.assertThat(userService.passwordCheck(1, "123123"), is(true));
-		Assert.assertThat(userService.passwordCheck(3, "123123"), is(false));
+		Assert.assertThat(userService.passwordCheck(100, "123123"), is(false));
 		Assert.assertThat(userService.passwordCheck(1, "654321"), is(false));
-		Assert.assertThat(userService.passwordCheck(3, "654321"), is(false));
+		Assert.assertThat(userService.passwordCheck(100, "654321"), is(false));
 	}
 	
 	@Test
