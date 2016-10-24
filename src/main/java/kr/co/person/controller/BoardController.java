@@ -69,7 +69,7 @@ public class BoardController {
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		Page<Board> pages = boardService.findAll(pageable);
 		if(IsValid.isNotValidObjects(pages)){
-			return "view/board/frame";
+			return "view/frame";
 		}
 		int maxPage = pages.getTotalPages();
 		if(lastPage > maxPage){
@@ -79,7 +79,7 @@ public class BoardController {
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("maxPage", maxPage);
-		return "view/board/frame";
+		return "view/frame";
 	}
 	
 	@RequestMapping(value="/boardWrite", method=RequestMethod.GET)
@@ -89,8 +89,8 @@ public class BoardController {
 			return "redirect:/";
 		}
 		log.info("execute BoardController boardWriteView");
-		model.addAttribute("include", "main/write.ftl");
-		return "view/board/frame";
+		model.addAttribute("include", "board/write.ftl");
+		return "view/frame";
 	}
 
 	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
@@ -182,7 +182,7 @@ public class BoardController {
 		String like = (IsValid.isNotValidObjects(boardLike))? message.BOARD_LIKE:message.BOARD_LIKE_CANCLE;
 		Page<Comment> comments = commentService.findAllCommentByBoard(boardNum, pageable);
 		if(IsValid.isNotValidObjects(comments)){
-			return "view/board/frame";
+			return "view/frame";
 		}
 		int maxPage = comments.getTotalPages();
 		if(lastPage > maxPage){
@@ -195,7 +195,7 @@ public class BoardController {
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("maxPage", maxPage);
-		model.addAttribute("include", "main/boardDetail.ftl");
+		model.addAttribute("include", "board/boardDetail.ftl");
 		model.addAttribute("board", board);
 		model.addAttribute("likeCount", likeCount);
 		model.addAttribute("like", like);
@@ -229,7 +229,7 @@ public class BoardController {
 			res.addCookie(common.addCookie("pht", boardNum + " "));
 		    boardService.addHitCount(boardNum);
 		}
-		return "view/board/frame";
+		return "view/frame";
 	}
 	
 	@RequestMapping(value="/boardUpdateView", method=RequestMethod.GET)
@@ -248,10 +248,10 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		model.addAttribute("include", "main/update.ftl");
+		model.addAttribute("include", "board/update.ftl");
 		model.addAttribute("board", board);
 		model.addAttribute("num", boardNum);
-		return "view/board/frame";
+		return "view/frame";
 	}
 	
 	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)

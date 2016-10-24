@@ -73,6 +73,6 @@ public class AdminControllerTest {
     			.session(mockSession))
 	    	.andExpect(status().isOk())
 	    	.andExpect(model().attribute("include", "/view/admin/adminView.ftl"))
-	    	.andExpect(view().name("view/board/frame"));
+	    	.andExpect(view().name("view/frame"));
     }
 }

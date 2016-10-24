@@ -68,7 +68,7 @@ public class BoardControllerTest {
     		get("/board")
     			.session(mockSession))
     		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
+    		.andExpect(view().name("view/frame"))
     		.andExpect(model().attributeExists("boardList"))
     		.andExpect(model().attributeExists("startPage"))
     		.andExpect(model().attributeExists("lastPage"))
@@ -81,8 +81,8 @@ public class BoardControllerTest {
     		get("/boardWrite")
     			.session(mockSession))
     		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
-    		.andExpect(model().attribute("include", "main/write.ftl"));
+    		.andExpect(view().name("view/frame"))
+    		.andExpect(model().attribute("include", "board/write.ftl"));
     }
     
     @Test
@@ -173,12 +173,12 @@ public class BoardControllerTest {
     			.session(mockSession)
     			.param("boardNum", "1"))
     		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
+    		.andExpect(view().name("view/frame"))
     		.andExpect(model().attributeExists("comments", "board"))
     		.andExpect(model().attribute("startPage", 1))
     		.andExpect(model().attribute("lastPage", 1))
     		.andExpect(model().attribute("maxPage", 1))
-    		.andExpect(model().attribute("include", "main/boardDetail.ftl"))
+    		.andExpect(model().attribute("include", "board/boardDetail.ftl"))
     		.andExpect(model().attribute("likeCount", 1L))
     		.andExpect(model().attribute("like", "좋아요"))
     		.andReturn();
@@ -218,9 +218,9 @@ public class BoardControllerTest {
     			.param("boardNum", "1"))
 	    	.andExpect(status().isOk())
 	    	.andExpect(model().attributeExists("include"))
-	    	.andExpect(model().attribute("include", "main/update.ftl"))
+	    	.andExpect(model().attribute("include", "board/update.ftl"))
 	    	.andExpect(model().attribute("num", 1))
-	    	.andExpect(view().name("view/board/frame"));
+	    	.andExpect(view().name("view/frame"));
     }
     
     @Test

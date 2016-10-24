@@ -32,6 +32,6 @@ public class AdminController {
 		}
 		model.addAttribute("users", adminService.findUserAll());
 		model.addAttribute("include", "/view/admin/adminView.ftl");
-		return "view/board/frame";
+		return "view/frame";
 	}
 }

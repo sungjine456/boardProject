@@ -99,7 +99,6 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setEmail(garbage);
 		user.setId(garbage);
-		user.setName(garbage);
 		user.setPassword(garbage);
 		userRepository.save(user);
 		return true;

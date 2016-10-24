@@ -296,7 +296,7 @@ public class UserController {
 			return "redirect:/";
 		}
 		model.addAttribute("include", "/view/user/mypage.ftl");
-		return "view/board/frame";
+		return "view/frame";
 	}
 	
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
@@ -377,7 +377,7 @@ public class UserController {
 			return "redirect:/mypage";
 		}
 		model.addAttribute("include", "/view/user/update.ftl");
-		return "view/board/frame";
+		return "view/frame";
 	}
 
 	@RequestMapping(value="/update", method=RequestMethod.POST)

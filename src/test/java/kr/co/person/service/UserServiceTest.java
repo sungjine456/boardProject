@@ -135,7 +135,6 @@ public class UserServiceTest {
 		Assert.assertThat(user.getEmail(), is(garbage));
 		Assert.assertThat(user.getId(), is(garbage));
 		Assert.assertThat(user.getPassword(), is(garbage));
-		Assert.assertThat(user.getName(), is(garbage));
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
 	}
 	

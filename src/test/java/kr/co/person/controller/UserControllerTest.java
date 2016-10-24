@@ -357,7 +357,7 @@ public class UserControllerTest {
     			.session(mockSession))
     		.andExpect(status().isOk())
     		.andExpect(model().attribute("include", "/view/user/mypage.ftl"))
-    		.andExpect(view().name("view/board/frame"));
+    		.andExpect(view().name("view/frame"));
     }
     
     @Test
@@ -524,7 +524,6 @@ public class UserControllerTest {
     	Assert.assertThat(user.getEmail(), is(garbage));
 		Assert.assertThat(user.getId(), is(garbage));
 		Assert.assertThat(user.getPassword(), is(garbage));
-		Assert.assertThat(user.getName(), is(garbage));
     }
     
     @Test
@@ -566,7 +565,7 @@ public class UserControllerTest {
 	    		.session(mockSession)
 	    		.param("password", "123123"))
     		.andExpect(status().isOk())
-    		.andExpect(view().name("view/board/frame"))
+    		.andExpect(view().name("view/frame"))
     		.andExpect(model().attribute("include", "/view/user/update.ftl"));
     }
     
@@ -630,7 +629,7 @@ public class UserControllerTest {
     	Assert.assertThat(id, is("sungjin"));
     	Assert.assertThat(name, is("test"));
     	Assert.assertThat(email, is("test@naver.com"));
-    	Assert.assertThat("default.png", is(img.substring(9)));
+    	Assert.assertThat("default.png", is(img.substring(10)));
     }
     
     @Test
@@ -659,7 +658,7 @@ public class UserControllerTest {
     	Assert.assertThat(id, is("sungjin"));
     	Assert.assertThat(name, is("test"));
     	Assert.assertThat(email, is("test@naver.com"));
-    	Assert.assertThat("test", is(img.substring(9, 13)));
+    	Assert.assertThat("test", is(img.substring(10, 14)));
     }
     
     @Test
