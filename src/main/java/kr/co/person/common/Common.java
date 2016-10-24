@@ -122,7 +122,7 @@ public class Common {
 			Date date = new Date();
 			String fileName = id + "_" + date.getTime() + "." + ext;
 			String filePath = "C:"+se+"boardProject"+se+"img"+se+kind;
-			imgPath = "img"+se+kind+se+fileName;
+			imgPath = "/img"+se+kind+se+fileName;
 			File dayFile = new File(filePath);
 			if(!dayFile.exists()){
 			   dayFile.mkdirs();

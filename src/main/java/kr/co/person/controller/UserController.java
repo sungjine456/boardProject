@@ -74,7 +74,7 @@ public class UserController {
 		}
 		String se = File.separator;
 		if(StringUtils.isEmpty(imgPath)){
-			imgPath = "img"+se+"user"+se+"default.png";
+			imgPath = "/img"+se+"user"+se+"default.png";
 		}
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
@@ -400,7 +400,7 @@ public class UserController {
 		}
 		String se = File.separator;
 		if(StringUtils.isEmpty(imgPath)){
-			imgPath = "img"+se+"user"+se+"default.png";
+			imgPath = "/img"+se+"user"+se+"default.png";
 		}
 		String name = updateUser.getName();
 		String email = updateUser.getEmail();

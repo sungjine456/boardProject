@@ -57,11 +57,13 @@ public class BoardController {
 	private final int COMMENT_MAX_COUNT_OF_PAGE = 20;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req){
+	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpSession session){
 		log.info("execute BoardController main");
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
+		User user = (User)session.getAttribute("user");
+		log.info(user.getImg());
 		Pageable pageable = new CustomPageable(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
@@ -129,7 +131,7 @@ public class BoardController {
 	        String filePath = paths[0];
 	        String kindPath = paths[1];
 	        String fileName = paths[2];
-			content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src="+filePath+se+kindPath+se+fileName+">");
+			content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src=/"+filePath+se+kindPath+se+fileName+">");
 		}
 		try {
 			title = common.cleanXss(title.trim());
