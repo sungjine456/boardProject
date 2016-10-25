@@ -35,6 +35,7 @@ import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.pojo.OkUserCheck;
 import kr.co.person.service.UserService;
 
 @Controller
@@ -191,7 +192,13 @@ public class UserController {
 			return "redirect:/";
 		}
 		try {
-			user = userService.joinCheck(common.cleanXss(id), password);
+			OkUserCheck ouc = userService.joinCheck(common.cleanXss(id), password);
+			if(!ouc.isBool()){
+				rea.addFlashAttribute("message", ouc.getMessage());
+				return "redirect:/";
+			} else {
+				user = ouc.getUser();
+			}
 		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.USER_NO_ID);
 			return "redirect:/";
@@ -336,8 +343,8 @@ public class UserController {
 		}
 		User user = (User)session.getAttribute("user");
 		int idx = user.getIdx();
-		User joinCheck = userService.joinCheck(user.getId(), password);
-		if(IsValid.isNotValidUser(joinCheck) || joinCheck.getIdx() != idx){
+		OkUserCheck joinCheck = userService.joinCheck(user.getId(), password);
+		if(!joinCheck.isBool() || IsValid.isNotValidUser(joinCheck.getUser()) || joinCheck.getUser().getIdx() != idx){
 			rea.addFlashAttribute("message", message.USER_WRONG_USER);
 			return "redirect:/";
 		}
@@ -371,9 +378,12 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		if(StringUtils.isEmpty(password) 
-				|| !userService.passwordCheck(((User)session.getAttribute("user")).getIdx(), password)){
+		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
+			return "redirect:/mypage";
+		}
+		if(!userService.passwordCheck(((User)session.getAttribute("user")).getIdx(), password)){
+			rea.addFlashAttribute("message", message.USER_RE_PASSWORD);
 			return "redirect:/mypage";
 		}
 		model.addAttribute("include", "/view/user/update.ftl");

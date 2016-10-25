@@ -40,6 +40,8 @@ public class UserRepositoryTest {
     
     @Test
     public void testFindByIdAndPassword() {
+    	user = userRepository.findByIdAndPassword("sungjin", "123123");
+    	Assert.assertThat(user, is(nullValue()));
     	user = userRepository.findByIdAndPassword("sungjin", password);
     	Assert.assertThat(user.getName(), is("hong"));
     	Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));

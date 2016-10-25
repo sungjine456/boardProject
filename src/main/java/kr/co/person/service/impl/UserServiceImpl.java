@@ -18,6 +18,7 @@ import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.pojo.OkUserCheck;
 import kr.co.person.repository.AutoLoginRepository;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;
@@ -135,22 +136,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User joinCheck(String id, String password) {
+	public OkUserCheck joinCheck(String id, String password) {
 		log.info("execute UserServiceImpl joinCheck");
-		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
-			return new User();
+		if(StringUtils.isEmpty(id)){
+			return new OkUserCheck(new User(), message.USER_NO_ID, false);
 		}
 		try {
 			password = common.passwordEncryption(password);
 		} catch(EmptyStringException e){
-			return new User();
+			return new OkUserCheck(new User(), message.USER_NO_PASSWORD, false);
 		} catch (NoSuchAlgorithmException e) {
-			return new User();
+			return new OkUserCheck(new User(), message.USER_RE_PASSWORD, false);
 		}
 		if(StringUtils.isEmpty(password)){
-			return new User();
+			return new OkUserCheck(new User(), message.USER_RE_PASSWORD, false);
 		}
-		return userRepository.findByIdAndPassword(id, password);
+		User user = userRepository.findByIdAndPassword(id, password);
+		return new OkUserCheck(user, "", true);
 	}
 
 	@Override

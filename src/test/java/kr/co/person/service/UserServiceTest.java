@@ -2,6 +2,7 @@ package kr.co.person.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import org.junit.Assert;
@@ -17,6 +18,7 @@ import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.pojo.OkUserCheck;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = BoardProjectApplication.class)
@@ -32,8 +34,12 @@ public class UserServiceTest {
 
 	@Test
 	public void testJoinCheck(){
-		user = userService.joinCheck("sungjin", "123123");
-		Assert.assertEquals("sungjin", user.getId());
+		OkUserCheck userCheck = userService.joinCheck("sungjin", "123123");
+		Assert.assertThat(userCheck, is(notNullValue()));
+		Assert.assertThat(userCheck.getMessage(), is(""));
+		Assert.assertThat(userCheck.isBool(), is(true));
+		Assert.assertThat(userCheck.getUser(), is(notNullValue()));
+		Assert.assertThat(userCheck.getUser().getId(), is("sungjin"));
 	}
 	
 	@Test

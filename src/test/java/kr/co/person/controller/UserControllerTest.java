@@ -555,7 +555,7 @@ public class UserControllerTest {
     			.param("password", "111111"))
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/mypage"))
-	    	.andExpect(flash().attribute("message", message.USER_NO_PASSWORD));
+	    	.andExpect(flash().attribute("message", message.USER_RE_PASSWORD));
     }
     
     @Test
