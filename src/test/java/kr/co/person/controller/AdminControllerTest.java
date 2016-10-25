@@ -1,10 +1,19 @@
 package kr.co.person.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import java.util.List;
 import java.util.UUID;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -59,20 +69,63 @@ public class AdminControllerTest {
     	mockSession.setAttribute("user", user);
     	
     	mock.perform(
-			get("/adminView/users")
+			get("/admin/users")
     			.session(mockSession))
 	    	.andExpect(status().isFound())
 			.andExpect(redirectedUrl("/"))
 			.andExpect(flash().attribute("message", message.USER_NO_LOGIN));
     }
 
-    @Test
-    public void testAdminView() throws Exception {
-    	mock.perform(
-			get("/adminView/users")
+	@Test
+	@SuppressWarnings("unchecked")
+    public void testAdminViewSuccess() throws Exception {
+    	MvcResult result = mock.perform(
+			get("/admin/users")
     			.session(mockSession))
 	    	.andExpect(status().isOk())
+	    	.andExpect(model().attributeExists("users"))
 	    	.andExpect(model().attribute("include", "/view/admin/adminView.ftl"))
-	    	.andExpect(view().name("view/frame"));
+	    	.andExpect(view().name("view/frame"))
+	    	.andReturn();
+    	
+    	List<User> userList = (List<User>)result.getRequest().getAttribute("users");
+    	Assert.assertThat(userList.size(), is(3));
+    }
+	
+	@Test
+    public void testAdminTranslatePasswordNoEmail() throws Exception{
+    	mock.perform(post("/admin/translatePassword"))
+    		.andExpect(status().isFound())
+    		.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
+    		.andExpect(redirectedUrl("/admin/users"));
+    }
+    
+    @Test
+    public void testAdminTranslatePasswordNoEmailFormat() throws Exception{
+    	mock.perform(
+    		post("/admin/translatePassword")
+    			.param("email", "test"))
+			.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_EMAIL_FORMAT))
+			.andExpect(redirectedUrl("/admin/users"));
+    }
+    
+    @Test
+    public void testAdminTranslatePasswordWrongEmail() throws Exception{
+    	mock.perform(
+    		post("/admin/translatePassword")
+    			.param("email", "test@naver.com"))
+	    	.andExpect(status().isFound())
+	    	.andExpect(flash().attribute("message", message.USER_WRONG_EMAIL))
+	    	.andExpect(redirectedUrl("/admin/users"));
+    }
+    
+    @Test
+    public void testAdminTranslatePasswordSuccess() throws Exception{
+    	mock.perform(
+    		post("/admin/translatePassword")
+    			.param("email", "sungjin@naver.com"))
+	    	.andExpect(status().isFound())
+	    	.andExpect(redirectedUrl("/admin/users"));
     }
 }

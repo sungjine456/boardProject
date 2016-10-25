@@ -1,51 +1,71 @@
 <div class="container" style="height:100%;">
+	<h1>유저 목록</h1>
+	<BR>
+	<form id="form" action="/admin/translatePassword" method="post">
+		<input type="hidden" id="email" name="email"/>
+	</form>
 	<table class="table" style="margin-top:10px;">
 		<colgroup>
 			<col width="10%"/>
+			<col width="10%"/>
 			<col width="30%"/>
-			<col width="25%"/>
-			<col width="25%"/>
+			<col width="15%"/>
+			<col width="15%"/>
+			<col width="10%"/>
 			<col width="10%"/>
 		</colgroup>
 		<thead>
 			<tr>
-				<th>
+				<th class="text-center">
+					아이디
+				</th>
+				<th class="text-center">
 					이름
 				</th>
-				<th>
+				<th class="text-center">
 					이메일
 				</th>
-				<th>
+				<th class="text-center">
 					가입일
 				</th>
-				<th>
+				<th class="text-center">
 					수정일
 				</th>
-				<th>
+				<th class="text-center">
 					동의 여부
+				</th>
+				<th class="text-center">
+					비밀번호
 				</th>
 			</tr>
 		</thead>
 		<tbody>
 			<#list users as user>
 			<tr>
-				<td>
+				<td class="text-center">
+					${user.id}
+				</td>
+				<td class="text-center">
 					${user.name}
 				</td>
-				<td>
+				<td class="text-center">
 					${user.email}
 				</td>
-				<td>
-					${user.regDate}
+				<td class="text-center">
+					${user.regDate.toString("yyyy.MM.dd HH:mm")}
 				</td>
-				<td>
-					${user.upDate}
+				<td class="text-center">
+					${user.upDate.toString("yyyy.MM.dd HH:mm")}
 				</td>
-				<td>
+				<td class="text-center">
 					${user.access}
+				</td>
+				<td class="text-center">
+					<button type="button" class="btn btn-default btn-xs translatePasswordBtn" data-email="${user.email}">재 발급</button>
 				</td>
 			</tr>
 			</#list>
 		</tbody>
 	</table>
 </div>
+<script type="text/javascript" src="/js/admin/usersView.js"></script>
