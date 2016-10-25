@@ -10,19 +10,19 @@
 		</colgroup>
 		<thead>
 			<tr>
-				<th>
+				<th class="text-center">
 					글 번호
 				</th>
 				<th>
 					제목
 				</th>
-				<th>
+				<th class="text-center">
 					작성자
 				</th>
-				<th>
+				<th class="text-center">
 					조회수
 				</th>
-				<th>
+				<th class="text-center">
 					작성일
 				</th>
 			</tr>
@@ -30,19 +30,19 @@
 		<tbody>
 		<#list boardList.content as board>
 			<tr>
-				<td>
+				<td class="text-center">
 					${board.idx}
 				</td>
 				<td>
 					<a href="/boardDetail?boardNum=${board.idx}">${board.title}</a>
 				</td>
-				<td>
+				<td class="text-center">
 					${board.user.name}
 				</td>
-				<td>
+				<td class="text-center">
 					${board.hitCount}
 				</td>
-				<td>
+				<td class="text-center">
 					${board.regDate.toString("yyyy.MM.dd HH:mm")}
 				</td>
 			</tr>
@@ -76,4 +76,4 @@
 		</tbody>
 	</table>
 </div>
-<script type="text/javascript" src="js/board/main.js"></script>
+<script type="text/javascript" src="/js/board/main.js"></script>

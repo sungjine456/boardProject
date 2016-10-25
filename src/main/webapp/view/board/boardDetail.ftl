@@ -109,4 +109,4 @@
 		</table>
 	</form>
 </div>
-<script type="text/javascript" src="js/board/detail.js"></script>
+<script type="text/javascript" src="/js/board/detail.js"></script>

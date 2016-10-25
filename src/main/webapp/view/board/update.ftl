@@ -31,4 +31,4 @@
 		</table>
 	</form>
 </div>
-<script type="text/javascript" src="js/board/update.js"></script>
+<script type="text/javascript" src="/js/board/update.js"></script>

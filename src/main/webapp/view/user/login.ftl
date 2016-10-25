@@ -8,9 +8,9 @@
 			</#if>
 		</script>
 		<title>로그인</title>
-		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
-		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
-		<link rel="stylesheet" href="css/common/common.css">
+		<link rel="stylesheet" href="/css/boot/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/boot/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/css/common/common.css">
 		<style type="text/css">
 			.container {
 				width : 30%;
@@ -93,8 +93,8 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>
-		<script type="text/javascript" src="js/boot/bootstrap.min.js"></script>
-		<script type="text/javascript" src="js/user/login.js"></script>
+		<script type="text/javascript" src="/js/common/jquery-1.12.3.min.js"></script>
+		<script type="text/javascript" src="/js/boot/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/user/login.js"></script>
 	</body>
 </html>

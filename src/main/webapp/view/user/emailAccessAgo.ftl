@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<title>email access</title>
-		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
-		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/css/boot/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/boot/bootstrap-theme.min.css">
 		<style type="text/css" media="screen">
 			body {
 				background-color: #f1f1f1;
@@ -22,7 +22,7 @@
 			</form>
 		</div>
 	</body>
-	<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>
-	<script type="text/javascript" src="js/boot/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/user/emailAccessAgo.js"></script>
+	<script type="text/javascript" src="/js/common/jquery-1.12.3.min.js"></script>
+	<script type="text/javascript" src="/js/boot/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/user/emailAccessAgo.js"></script>
 </html>

@@ -8,8 +8,8 @@
 			</#if>
 		</script>
 		<title> 회원가입 </title>
-		<link rel="stylesheet" href="css/boot/bootstrap.min.css">
-		<link rel="stylesheet" href="css/boot/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/css/boot/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/boot/bootstrap-theme.min.css">
 		<style>
 			.right {
 				text-align: right;
@@ -110,8 +110,8 @@
 				</div>
 			</form>
 		</div>
-		<script type="text/javascript" src="js/common/jquery-1.12.3.min.js"></script>
-		<script type="text/javascript" src="js/boot/bootstrap.min.js"></script>
-		<script type="text/javascript" src="js/user/join.js"></script>
+		<script type="text/javascript" src="/js/common/jquery-1.12.3.min.js"></script>
+		<script type="text/javascript" src="/js/boot/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/user/join.js"></script>
 	</body>
 </html>

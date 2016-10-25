@@ -40,5 +40,5 @@
 		</table>
 	</form>
 </div>
-<script type="text/javascript" src="js/board/write.js"></script>
-<script type="text/javascript" src="js/common/editer.js"></script>
+<script type="text/javascript" src="/js/board/write.js"></script>
+<script type="text/javascript" src="/js/common/editer.js"></script>

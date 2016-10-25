@@ -108,4 +108,4 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript" src="js/user/update.js"></script>
+<script type="text/javascript" src="/js/user/update.js"></script>
