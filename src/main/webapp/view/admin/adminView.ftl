@@ -1,18 +1,22 @@
 <div class="container" style="height:100%;">
 	<h1>유저 목록</h1>
 	<BR>
-	<form id="form" action="/admin/translatePassword" method="post">
-		<input type="hidden" id="email" name="email"/>
+	<form id="translatePasswordForm" action="/admin/translatePassword" method="post">
+		<input type="hidden" id="translatePasswordEmail" name="email"/>
+	</form>
+	<form id="emailAccessReForm" action="/admin/emailAccessRe" method="post">
+		<input type="hidden" id="emailAccessReEmail" name="email"/>
 	</form>
 	<table class="table" style="margin-top:10px;">
 		<colgroup>
-			<col width="10%"/>
-			<col width="10%"/>
+			<col width="8%"/>
+			<col width="8%"/>
 			<col width="30%"/>
 			<col width="15%"/>
 			<col width="15%"/>
-			<col width="10%"/>
-			<col width="10%"/>
+			<col width="8%"/>
+			<col width="8%"/>
+			<col width="8%"/>
 		</colgroup>
 		<thead>
 			<tr>
@@ -36,6 +40,9 @@
 				</th>
 				<th class="text-center">
 					비밀번호
+				</th>
+				<th class="text-center">
+					동의 여부 재전송
 				</th>
 			</tr>
 		</thead>
@@ -62,6 +69,9 @@
 				</td>
 				<td class="text-center">
 					<button type="button" class="btn btn-default btn-xs translatePasswordBtn" data-email="${user.email}">재 발급</button>
+				</td>
+				<td class="text-center">
+					<button type="button" class="btn btn-default btn-xs emailAccessReBtn" data-email="${user.email}">재 전송</button>
 				</td>
 			</tr>
 			</#list>

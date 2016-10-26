@@ -1,15 +1,24 @@
 var usersView = {
 	translatePasswordBtn : $(".translatePasswordBtn"),
-	form : $("#form"),
-	email : $("#email"),
+	emailAccessReBtn : $(".emailAccessReBtn"),
+	translatePasswordForm : $("#translatePasswordForm"),
+	emailAccessReForm : $("#emailAccessReForm"),
+	translatePasswordEmail : $("#translatePasswordEmail"),
+	emailAccessReEmail : $("#emailAccessReEmail"),
 	tramslatePasswordEvent : function(event){
 		var target = $(event.target);
-		this.email.val(target.data("email"));
-        form.submit();
+		this.translatePasswordEmail.val(target.data("email"));
+		this.translatePasswordForm.submit();
+    },
+    emailAccessReEvent : function(event){
+    	var target = $(event.target);
+		this.emailAccessReEmail.val(target.data("email"));
+        this.emailAccessReForm.submit();
     },
 	init : function(){
 		var self = this;
 		self.translatePasswordBtn.click(function(){self.tramslatePasswordEvent(event)});
+		self.emailAccessReBtn.click(function(){self.emailAccessReEvent(event)});
 	}	
 }
 
