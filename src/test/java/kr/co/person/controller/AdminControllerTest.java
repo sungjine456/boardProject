@@ -94,7 +94,9 @@ public class AdminControllerTest {
 	
 	@Test
     public void testAdminTranslatePasswordNoEmail() throws Exception{
-    	mock.perform(post("/admin/translatePassword"))
+    	mock.perform(
+    		post("/admin/translatePassword")
+    			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
     		.andExpect(redirectedUrl("/admin/users"));
@@ -104,7 +106,8 @@ public class AdminControllerTest {
     public void testAdminTranslatePasswordNoEmailFormat() throws Exception{
     	mock.perform(
     		post("/admin/translatePassword")
-    			.param("email", "test"))
+    			.param("email", "test")
+    			.session(mockSession))
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.USER_NO_EMAIL_FORMAT))
 			.andExpect(redirectedUrl("/admin/users"));
@@ -114,7 +117,8 @@ public class AdminControllerTest {
     public void testAdminTranslatePasswordWrongEmail() throws Exception{
     	mock.perform(
     		post("/admin/translatePassword")
-    			.param("email", "test@naver.com"))
+    			.param("email", "test@naver.com")
+    			.session(mockSession))
 	    	.andExpect(status().isFound())
 	    	.andExpect(flash().attribute("message", message.USER_WRONG_EMAIL))
 	    	.andExpect(redirectedUrl("/admin/users"));
@@ -124,8 +128,29 @@ public class AdminControllerTest {
     public void testAdminTranslatePasswordSuccess() throws Exception{
     	mock.perform(
     		post("/admin/translatePassword")
-    			.param("email", "sungjin@naver.com"))
+    			.param("email", "sungjin@naver.com")
+    			.session(mockSession))
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/admin/users"));
+    }
+    
+    @Test
+    public void testEmailAccessReNoEmail() throws Exception {
+    	mock.perform(
+    		post("/admin/emailAccessRe")
+    			.session(mockSession))
+			.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
+			.andExpect(redirectedUrl("/admin/users"));
+    }
+    
+    @Test
+    public void testEmailAccessReSuccess() throws Exception {
+    	mock.perform(
+    		post("/admin/emailAccessRe")
+    			.param("email", "sungjine@naver.com")
+    			.session(mockSession))
+	    	.andExpect(status().isFound())
+			.andExpect(redirectedUrl("/admin/users"));
     }
 }

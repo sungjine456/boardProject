@@ -1,6 +1,8 @@
 package kr.co.person.repository;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -23,16 +25,14 @@ import kr.co.person.domain.User;
 public class AutoLoginRepositoryTest {
 
 	@Autowired private AutoLoginRepository autoLoginRepository;
-	@Autowired private UserRepository userRepository;
 	
 	@Test
 	public void testSave() {
-		User user = userRepository.findOne(1);
-		Assert.assertThat(user.getIdx(), is(1));
-		Assert.assertThat(user.getName(), is("hong"));
-		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
+		DateTime date = new DateTime();
+		User user = new User("test", "test@naver.cmo", "123123", "test", "test", date, date);
 		AutoLogin autoLoginSave = autoLoginRepository.save(new AutoLogin("asdasdasd", new DateTime(), user));
 		Assert.assertThat(autoLoginSave.getLoginId(), is("asdasdasd"));
+		Assert.assertThat(autoLoginSave.getUser().getIdx(), is(user.getIdx()));
 	}
 	
 	@Test
@@ -47,6 +47,7 @@ public class AutoLoginRepositoryTest {
 	@Test
 	public void testFindByUserIdx(){
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(1, "asdasdasd");
+		Assert.assertThat(autoLogin.getLoginIdx(), is(1));
 		Assert.assertThat(autoLogin.getLoginId(), is("asdasdasd"));
 	}
 }

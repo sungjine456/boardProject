@@ -32,11 +32,10 @@ public class CommnetRepositoryTest {
 	
 	@Autowired private CommentRepository commentRepository;
 	DateTime date = new DateTime();
-	private Comment comment;
 
 	@Test
 	public void testFindOne() {
-		comment = commentRepository.findOne(1);
+		Comment comment = commentRepository.findOne(1);
 		Assert.assertThat(comment.getComment(), is("comment1"));
 	}
 	
@@ -45,8 +44,10 @@ public class CommnetRepositoryTest {
 		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
 		Board board = new Board("title", "content", user, date, date);
 		
-		comment = commentRepository.save(new Comment("c", 0, 0, 0, user, board, date, date));
+		Comment comment = commentRepository.save(new Comment("c", 0, 0, 0, user, board, date, date));
 		Assert.assertThat(comment.getComment(), is("c"));
+		Assert.assertThat(comment.getWriter().getId(), is(user.getId()));
+		Assert.assertThat(comment.getBoard().getTitle(), is(board.getTitle()));
 	}
 	
 	@Test
@@ -137,7 +138,7 @@ public class CommnetRepositoryTest {
 		Assert.assertThat(comments.get(1).getStep(), is(3));
 		Assert.assertThat(comments.get(2).getStep(), is(4));
 		Assert.assertThat(comments.get(3).getStep(), is(5));
-		commentRepository.updateComment(1, 1, 1);
+		commentRepository.increaseCommentIdx(1, 1, 1);
 		comments = commentRepository.getCommentList(1, 1, 1);
 		Assert.assertThat(comments.size(), is(4));
 		Assert.assertThat(comments.get(0).getStep(), is(3));

@@ -1,6 +1,9 @@
 package kr.co.person.common;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
+import java.security.NoSuchAlgorithmException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
+import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.pojo.OkCheck;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,5 +39,27 @@ public class CommonTest {
 		check = common.isEmail("");
 		Assert.assertThat(check.isBool(), is(false));
 		Assert.assertThat(check.getMessage(), is(message.USER_NO_EMAIL));
+	}
+	
+	@Test(expected=EmptyStringException.class)
+	public void testPasswordEncryptionEmptyException() throws EmptyStringException, NoSuchAlgorithmException {
+		common.passwordEncryption("");
+	}
+	
+	@Test
+	public void testPasswordEncryption() throws EmptyStringException, NoSuchAlgorithmException {
+		String password = "123123";
+		String passwordEncryption = common.passwordEncryption(password);
+		Assert.assertThat(password, not(passwordEncryption));
+	}
+
+	@Test(expected=EmptyStringException.class)
+	public void testCookieValueEncryptionEmptyException() throws EmptyStringException, NoSuchAlgorithmException {
+		common.cookieValueEncryption("");
+	}
+
+	@Test(expected=EmptyStringException.class)
+	public void testcleanXssEmptyException() throws EmptyStringException {
+		common.cleanXss("");
 	}
 }

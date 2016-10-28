@@ -70,7 +70,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
 	@Override
 	@Transactional
-	public void updateComment(int boardIdx, int circle, int step) {
+	public void increaseCommentIdx(int boardIdx, int circle, int step) {
 		Board board = boardRepository.findOne(boardIdx);
 		QComment qComment = new QComment("c");
 		new JPAUpdateClause(em, qComment).where(qComment.board.eq(board).and(qComment.circle.eq(circle)).and(qComment.step.gt(step)))

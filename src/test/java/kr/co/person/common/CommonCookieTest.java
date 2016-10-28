@@ -22,9 +22,10 @@ public class CommonCookieTest {
 	@Autowired CommonCookie commonCookie;
 	@Test
 	public void testAes() throws EmptyStringException, Exception{
-		String en = commonCookie.aesEncode("sungjin");
-		Assert.assertThat(en, is(not("sungjin")));
+		String testStr = "sungjin";
+		String en = commonCookie.aesEncode(testStr);
+		Assert.assertThat(en, is(not(testStr)));
 		String de = commonCookie.aesDecode(en);
-		Assert.assertThat(de, is("sungjin"));
+		Assert.assertThat(de, is(testStr));
 	}
 }

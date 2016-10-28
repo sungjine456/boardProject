@@ -61,6 +61,8 @@ public class UserServiceTest {
 
 	@Test
 	public void testFindUserForIdx() {
+		user = userService.findUserForIdx(0);
+		Assert.assertThat(user, is(nullValue()));
 		user = userService.findUserForIdx(1);
 		Assert.assertThat(user.getName(), is("hong"));
 		Assert.assertThat(user.getId(), is("sungjin"));
@@ -69,6 +71,8 @@ public class UserServiceTest {
 	
 	@Test
 	public void testFindUserForId(){
+		user = userService.findUserForId(null);
+		Assert.assertThat(user, is(nullValue()));
 		user = userService.findUserForId("");
 		Assert.assertThat(user, is(nullValue()));
 		user = userService.findUserForId("abcdabcd");
@@ -87,7 +91,7 @@ public class UserServiceTest {
 		Assert.assertThat(ok.isBool(), is(true));
 		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_TRANSlATE_PASSWORD));
 		user = userService.findUserForIdx(1);
-		Assert.assertThat(user.getPassword(), is("481f6cc0511143ccdd7e2d1b1b94faf0a700a8b49cd13922a70b5ae28acaa8c5personProject"));
+		Assert.assertThat(user.getPassword(), not(password));
 	}
 	
 	@Test
@@ -153,7 +157,7 @@ public class UserServiceTest {
 		Assert.assertThat(userService.update(100, "hyun", "hyun@naver.com", ""), is(false));
 		Assert.assertThat(userService.update(1, "hyun", "hyun@naver.com", ""), is(true));
 		user = userService.findUserForIdx(1);
-		Assert.assertThat(user.getUpDate(), is(not(user.getRegDate())));
+		Assert.assertThat(user.getUpDate(), not(user.getRegDate()));
 	}
 	
 	@Test
@@ -161,7 +165,7 @@ public class UserServiceTest {
 		user = userService.findUserForIdx(1);
 		userService.translatePassword("sungjin@naver.com");
 		User updateUser = userService.findUserForIdx(1);
-		Assert.assertThat(updateUser.getPassword(), is(not(user.getPassword())));
+		Assert.assertThat(updateUser.getPassword(), not(user.getPassword()));
 	}
 	
 	@Test
@@ -198,7 +202,8 @@ public class UserServiceTest {
 	public void testAccessEmail(){
 		user = userService.findUserForId("sungjine");
 		Assert.assertThat(user.getAccess(), is("N"));
-		user = userService.accessEmail("sungjine@naver.com");
+		userService.accessEmail("sungjine@naver.com");
+		user = userService.findUserForId("sungjine");
 		Assert.assertThat(user.getAccess(), is("Y"));
 	}
 }

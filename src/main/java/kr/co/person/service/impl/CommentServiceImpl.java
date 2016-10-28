@@ -96,14 +96,14 @@ public class CommentServiceImpl implements CommentService {
 			}
 			int maxSize = maxComments.size();
 			if(maxSize != 0){
-				commentRepository.updateComment(boardIdx, circle, step);
+				commentRepository.increaseCommentIdx(boardIdx, circle, step);
 				commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
 			} else {
 				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth() + 1, writer, board, date, date));
 			}
 		} else {
 			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth() + 1, writer, board, date, date));
-			commentRepository.updateComment(boardIdx, circle, step);
+			commentRepository.increaseCommentIdx(boardIdx, circle, step);
 		}
 		return true;
 	}

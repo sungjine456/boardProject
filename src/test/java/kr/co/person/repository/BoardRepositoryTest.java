@@ -25,12 +25,11 @@ import kr.co.person.domain.User;
 public class BoardRepositoryTest {
 	
 	@Autowired private BoardRepository boardRepository;
-	private Board board;
 	DateTime date = new DateTime();
 
 	@Test
 	public void testFind() {
-		board = boardRepository.findOne(1);
+		Board board = boardRepository.findOne(1);
 		Assert.assertThat(board.getTitle(), is("title"));
 		Assert.assertThat(board.getContent(), is("content"));
 	}
@@ -41,25 +40,31 @@ public class BoardRepositoryTest {
 		Assert.assertThat(boardList.size(), is(1));
 		
 		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
-		board = new Board("t", "c", user, date, date);
 		
-		Board boardSave = boardRepository.save(board);
+		Board boardSave = boardRepository.save(new Board("t", "c", user, date, date));
 		Assert.assertThat(boardSave.getTitle(), is("t"));
 		Assert.assertThat(boardSave.getContent(), is("c"));
+		
 		List<Board> boardList2 = (List<Board>) boardRepository.findAll();
 		Assert.assertThat(boardList2.size(), is(2));
+		
+		Board board = boardList2.get(1);
+		Assert.assertThat(boardSave.getIdx(), is(board.getIdx()));
+		Assert.assertThat(boardSave.getContent(), is(board.getContent()));
+		Assert.assertThat(boardSave.getTitle(), is(board.getTitle()));
+		Assert.assertThat(boardSave.getHitCount(), is(board.getHitCount()));
 	}
 	
 	@Test
 	public void testUpdate(){
-		board = boardRepository.findOne(1);
+		Board board = boardRepository.findOne(1);
 		Assert.assertThat(board.getTitle(), is("title"));
 		Assert.assertThat(board.getContent(), is("content"));
 		board.setContent("cccc");
 		board.setTitle("tttt");
 		boardRepository.save(board);
-		board = boardRepository.findOne(1);
-		Assert.assertThat(board.getTitle(), is("tttt"));
-		Assert.assertThat(board.getContent(), is("cccc"));
+		Board boardUpdate = boardRepository.findOne(1);
+		Assert.assertThat(boardUpdate.getTitle(), is("tttt"));
+		Assert.assertThat(boardUpdate.getContent(), is("cccc"));
 	}
 }
