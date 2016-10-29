@@ -25,11 +25,11 @@ import kr.co.person.domain.User;
 public class AutoLoginRepositoryTest {
 
 	@Autowired private AutoLoginRepository autoLoginRepository;
+	@Autowired private UserRepository userRepository;
 	
 	@Test
 	public void testSave() {
-		DateTime date = new DateTime();
-		User user = new User("test", "test@naver.cmo", "123123", "test", "test", date, date);
+		User user = userRepository.findOne(1);
 		AutoLogin autoLoginSave = autoLoginRepository.save(new AutoLogin("asdasdasd", new DateTime(), user));
 		Assert.assertThat(autoLoginSave.getLoginId(), is("asdasdasd"));
 		Assert.assertThat(autoLoginSave.getUser().getIdx(), is(user.getIdx()));

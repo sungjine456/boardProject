@@ -47,7 +47,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<#list users as user>
+			<#list users.content as user>
 			<tr>
 				<td class="text-center">
 					${user.id}
@@ -75,6 +75,21 @@
 				</td>
 			</tr>
 			</#list>
+			<tr>
+				<td colspan="8">
+					<div style="text-align:center;">
+		<#if startPage &gt; 2>
+			<a class="btn btn-default btn-sm" href="?pageNum=${startPage-1}">이전</a>
+		</#if>
+		<#list startPage..lastPage as i>
+			<a class="btn btn-default btn-sm" href="?pageNum=${i}">${i}</a>
+		</#list>
+		<#if lastPage &lt; maxPage>
+			<a class="btn btn-default btn-sm" href="?pageNum=${lastPage+1}">다음</a>
+		</#if>
+					</div>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>

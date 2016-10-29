@@ -1,9 +1,10 @@
 package kr.co.person.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import kr.co.person.domain.User;
 
 public interface AdminService {
-	public List<User> findUserAll();
+	public Page<User> findUserAll(Pageable pageable);
 }

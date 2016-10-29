@@ -7,6 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,8 @@ import kr.co.person.common.CommonCookie;
 import kr.co.person.common.CommonMail;
 import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
+import kr.co.person.domain.User;
+import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.service.AdminService;
 import kr.co.person.service.UserService;
@@ -34,14 +39,33 @@ public class AdminController {
 	@Autowired private CommonMail commonMail;
 	@Autowired private CommonCookie commonCookie;
 	
+	private final int PAGE_SIZE = 5;
+	private final int PAGE_SIZE_CONTROL_NUM = 1;
+	private final int MAX_COUNT_OF_PAGE = 20;
+	
 	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
-	public String adminView(HttpSession session, Model model, RedirectAttributes rea){
+	public String adminView(@RequestParam(required=false, defaultValue="0") int pageNum, HttpSession session, Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminView");
+		if(pageNum > 0){
+			pageNum -= 1;
+		}
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		model.addAttribute("users", adminService.findUserAll());
+		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
+		Page<User> pages = adminService.findUserAll(pageable);
+		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
+		int maxPage = pages.getTotalPages();
+		if(lastPage > maxPage){
+			lastPage = maxPage;
+		}
+		
+		model.addAttribute("users", pages);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("lastPage", lastPage);
+		model.addAttribute("maxPage", maxPage);
 		model.addAttribute("include", "/view/admin/adminView.ftl");
 		return "view/frame";
 	}
@@ -70,7 +94,7 @@ public class AdminController {
 	
 	@RequestMapping(value="/admin/emailAccessRe", method=RequestMethod.POST)
 	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea){
-		log.info("execute UserController reEmailAccess");
+		log.info("execute AdminController reEmailAccess");
 		OkCheck ok = common.isEmail(email);
 		if(!ok.isBool()){
 			rea.addFlashAttribute("message", message.USER_NO_EMAIL);

@@ -1,7 +1,6 @@
 package kr.co.person.controller;
 
 import static org.hamcrest.CoreMatchers.is;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
@@ -21,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -88,7 +88,8 @@ public class AdminControllerTest {
 	    	.andExpect(view().name("view/frame"))
 	    	.andReturn();
     	
-    	List<User> userList = (List<User>)result.getRequest().getAttribute("users");
+    	Page<User> pages = (Page<User>)result.getRequest().getAttribute("users");
+    	List<User> userList = pages.getContent();
     	Assert.assertThat(userList.size(), is(3));
     }
 	
