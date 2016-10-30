@@ -21,22 +21,22 @@
 		<thead>
 			<tr>
 				<th class="text-center">
-					아이디
+					<a href="?sort=id">아이디</a>
 				</th>
 				<th class="text-center">
-					이름
+					<a href="?sort=name">이름</a>
 				</th>
 				<th class="text-center">
-					이메일
+					<a href="?sort=email">이메일</a>
 				</th>
 				<th class="text-center">
-					가입일
+					<a href="?sort=regDate">가입일</a>
 				</th>
 				<th class="text-center">
 					수정일
 				</th>
 				<th class="text-center">
-					동의 여부
+					<a href="?sort=access">동의 여부</a>
 				</th>
 				<th class="text-center">
 					비밀번호

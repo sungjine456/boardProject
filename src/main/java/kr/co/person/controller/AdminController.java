@@ -42,18 +42,31 @@ public class AdminController {
 	private final int PAGE_SIZE = 5;
 	private final int PAGE_SIZE_CONTROL_NUM = 1;
 	private final int MAX_COUNT_OF_PAGE = 20;
-	
+	private String saveSort = "";
+	private Direction direction = Direction.DESC;
 	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
-	public String adminView(@RequestParam(required=false, defaultValue="0") int pageNum, HttpSession session, Model model, RedirectAttributes rea){
+	public String adminView(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminView");
 		if(pageNum > 0){
 			pageNum -= 1;
+		}
+		if(StringUtils.isEmpty(sort)){
+			sort = "idx";
+		}
+		if(saveSort.equals(sort)){
+			if(direction == Direction.DESC){
+				direction = Direction.ASC;
+			} else {
+				direction = Direction.DESC;
+			}
+		} else {
+			saveSort = sort;
 		}
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
+		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, direction, sort);
 		Page<User> pages = adminService.findUserAll(pageable);
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
