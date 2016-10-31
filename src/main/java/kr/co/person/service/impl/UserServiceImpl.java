@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(password);
 		DateTime date = new DateTime();
 		user.setRegDate(date);
-		user.setUpDate(date);
+		user.setUpdateDate(date);
 		
 		userRepository.save(user);
 		return new OkCheck(message.USER_SUCCESS_JOIN, true);
@@ -301,7 +301,7 @@ public class UserServiceImpl implements UserService {
 		user.setName(name);
 		user.setEmail(email);
 		user.setImg(imgPath);
-		user.setUpDate(new DateTime());
+		user.setUpdateDate(new DateTime());
 		user = userRepository.save(user);
 		if(user == null){
 			return false;
@@ -321,7 +321,7 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setName(name);
 		user.setEmail(email);
-		user.setUpDate(new DateTime());
+		user.setUpdateDate(new DateTime());
 		userRepository.save(user);
 		return true;
 	}

@@ -63,13 +63,13 @@ public class BoardServiceTest {
 	@Test
 	public void testUpdate(){
 		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getRegDate(), is(board.getUpDate()));
+		Assert.assertThat(board.getRegDate(), is(board.getUpdateDate()));
 		Assert.assertThat(boardService.update(1, "hyun", ""), is(false));
 		Assert.assertThat(boardService.update(1, "", "hyun"), is(false));
 		Assert.assertThat(boardService.update(5, "hyun", "hyun"), is(false));
 		Assert.assertThat(boardService.update(1, "ttttt", "ccccc"), is(true));
 		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getRegDate(), is(not(board.getUpDate())));
+		Assert.assertThat(board.getRegDate(), is(not(board.getUpdateDate())));
 	}
 	
 	@Test

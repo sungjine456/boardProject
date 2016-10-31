@@ -10,13 +10,13 @@ public class CommonEntity {
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime regDate;
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime upDate;
+	private DateTime updateDate;
 	
 	public CommonEntity(){
 	}
-	public CommonEntity(DateTime regDate, DateTime upDate){
+	public CommonEntity(DateTime regDate, DateTime updateDate){
 		this.regDate = regDate;
-		this.upDate = upDate;
+		this.updateDate = updateDate;
 	}
 	
 	public DateTime getRegDate() {
@@ -25,10 +25,10 @@ public class CommonEntity {
 	public void setRegDate(DateTime regDate) {
 		this.regDate = regDate;
 	}
-	public DateTime getUpDate() {
-		return upDate;
+	public DateTime getUpdateDate() {
+		return updateDate;
 	}
-	public void setUpDate(DateTime upDate) {
-		this.upDate = upDate;
+	public void setUpdateDate(DateTime updateDate) {
+		this.updateDate = updateDate;
 	}
 }

@@ -33,7 +33,7 @@
 					<a href="?sort=regDate">가입일</a>
 				</th>
 				<th class="text-center">
-					수정일
+					<a href="?sort=updateDate">수정일</a>
 				</th>
 				<th class="text-center">
 					<a href="?sort=access">동의 여부</a>
@@ -62,7 +62,7 @@
 					${user.regDate.toString("yyyy.MM.dd HH:mm")}
 				</td>
 				<td class="text-center">
-					${user.upDate.toString("yyyy.MM.dd HH:mm")}
+					${user.updateDate.toString("yyyy.MM.dd HH:mm")}
 				</td>
 				<td class="text-center">
 					${user.access}

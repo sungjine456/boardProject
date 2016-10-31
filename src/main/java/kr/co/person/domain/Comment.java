@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
 @Table(name = "comment")
 @AttributeOverrides({
 	@AttributeOverride(name = "regDate", column = @Column(name = "reg_date", nullable = false)),
-	@AttributeOverride(name = "upDate", column = @Column(name = "up_date", nullable = false))
+	@AttributeOverride(name = "updateDate", column = @Column(name = "up_date", nullable = false))
 })
 public class Comment extends CommonEntity {
 	@Id

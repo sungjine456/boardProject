@@ -86,7 +86,7 @@ public class BoardServiceImpl implements BoardService {
 		}
 		board.setContent(content);
 		board.setTitle(title);
-		board.setUpDate(new DateTime());
+		board.setUpdateDate(new DateTime());
 		boardRepository.save(board);
 		return true;
 	}

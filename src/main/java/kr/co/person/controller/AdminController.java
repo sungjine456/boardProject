@@ -44,6 +44,7 @@ public class AdminController {
 	private final int MAX_COUNT_OF_PAGE = 20;
 	private String saveSort = "";
 	private Direction direction = Direction.DESC;
+	
 	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
 	public String adminView(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminView");
