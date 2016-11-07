@@ -98,8 +98,10 @@ public class UserServiceTest {
 	public void testJoin(){
 		user = new User();
 		OkCheck ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_WRONG_ID_OR_WRONG_PASSWORD));
+		Assert.assertThat(ok.getMessage(), is(message.USER_FAIL_JOIN));
 		user.setId("sungjin1");
+		ok = userService.join(user);
+		Assert.assertThat(ok.getMessage(), is(message.USER_WRONG_ID_OR_WRONG_PASSWORD));
 		user.setPassword(password);
 		ok = userService.join(user);
 		Assert.assertThat(ok.getMessage(), is(message.USER_NO_NAME));

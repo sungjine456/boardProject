@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserServiceImpl join");
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
 		String id = "";
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
 		log.info("execute userServiceImpl leave");
 		String garbage = "b94c56f6f1cf92d48e021c573b77fa253eca91e579e308473c0536716c8e7bd6personProject";
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return false;
 		}
 		if(StringUtils.isNotEmpty(loginId)){
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck(message.USER_NO_ID, false);
 		}
 		User user = userRepository.findById(id);
-		return (IsValid.isNotValidObjects(user))
+		return (IsValid.isNotValidUser(user))
 				?new OkCheck(message.USER_AVAILABLE_ID, true)
 				:new OkCheck(message.USER_ALREADY_JOIN_ID, false);
 	}
@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck(emailCheck.getMessage(), false);
 		}
 		User user = userRepository.findByEmail(email); 
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_WRONG_EMAIL, false);
 		}
 		String random = "";
@@ -211,7 +211,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck(message.USER_NO_LOGIN, false);
 		}
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_WRONG_USER, false);
 		}
 		try {
@@ -238,11 +238,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLoginCheck(User user, String loginId){
 		log.info("execute UserServiceImpl autoLoginCheck");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
+		if(IsValid.isNotValidUser(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
@@ -255,7 +255,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLogin(User user, String loginId){
 		log.info("execute UserServiceImpl autoLogin");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
+		if(IsValid.isNotValidUser(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
@@ -268,7 +268,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLogout(User user, String loginId) {
 		log.info("execute userServiceImpl autoLogout");
-		if(IsValid.isNotValidObjects(user) || StringUtils.isEmpty(loginId)){
+		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
 		int idx = user.getIdx();
@@ -292,7 +292,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return false;
 		}
 		if(StringUtils.isEmpty(imgPath)){
@@ -316,7 +316,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return false;
 		}
 		user.setName(name);
@@ -337,7 +337,7 @@ public class UserServiceImpl implements UserService {
 		} catch (NoSuchAlgorithmException e) {
 			return false;
 		}
-		if(IsValid.isNotValidObjects(user) || !StringUtils.equals(password, user.getPassword())){
+		if(IsValid.isNotValidUser(user) || !StringUtils.equals(password, user.getPassword())){
 			return false;
 		}
 		return true;
@@ -347,7 +347,7 @@ public class UserServiceImpl implements UserService {
 	public User accessEmail(String email) {
 		log.info("execute UserServiceImpl accessEmail");
 		User user = userRepository.findByEmail(email);
-		if(IsValid.isNotValidObjects(user)){
+		if(IsValid.isNotValidUser(user)){
 			return new User();
 		}
 		user.setAccess("Y");
