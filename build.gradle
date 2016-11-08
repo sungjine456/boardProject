@@ -23,8 +23,6 @@ repositories {
 
 ext {
 	querydsl = '4.1.4'
-	logback = '1.1.2'
-	slf4j = '1.7.16'
 }
 
 springBoot {
@@ -70,9 +68,6 @@ dependencies {
 	compile('joda-time:joda-time')
 	compile('org.jadira.usertype:usertype.core:3.1.0.CR1')
 	compile('org.apache.commons:commons-lang3:3.4')
-	compile 'org.slf4j:slf4j-api:' + slf4j
-	compile 'ch.qos.logback:logback-core:' + logback
-	compile 'ch.qos.logback:logback-classic:' + logback
 	compile('com.h2database:h2')
 	compile('mysql:mysql-connector-java')
 	compile 'org.springframework.boot:spring-boot-starter-freemarker:' + springBootVersion
