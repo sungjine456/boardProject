@@ -37,8 +37,8 @@ public class Board extends CommonEntity{
 	
 	public Board(){
 	}
-	public Board(String title, String content, User user, DateTime regDate, DateTime upDate){
-		super(regDate, upDate);
+	public Board(String title, String content, User user, DateTime regDate, DateTime updateDate){
+		super(regDate, updateDate);
 		this.title = title;
 		this.content = content;
 		this.user = user;

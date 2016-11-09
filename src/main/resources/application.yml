@@ -9,9 +9,6 @@ spring:
     cache: false
     
   jpa:
-    hibernate:
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-
     properties:
       jadira:
         usertype:

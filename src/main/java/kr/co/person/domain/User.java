@@ -39,8 +39,8 @@ public class User extends CommonEntity {
 	public User(){
 	}
 	
-	public User(String id, String email, String password, String name, String img, DateTime regDate, DateTime upDate){
-		super(regDate, upDate);
+	public User(String id, String email, String password, String name, String img, DateTime regDate, DateTime updateDate){
+		super(regDate, updateDate);
 		this.id = id;
 		this.email = email;
 		this.password = password;

@@ -42,8 +42,8 @@ public class Comment extends CommonEntity {
 	
 	public Comment(){
 	}	
-	public Comment(String comment, int circle, int step, int depth, User writer, Board board, DateTime regDate, DateTime upDate){
-		super(regDate, upDate);
+	public Comment(String comment, int circle, int step, int depth, User writer, Board board, DateTime regDate, DateTime updateDate){
+		super(regDate, updateDate);
 		this.comment = comment;
 		this.circle = circle;
 		this.step = step;
