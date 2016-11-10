@@ -13,14 +13,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
@@ -28,8 +27,7 @@ import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BoardProjectApplication.class)
-@WebAppConfiguration
+@SpringBootTest(classes = BoardProjectApplication.class)
 @Sql(scripts="classpath:/testDataSql/testData.sql")
 public class BoardServiceTest {
 

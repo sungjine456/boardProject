@@ -7,16 +7,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.exception.EmptyStringException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BoardProjectApplication.class)
-@WebAppConfiguration
+@SpringBootTest(classes = BoardProjectApplication.class)
 public class CommonCookieTest {
 	
 	@Autowired CommonCookie commonCookie;
