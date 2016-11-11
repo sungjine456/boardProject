@@ -2,7 +2,7 @@ package kr.co.person.common;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.ErrorPage;
+import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.http.HttpStatus;
 
 public class ServerCustomization extends ServerProperties {
