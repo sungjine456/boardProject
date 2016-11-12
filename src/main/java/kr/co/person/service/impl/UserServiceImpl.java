@@ -185,12 +185,6 @@ public class UserServiceImpl implements UserService {
 		
 		return new OkCheck("비밀번호가 " + random + "로 수정되었습니다.", true);
 	}
-
-	@Override
-	public User findUserForIdx(int idx) {
-		log.info("execute UserServiceImpl findUserForIdx");
-		return userRepository.findOne(idx);
-	}
 	
 	@Override
 	public User findUserForId(String id) {

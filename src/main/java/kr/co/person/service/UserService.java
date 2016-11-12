@@ -11,7 +11,6 @@ public interface UserService {
 	OkUserCheck joinCheck(String id, String password);
 	boolean leave(int idx, String loginId);
 	OkCheck translatePassword(String email);
-	User findUserForIdx(int idx);
 	User findUserForId(String id);
 	User findUserForEmail(String email);
 	OkCheck changePassword(int idx, String password, String changePassword);

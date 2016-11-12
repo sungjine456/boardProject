@@ -19,12 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
-import kr.co.person.service.UserService;
+import kr.co.person.repository.UserRepository;
 
 @Component
 public class Common {
-	@Autowired Message message;
-	@Autowired UserService userService;
+	@Autowired private Message message;
+	@Autowired private UserRepository userRepository;
 	
 	public String passwordEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
 		if(StringUtils.isEmpty(str)){
@@ -142,7 +142,7 @@ public class Common {
 		if(sessionUser == null){
 			return false;
 		}
-		User user = userService.findUserForIdx(sessionUser.getIdx());
+		User user = userRepository.findOne(sessionUser.getIdx());
 		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
 				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
 				|| !StringUtils.equals(loginYn, "Y"))
@@ -155,7 +155,7 @@ public class Common {
 		if(sessionUser == null){
 			return false;
 		}
-		User user = userService.findUserForIdx(sessionUser.getIdx());
+		User user = userRepository.findOne(sessionUser.getIdx());
 		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
 				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
 				|| ((sessionUser.getAdmin().equals(user.getAdmin()))?user.getAdmin():"N").equals("N") || !StringUtils.equals(loginYn, "Y"))
