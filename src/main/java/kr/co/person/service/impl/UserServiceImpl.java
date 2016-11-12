@@ -281,44 +281,38 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean update(int idx, String name, String email, String imgPath) {
-		log.info("execute UserServiceImpl update 4param");
+	public boolean update(User user) {
+		log.info("execute UserServiceImpl update");
 		String se = File.separator;
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email).isBool()){
+		if(IsValid.isNotValidUser(user)){
 			return false;
 		}
-		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidUser(user)){
+		int idx = user.getIdx();
+		String name = user.getName();
+		String email = user.getEmail();
+		String imgPath = user.getImg();
+		String password = user.getPassword();
+		if(StringUtils.isEmpty(name) || StringUtils.isEmpty(password) || !common.isEmail(email).isBool()){
+			System.out.println("1");
 			return false;
 		}
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "img"+se+"user"+se+"default.png";
 		} 
-		user.setName(name);
-		user.setEmail(email);
-		user.setImg(imgPath);
-		user.setUpdateDate(new DateTime());
-		user = userRepository.save(user);
-		if(user == null){
+		User findUser = userRepository.findOne(idx);
+		if(IsValid.isNotValidUser(findUser)){
 			return false;
 		}
-		return true;
-	}
-	
-	@Override
-	public boolean update(int idx, String name, String email) {
-		log.info("execute UserService update 3param");
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(name) || !common.isEmail(email).isBool()){
+		if(!password.equals(findUser.getPassword())){
 			return false;
 		}
-		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidUser(user)){
+		findUser.setName(name);
+		findUser.setEmail(email);
+		findUser.setImg(imgPath);
+		findUser.setUpdateDate(new DateTime());
+		if(userRepository.save(findUser) == null){
 			return false;
 		}
-		user.setName(name);
-		user.setEmail(email);
-		user.setUpdateDate(new DateTime());
-		userRepository.save(user);
 		return true;
 	}
 

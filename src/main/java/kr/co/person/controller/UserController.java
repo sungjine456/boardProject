@@ -432,21 +432,11 @@ public class UserController {
 			return "redirect:/mypage";
 		}
 		User user = (User)session.getAttribute("user");
-		int idx = user.getIdx();
 		user.setName(name);
 		user.setEmail(email);
-		boolean isSuccessUpdate = false;
-		if(ufile.getSize() != 0){
-			if(userService.update(idx, name, email, imgPath)){
-				isSuccessUpdate = true;
-				user.setImg(imgPath);
-			}
-		} else {
-			if(userService.update(idx, name, email)){
-				isSuccessUpdate = true;
-			}
-		}
-		if(isSuccessUpdate){
+		user.setImg(imgPath);
+		user.setPassword(updateUser.getPassword());
+		if(userService.update(user)){
 			rea.addFlashAttribute("message", message.USER_SUCCESS_UPDATE);
 		} else {
 			rea.addFlashAttribute("message", message.USER_FAIL_UPDATE);

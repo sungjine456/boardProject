@@ -156,12 +156,23 @@ public class UserServiceTest {
 	public void testUpdate(){
 		user = userRepository.findOne(1);
 		Assert.assertEquals(user.getRegDate(), user.getUpdateDate());
-		Assert.assertThat(userService.update(1, "hyun", "", ""), is(false));
-		Assert.assertThat(userService.update(1, "", "hyun@naver.com", ""), is(false));
-		Assert.assertThat(userService.update(100, "hyun", "hyun@naver.com", ""), is(false));
-		Assert.assertThat(userService.update(1, "hyun", "hyun@naver.com", ""), is(true));
-		user = userService.findUserForIdx(1);
+		user.setName("");
+		Assert.assertThat(userService.update(user), is(false));
+		user.setName("hong");
+		user.setEmail("");
+		Assert.assertThat(userService.update(user), is(false));
+		user.setEmail("hong@naver.com");
+		user.setPassword("000000");
+		Assert.assertThat(userService.update(user), is(false));
+		user.setPassword(password);
+		user.setIdx(100);
+		Assert.assertThat(userService.update(user), is(false));
+		user.setIdx(1);
+		Assert.assertThat(userService.update(user), is(true));
+		user = userRepository.findOne(1);
 		Assert.assertThat(user.getUpdateDate(), not(user.getRegDate()));
+		Assert.assertThat(user.getName(), is("hong"));
+		Assert.assertThat(user.getEmail(), is("hong@naver.com"));
 	}
 	
 	@Test

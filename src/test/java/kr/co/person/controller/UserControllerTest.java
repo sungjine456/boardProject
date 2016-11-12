@@ -56,6 +56,9 @@ public class UserControllerTest {
 	@Autowired private WebApplicationContext wac;
 	private MockMvc mock;
 	private MockHttpSession mockSession;
+	
+	// 비밀번호123123을 암호화한 형태
+    private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
 	 
     @Before
     public void setUp() throws Exception {
@@ -604,34 +607,7 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testUpdateSuccessParam3() throws Exception{
-    	MvcResult result = mock.perform(
-    		fileUpload("/update")
-    			.file(new MockMultipartFile("ufile", "b".getBytes()))
-    			.session(mockSession)
-    			.param("id", "test")
-    			.param("email", "test@naver.com")
-    			.param("name", "test"))
-	    	.andExpect(status().isFound())
-	    	.andExpect(redirectedUrl("/mypage"))
-	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
-			.andReturn();
-        	
-    	User user = (User)result.getRequest().getSession().getAttribute("user");
-    	int idx = user.getIdx();
-    	String id = user.getId();
-    	String name = user.getName();
-    	String email = user.getEmail();
-    	String img = user.getImg();
-    	Assert.assertThat(idx, is(1));
-    	Assert.assertThat(id, is("sungjin"));
-    	Assert.assertThat(name, is("test"));
-    	Assert.assertThat(email, is("test@naver.com"));
-    	Assert.assertThat("default.png", is(img.substring(10)));
-    }
-    
-    @Test
-    public void testUpdateSuccessParam4() throws Exception{
+    public void testUpdateSuccess() throws Exception{
     	MockMultipartFile isFile = new MockMultipartFile("ufile", "none.png", null, "bar".getBytes());
         
     	MvcResult result = mock.perform(
@@ -640,7 +616,8 @@ public class UserControllerTest {
     			.session(mockSession)
     			.param("id", "test")
     			.param("email", "test@naver.com")
-    			.param("name", "test"))
+    			.param("name", "test")
+    			.param("password", password))
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/mypage"))
 	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))
