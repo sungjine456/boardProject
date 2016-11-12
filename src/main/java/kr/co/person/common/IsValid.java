@@ -100,7 +100,6 @@ public class IsValid {
     	if(user != null){
     		if(StringUtils.isEmpty(user.getEmail()) 
     				&& StringUtils.isEmpty(user.getId()) 
-    				&& StringUtils.isEmpty(user.getImg()) 
     				&& StringUtils.isEmpty(user.getName()) 
     				&& StringUtils.isEmpty(user.getPassword()) && user.getIdx() == 0){
     			return true;

@@ -101,6 +101,9 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(garbage);
 		user.setId(garbage);
 		user.setPassword(garbage);
+		user.setName(garbage);
+		user.setImg(garbage);
+		user.setAccess("N");
 		userRepository.save(user);
 		return true;
 	}
@@ -124,7 +127,7 @@ public class UserServiceImpl implements UserService {
 			return new OkCheck(message.USER_NO_EMAIL, false);
 		}
 		User findUserByEmail = userRepository.findByEmail(email);
-		if(IsValid.isValidObjects(findUserByEmail)){
+		if(IsValid.isValidUser(findUserByEmail)){
 			return (common.isEmail(findUserByEmail.getEmail()).isBool())
 					?new OkCheck(message.USER_ALREADY_JOIN_EMAIL, false)
 					:new OkCheck(message.USER_NO_EMAIL_FORMAT, false);
@@ -136,8 +139,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public OkUserCheck joinCheck(String id, String password) {
-		log.info("execute UserServiceImpl joinCheck");
+	public OkUserCheck confirmUserPassword(String id, String password) {
+		log.info("execute UserServiceImpl confirmUserPassword");
 		if(StringUtils.isEmpty(id)){
 			return new OkUserCheck(new User(), message.USER_NO_ID, false);
 		}
@@ -152,6 +155,9 @@ public class UserServiceImpl implements UserService {
 			return new OkUserCheck(new User(), message.USER_RE_PASSWORD, false);
 		}
 		User user = userRepository.findByIdAndPassword(id, password);
+		if(IsValid.isNotValidUser(user)){
+			return new OkUserCheck(user, message.USER_WRONG_USER, true);
+		}
 		return new OkUserCheck(user, "", true);
 	}
 
@@ -232,7 +238,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLoginCheck(User user, String loginId){
 		log.info("execute UserServiceImpl autoLoginCheck");
-		if(IsValid.isNotValidUser(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
+		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
 		user = userRepository.findOne(user.getIdx());
@@ -249,7 +255,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLogin(User user, String loginId){
 		log.info("execute UserServiceImpl autoLogin");
-		if(IsValid.isNotValidUser(user) || IsValid.isNotValidObjects(user.getIdx()) || StringUtils.isEmpty(loginId)){
+		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
@@ -265,11 +271,7 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
 			return false;
 		}
-		int idx = user.getIdx();
-		if(IsValid.isNotValidInts(idx)){
-			return false;
-		}
-		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(idx, loginId);
+		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isValidObjects(autoLogin)){
 			autoLoginRepository.delete(autoLogin);
 			return true;

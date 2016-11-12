@@ -33,8 +33,10 @@ public class UserServiceTest {
     private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
 
 	@Test
-	public void testJoinCheck(){
-		OkUserCheck userCheck = userService.joinCheck("sungjin", "123123");
+	public void testConfirmUserPassword(){
+		OkUserCheck userCheck = userService.confirmUserPassword("test12", "00000000");
+		Assert.assertThat(userCheck.getUser(), is(nullValue()));
+		userCheck = userService.confirmUserPassword("sungjin", "123123");
 		Assert.assertThat(userCheck, is(notNullValue()));
 		Assert.assertThat(userCheck.getMessage(), is(""));
 		Assert.assertThat(userCheck.isBool(), is(true));

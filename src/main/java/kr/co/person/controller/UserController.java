@@ -49,11 +49,8 @@ public class UserController {
 	@Autowired private Message message;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
-	public String joinView(HttpSession session){
+	public String joinView(){
 		log.info("execute UserController joinView");
-		if(common.sessionComparedToDB(session)){
-			return "redirect:/board";
-		}
 		return "view/user/join";
 	}
 	
@@ -192,7 +189,7 @@ public class UserController {
 			return "redirect:/";
 		}
 		try {
-			OkUserCheck ouc = userService.joinCheck(common.cleanXss(id), password);
+			OkUserCheck ouc = userService.confirmUserPassword(common.cleanXss(id), password);
 			if(!ouc.isBool()){
 				rea.addFlashAttribute("message", ouc.getMessage());
 				return "redirect:/";
@@ -343,8 +340,12 @@ public class UserController {
 		}
 		User user = (User)session.getAttribute("user");
 		int idx = user.getIdx();
-		OkUserCheck joinCheck = userService.joinCheck(user.getId(), password);
-		if(!joinCheck.isBool() || IsValid.isNotValidUser(joinCheck.getUser()) || joinCheck.getUser().getIdx() != idx){
+		OkUserCheck ouc = userService.confirmUserPassword(user.getId(), password);
+		if(!ouc.isBool()){
+			rea.addFlashAttribute("message", ouc.getMessage());
+			return "redirect:/";
+		}
+		if(ouc.getUser().getIdx() != idx){
 			rea.addFlashAttribute("message", message.USER_WRONG_USER);
 			return "redirect:/";
 		}
@@ -406,7 +407,7 @@ public class UserController {
 			imgPath = common.createImg(ufile, updateUser.getId(), "user");
 		} catch (IOException e) {
 			rea.addFlashAttribute("message", message.FILE_FAIL_UPLOAD);
-			return "redirect:/";
+			return "redirect:/mypage";
 		}
 		String se = File.separator;
 		if(StringUtils.isEmpty(imgPath)){

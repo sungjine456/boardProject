@@ -31,9 +31,9 @@ public class User extends CommonEntity {
 	private String email;
 	@Column(name="img")
 	private String img;
-	@Column(name="access")
+	@Column(name="access", length = 1)
 	private String access = "N";
-	@Column(name="admin_yn")
+	@Column(name="admin_yn", length = 1)
 	private String admin = "N";
 	
 	public User(){

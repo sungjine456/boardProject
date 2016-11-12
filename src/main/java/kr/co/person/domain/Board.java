@@ -29,8 +29,8 @@ public class Board extends CommonEntity{
 	private String title;
 	@Column(name = "content", nullable = false)
 	private String content;
-	@Column(name = "hit_count", nullable = false)
-	private int hitCount;
+	@Column(name = "hit_count")
+	private int hitCount = 0;
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "writer")
 	private User user;
