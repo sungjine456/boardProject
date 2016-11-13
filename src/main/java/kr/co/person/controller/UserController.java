@@ -158,7 +158,7 @@ public class UserController {
 					} catch (EmptyStringException e) {
 						return "view/user/login";
 					} catch (Exception e){
-						return "view/user/join";
+						return "view/user/login";
 					}
 				}
 				if(StringUtils.equals("psvlgnd", key)){

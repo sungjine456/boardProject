@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 			password = common.passwordEncryption(user.getPassword());
 			name = common.cleanXss(user.getName());
 		} catch(EmptyStringException e){
-			log.info("execute UserServiceImpl join : " + e.getMessage());
+			return new OkCheck(message.USER_FAIL_JOIN, false);
 		} catch(NoSuchAlgorithmException e) {
 			return new OkCheck(message.USER_RE_PASSWORD, false);
 		}

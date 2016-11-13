@@ -85,11 +85,9 @@ public class UserControllerTest {
     
     @Test
     public void testJoinNoEmail() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
-    	
     	mock.perform(
 			fileUpload("/join")
-				.file(file)
+				.file(new MockMultipartFile("file", null, null, "bar".getBytes()))
 				.param("id", "test")
 				.param("password", "123456"))
     		.andExpect(status().isFound())
@@ -99,11 +97,9 @@ public class UserControllerTest {
     
     @Test
     public void testJoinNoEmailFormet() throws Exception {
-    	MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
-    	
     	mock.perform(
     		fileUpload("/join")
-    			.file(file)
+    			.file(new MockMultipartFile("file", null, null, "bar".getBytes()))
     			.param("id", "test")
     			.param("password", "123456")
     			.param("email", "aaa"))
@@ -114,11 +110,9 @@ public class UserControllerTest {
     
     @Test
     public void testJoinSuccess() throws Exception {
-    	MockMultipartFile file = new MockMultipartFile("file", null, null, "bar".getBytes());
-    	
     	mock.perform(
     		fileUpload("/join")
-    			.file(file)
+    			.file(new MockMultipartFile("file", null, null, "bar".getBytes()))
     			.param("id", "test")
     			.param("name", "test")
     			.param("password", "123456")
@@ -608,11 +602,9 @@ public class UserControllerTest {
     
     @Test
     public void testUpdateSuccess() throws Exception{
-    	MockMultipartFile isFile = new MockMultipartFile("ufile", "none.png", null, "bar".getBytes());
-        
     	MvcResult result = mock.perform(
     		fileUpload("/update")
-    			.file(isFile)
+    			.file(new MockMultipartFile("ufile", "none.png", null, "bar".getBytes()))
     			.session(mockSession)
     			.param("id", "test")
     			.param("email", "test@naver.com")
@@ -656,10 +648,9 @@ public class UserControllerTest {
     
     @Test
     public void testEmailAccessSuccess() throws Exception {
-    	String email = commonCookie.aesEncode("sungjine@naver.com");
     	mock.perform(
     		get("/emailAccess")
-    			.param("access", email))
+    			.param("access", commonCookie.aesEncode("sungjine@naver.com")))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.ACCESS_THANK_YOU_FOR_AGREE))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))
