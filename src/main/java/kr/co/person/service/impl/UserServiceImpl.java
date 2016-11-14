@@ -39,13 +39,19 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_FAIL_JOIN, false);
 		}
-		String id = "";
-		String password = "";
-		String name = "";
+		String id = user.getId();
+		String password = user.getPassword();
+		String name = user.getName();
+		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
+			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
+		}
+		if(StringUtils.isEmpty(name)){
+			return new OkCheck(message.USER_NO_NAME, false);
+		}
 		try {
-			id = common.cleanXss(user.getId());
-			password = common.passwordEncryption(user.getPassword());
-			name = common.cleanXss(user.getName());
+			id = common.cleanXss(id);
+			password = common.passwordEncryption(password);
+			name = common.cleanXss(name);
 		} catch(EmptyStringException e){
 			return new OkCheck(message.USER_FAIL_JOIN, false);
 		} catch(NoSuchAlgorithmException e) {
@@ -193,15 +199,32 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public User findUserForId(String id) {
+	public OkUserCheck findUserForId(String id) {
 		log.info("execute UserServiceImpl findUserForId");
-		return userRepository.findById(id);
+		if(StringUtils.isEmpty(id)){
+			return new OkUserCheck(new User(), message.USER_WRONG_ID, false);
+		}
+		User user = userRepository.findById(id);
+		if(IsValid.isValidUser(user)){
+			return new OkUserCheck(user, "", true);
+		} else {
+			return new OkUserCheck(user, message.USER_WRONG_ID, false);
+		}
 	}
 	
 	@Override
-	public User findUserForEmail(String email) {
+	public OkUserCheck findUserForEmail(String email) {
 		log.info("execute UserServiceImpl findUserForEmail");
-		return userRepository.findByEmail(email);
+		OkCheck ok = common.isEmail(email);
+		if(!ok.isBool()){
+			return new OkUserCheck(new User(), ok.getMessage(), false);
+		}
+		User user = userRepository.findByEmail(email);
+		if(IsValid.isValidUser(user)){
+			return new OkUserCheck(user, "", true);
+		} else {
+			return new OkUserCheck(user, message.USER_WRONG_EMAIL, false);
+		}
 	}
 
 	@Override
@@ -334,13 +357,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User accessEmail(String email) {
+	public OkUserCheck accessEmail(String email) {
 		log.info("execute UserServiceImpl accessEmail");
+		OkCheck ok = common.isEmail(email);
+		if(!ok.isBool()){
+			return new OkUserCheck(new User(), ok.getMessage(), false);
+		}
 		User user = userRepository.findByEmail(email);
 		if(IsValid.isNotValidUser(user)){
-			return new User();
+			return new OkUserCheck(new User(), message.ACCESS_FAIL_ACCESS, false);
 		}
 		user.setAccess("Y");
-		return user;
+		return new OkUserCheck(user, message.ACCESS_THANK_YOU_FOR_AGREE, true);
 	}
 }

@@ -38,6 +38,7 @@ public class Message {
 	public final String USER_PASSWORD_SAME_UPDATE_PASSWORD;
 	public final String USER_WRONG_ID_OR_WRONG_PASSWORD;
 	public final String USER_WRONG_EMAIL;
+	public final String USER_WRONG_ID;
 	public final String USER_WRONG_USER;
 	public final String USER_RE_EMAIL;
 	public final String USER_RE_PASSWORD;
@@ -95,6 +96,7 @@ public class Message {
 		USER_PASSWORD_SAME_UPDATE_PASSWORD = messageSource.getMessage("user.passwordSameUpdatePassword", null, null);
 		USER_WRONG_ID_OR_WRONG_PASSWORD = messageSource.getMessage("user.wrongIdOrWrongPassword", null, null);
 		USER_WRONG_EMAIL = messageSource.getMessage("user.wrongEmail", null, null);
+		USER_WRONG_ID = messageSource.getMessage("user.wrongId", null, null);
 		USER_WRONG_USER = messageSource.getMessage("user.wrongUser", null, null);
 		USER_RE_EMAIL = messageSource.getMessage("user.reEmail", null, null);
 		USER_RE_PASSWORD = messageSource.getMessage("user.rePassword", null, null);

@@ -11,13 +11,13 @@ public interface UserService {
 	OkUserCheck confirmUserPassword(String id, String password);
 	boolean leave(int idx, String loginId);
 	OkCheck translatePassword(String email);
-	User findUserForId(String id);
-	User findUserForEmail(String email);
+	OkUserCheck findUserForId(String id);
+	OkUserCheck findUserForEmail(String email);
 	OkCheck changePassword(int idx, String password, String changePassword);
 	boolean autoLoginCheck(User user, String loginId);
 	boolean autoLogin(User user, String loginId);
 	boolean autoLogout(User user, String loginId);
 	boolean update(User user);
 	boolean passwordCheck(int idx, String password);
-	User accessEmail(String email);
+	OkUserCheck accessEmail(String email);
 }

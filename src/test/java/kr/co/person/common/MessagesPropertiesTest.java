@@ -65,6 +65,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.USER_PASSWORD_SAME_UPDATE_PASSWORD, is("비밀번호와 비밀번호 수정이 다르게 입력해주세요."));
 		Assert.assertThat(message.USER_WRONG_ID_OR_WRONG_PASSWORD, is("아이디 혹은 비밀번호가 틀렸습니다."));
 		Assert.assertThat(message.USER_WRONG_EMAIL, is("존재하지 않는 이메일입니다."));
+		Assert.assertThat(message.USER_WRONG_ID, is("존재하지 않는 아이디입니다."));
 		Assert.assertThat(message.USER_WRONG_USER, is("존재하지 않는 회원입니다."));
 		Assert.assertThat(message.USER_RE_EMAIL, is("이메일을 다시 입력해주세요."));
 		Assert.assertThat(message.USER_RE_PASSWORD, is("비밀번호를 다시 입력해주세요."));

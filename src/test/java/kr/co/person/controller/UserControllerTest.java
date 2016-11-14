@@ -642,7 +642,7 @@ public class UserControllerTest {
     		get("/emailAccess")
     			.param("access", "hMRcmzpoVp0WXLCMP/catK28AAfXZxtkY/ovyD0Baz4="))
     		.andExpect(status().isFound())
-    		.andExpect(flash().attribute("message", message.ACCESS_FAIL_ACCESS))
+    		.andExpect(flash().attribute("message", message.USER_WRONG_EMAIL))
     		.andExpect(redirectedUrl("/"));
     }
     

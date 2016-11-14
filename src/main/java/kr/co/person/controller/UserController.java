@@ -166,10 +166,10 @@ public class UserController {
 				}
 			}
 		}
-		User user = userService.findUserForId(id);
-		if(IsValid.isValidObjects(user) && userService.autoLoginCheck(user, loginId)){
+		OkUserCheck ouc = userService.findUserForId(id);
+		if(ouc.isBool() && userService.autoLoginCheck(ouc.getUser(), loginId)){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("user", user);
+			session.setAttribute("user", ouc.getUser());
 			return "redirect:/board";
 		}
 		return "view/user/login";
@@ -461,24 +461,24 @@ public class UserController {
 			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
 			return "redirect:/";
 		}
-		User user = userService.findUserForEmail(email);
-		if(IsValid.isNotValidUser(user)){
-			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+		OkUserCheck findUserForEmail = userService.findUserForEmail(email);
+		if(!findUserForEmail.isBool()){
+			rea.addFlashAttribute("message", findUserForEmail.getMessage());
 			return "redirect:/";
 		}
-		if(StringUtils.equals(user.getAccess(), "Y")){
+		if(StringUtils.equals(findUserForEmail.getUser().getAccess(), "Y")){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("user", user);
+			session.setAttribute("user", findUserForEmail.getUser());
 			return "redirect:/board";
 		}
-		user = userService.accessEmail(email);
-		if(IsValid.isNotValidUser(user)){
-			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
+		OkUserCheck accessEmail = userService.accessEmail(email);
+		if(!accessEmail.isBool()){
+			rea.addFlashAttribute("message", accessEmail.getMessage());
 			return "redirect:/";
 		}
 		session.setAttribute("loginYn", "Y");
-		session.setAttribute("user", user);
-		rea.addFlashAttribute("message", message.ACCESS_THANK_YOU_FOR_AGREE);
+		session.setAttribute("user", accessEmail.getUser());
+		rea.addFlashAttribute("message", accessEmail.getMessage());
 		return "redirect:/board";
 	}
 	
