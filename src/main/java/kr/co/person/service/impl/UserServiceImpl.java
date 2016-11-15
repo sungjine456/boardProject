@@ -1,6 +1,5 @@
 package kr.co.person.service.impl;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,18 +35,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserServiceImpl join");
-		if(IsValid.isNotValidUser(user)){
-			return new OkCheck(message.USER_FAIL_JOIN, false);
-		}
 		String id = user.getId();
 		String password = user.getPassword();
 		String name = user.getName();
-		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
-			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
-		}
-		if(StringUtils.isEmpty(name)){
-			return new OkCheck(message.USER_NO_NAME, false);
-		}
 		try {
 			id = common.cleanXss(id);
 			password = common.passwordEncryption(password);
@@ -117,9 +107,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck idCheck(String id) {
 		log.info("execute userServiceImpl idCheck");
-		if(StringUtils.isEmpty(id)){
-			return new OkCheck(message.USER_NO_ID, false);
-		}
 		User user = userRepository.findById(id);
 		return (IsValid.isNotValidUser(user))
 				?new OkCheck(message.USER_AVAILABLE_ID, true)
@@ -129,9 +116,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck emailCheck(String email) {
 		log.info("execute userServiceImpl emailCheck");
-		if(StringUtils.isEmpty(email)){
-			return new OkCheck(message.USER_NO_EMAIL, false);
-		}
 		User findUserByEmail = userRepository.findByEmail(email);
 		if(IsValid.isValidUser(findUserByEmail)){
 			return (common.isEmail(findUserByEmail.getEmail()).isBool())
@@ -147,9 +131,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkUserCheck confirmUserPassword(String id, String password) {
 		log.info("execute UserServiceImpl confirmUserPassword");
-		if(StringUtils.isEmpty(id)){
-			return new OkUserCheck(new User(), message.USER_NO_ID, false);
-		}
 		try {
 			password = common.passwordEncryption(password);
 		} catch(EmptyStringException e){
@@ -170,10 +151,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck translatePassword(String email) {
 		log.info("execute UserServiceImpl translatePassword");
-		OkCheck emailCheck = common.isEmail(email);
-		if(!emailCheck.isBool()){
-			return new OkCheck(emailCheck.getMessage(), false);
-		}
 		User user = userRepository.findByEmail(email); 
 		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_WRONG_EMAIL, false);
@@ -201,9 +178,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkUserCheck findUserForId(String id) {
 		log.info("execute UserServiceImpl findUserForId");
-		if(StringUtils.isEmpty(id)){
-			return new OkUserCheck(new User(), message.USER_WRONG_ID, false);
-		}
 		User user = userRepository.findById(id);
 		if(IsValid.isValidUser(user)){
 			return new OkUserCheck(user, "", true);
@@ -215,10 +189,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkUserCheck findUserForEmail(String email) {
 		log.info("execute UserServiceImpl findUserForEmail");
-		OkCheck ok = common.isEmail(email);
-		if(!ok.isBool()){
-			return new OkUserCheck(new User(), ok.getMessage(), false);
-		}
 		User user = userRepository.findByEmail(email);
 		if(IsValid.isValidUser(user)){
 			return new OkUserCheck(user, "", true);
@@ -230,9 +200,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck changePassword(int idx, String password, String changePassword) {
 		log.info("execute UserServiceImpl changePassword");
-		if(IsValid.isNotValidInts(idx)){
-			return new OkCheck(message.USER_NO_LOGIN, false);
-		}
 		User user = userRepository.findOne(idx);
 		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_WRONG_USER, false);
@@ -261,13 +228,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLoginCheck(User user, String loginId){
 		log.info("execute UserServiceImpl autoLoginCheck");
-		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
-			return false;
-		}
-		user = userRepository.findOne(user.getIdx());
-		if(IsValid.isNotValidUser(user)){
-			return false;
-		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isNotValidObjects(autoLogin)){
 			return false;
@@ -278,9 +238,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLogin(User user, String loginId){
 		log.info("execute UserServiceImpl autoLogin");
-		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
-			return false;
-		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isNotValidObjects(autoLogin)){
 			autoLoginRepository.save(new AutoLogin(loginId, new DateTime(), user));
@@ -291,9 +248,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean autoLogout(User user, String loginId) {
 		log.info("execute userServiceImpl autoLogout");
-		if(IsValid.isNotValidUser(user) || StringUtils.isEmpty(loginId)){
-			return false;
-		}
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isValidObjects(autoLogin)){
 			autoLoginRepository.delete(autoLogin);
@@ -306,32 +260,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean update(User user) {
 		log.info("execute UserServiceImpl update");
-		String se = File.separator;
-		if(IsValid.isNotValidUser(user)){
-			return false;
-		}
-		int idx = user.getIdx();
-		String name = user.getName();
-		String email = user.getEmail();
-		String imgPath = user.getImg();
-		String password = user.getPassword();
-		if(StringUtils.isEmpty(name) || StringUtils.isEmpty(password) || !common.isEmail(email).isBool()){
-			System.out.println("1");
-			return false;
-		}
-		if(StringUtils.isEmpty(imgPath)){
-			imgPath = "img"+se+"user"+se+"default.png";
-		} 
-		User findUser = userRepository.findOne(idx);
-		if(IsValid.isNotValidUser(findUser)){
-			return false;
-		}
-		if(!password.equals(findUser.getPassword())){
-			return false;
-		}
-		findUser.setName(name);
-		findUser.setEmail(email);
-		findUser.setImg(imgPath);
+		User findUser = userRepository.findOne(user.getIdx());
+		findUser.setName(user.getName());
+		findUser.setEmail(user.getEmail());
+		findUser.setImg(user.getImg());
 		findUser.setUpdateDate(new DateTime());
 		if(userRepository.save(findUser) == null){
 			return false;
@@ -359,10 +291,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkUserCheck accessEmail(String email) {
 		log.info("execute UserServiceImpl accessEmail");
-		OkCheck ok = common.isEmail(email);
-		if(!ok.isBool()){
-			return new OkUserCheck(new User(), ok.getMessage(), false);
-		}
 		User user = userRepository.findByEmail(email);
 		if(IsValid.isNotValidUser(user)){
 			return new OkUserCheck(new User(), message.ACCESS_FAIL_ACCESS, false);

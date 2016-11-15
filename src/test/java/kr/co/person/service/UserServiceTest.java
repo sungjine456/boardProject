@@ -15,9 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
+import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
 import kr.co.person.pojo.OkUserCheck;
+import kr.co.person.repository.AutoLoginRepository;
 import kr.co.person.repository.UserRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,6 +29,7 @@ public class UserServiceTest {
 
 	@Autowired private UserService userService;
 	@Autowired private UserRepository userRepository;
+	@Autowired private AutoLoginRepository autoLoginRepository;
 	@Autowired private Message message;
 	private User user;
 	// 비밀번호123123을 암호화한 형태
@@ -34,9 +37,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testConfirmUserPassword(){
-		OkUserCheck userCheck = userService.confirmUserPassword("test12", "00000000");
-		Assert.assertThat(userCheck.getUser(), is(nullValue()));
-		userCheck = userService.confirmUserPassword("sungjin", "123123");
+		OkUserCheck userCheck = userService.confirmUserPassword("sungjin", "123123");
 		Assert.assertThat(userCheck, is(notNullValue()));
 		Assert.assertThat(userCheck.getMessage(), is(""));
 		Assert.assertThat(userCheck.isBool(), is(true));
@@ -46,16 +47,12 @@ public class UserServiceTest {
 	
 	@Test
 	public void testIdCheck() {
-		Assert.assertThat(userService.idCheck(null).getMessage(), is(message.USER_NO_ID));
-		Assert.assertThat(userService.idCheck("").getMessage(), is(message.USER_NO_ID));
 		Assert.assertThat(userService.idCheck("sungjin").getMessage(), is(message.USER_ALREADY_JOIN_ID));
 		Assert.assertThat(userService.idCheck("sungjin123").getMessage(), is(message.USER_AVAILABLE_ID));
 	}
 
 	@Test
 	public void testEmailCheck() {
-		Assert.assertThat(userService.emailCheck(null).getMessage(), is(message.USER_NO_EMAIL));
-		Assert.assertThat(userService.emailCheck("").getMessage(), is(message.USER_NO_EMAIL));
 		Assert.assertThat(userService.emailCheck("tjdwls@naver.com").getMessage(), is(message.USER_AVAILABLE_EMAIL));
 		Assert.assertThat(userService.emailCheck("sungjin@naver.com").getMessage(), is(message.USER_ALREADY_JOIN_EMAIL));
 		Assert.assertThat(userService.emailCheck("sungjin").getMessage(), is(message.USER_NO_EMAIL_FORMAT));
@@ -88,19 +85,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testFindUserForEmail(){
-		OkUserCheck ouc = userService.findUserForEmail(null);
-		Assert.assertThat(ouc.isBool(), is(false));
-		Assert.assertThat(ouc.getMessage(), is(message.USER_NO_EMAIL));
-		ouc = userService.findUserForEmail("");
-		Assert.assertThat(ouc.isBool(), is(false));
-		Assert.assertThat(ouc.getMessage(), is(message.USER_NO_EMAIL));
-		ouc = userService.findUserForEmail("abcdabcd");
-		Assert.assertThat(ouc.isBool(), is(false));
-		Assert.assertThat(ouc.getMessage(), is(message.USER_NO_EMAIL_FORMAT));
-		ouc = userService.findUserForEmail("sungjin");
-		Assert.assertThat(ouc.isBool(), is(false));
-		Assert.assertThat(ouc.getMessage(), is(message.USER_NO_EMAIL_FORMAT));
-		ouc = userService.findUserForEmail("su@naver.com");
+		OkUserCheck	ouc = userService.findUserForEmail("su@naver.com");
 		Assert.assertThat(ouc.isBool(), is(false));
 		Assert.assertThat(ouc.getMessage(), is(message.USER_WRONG_EMAIL));
 		ouc = userService.findUserForEmail("sungjin@naver.com");
@@ -124,22 +109,11 @@ public class UserServiceTest {
 	@Test
 	public void testJoin(){
 		user = new User();
-		OkCheck ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_FAIL_JOIN));
 		user.setId("sungjin1");
-		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_WRONG_ID_OR_WRONG_PASSWORD));
 		user.setPassword(password);
-		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_NO_NAME));
 		user.setName("hong");
-		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_NO_EMAIL));
-		user.setEmail("sungjin1");
-		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_NO_EMAIL_FORMAT));
 		user.setEmail("sungjin1@naver.com");
-		ok = userService.join(user);
+		OkCheck ok = userService.join(user);
 		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_JOIN));
 		Assert.assertThat(ok.isBool(), is(true));
 		ok = userService.join(user);
@@ -149,10 +123,6 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAutoLoginCheck(){
-		User user = new User();
-		Assert.assertThat(userService.autoLoginCheck(null, ""), is(false));
-		Assert.assertThat(userService.autoLoginCheck(null, "abdsbas"), is(false));
-		Assert.assertThat(userService.autoLoginCheck(user, ""), is(false));
 		user = userRepository.findOne(1);
 		user.setIdx(5);
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(false));
@@ -179,25 +149,23 @@ public class UserServiceTest {
 	
 	@Test
 	public void testUpdate(){
+		String newName = "hongs";
+		String newEmail = "hong@naver.com";
+		String newImg = "img/hong";
 		user = userRepository.findOne(1);
-		Assert.assertEquals(user.getRegDate(), user.getUpdateDate());
-		user.setName("");
-		Assert.assertThat(userService.update(user), is(false));
-		user.setName("hong");
-		user.setEmail("");
-		Assert.assertThat(userService.update(user), is(false));
-		user.setEmail("hong@naver.com");
-		user.setPassword("000000");
-		Assert.assertThat(userService.update(user), is(false));
-		user.setPassword(password);
-		user.setIdx(100);
-		Assert.assertThat(userService.update(user), is(false));
-		user.setIdx(1);
+		Assert.assertThat(user.getRegDate(), is(user.getUpdateDate()));
+		Assert.assertThat(user.getName(), not(newName));
+		Assert.assertThat(user.getEmail(), not(newEmail));
+		Assert.assertThat(user.getImg(), not(newImg));
+		user.setName(newName);
+		user.setEmail(newEmail);
+		user.setImg(newImg);
 		Assert.assertThat(userService.update(user), is(true));
 		user = userRepository.findOne(1);
 		Assert.assertThat(user.getUpdateDate(), not(user.getRegDate()));
-		Assert.assertThat(user.getName(), is("hong"));
-		Assert.assertThat(user.getEmail(), is("hong@naver.com"));
+		Assert.assertThat(user.getName(), is(newName));
+		Assert.assertThat(user.getEmail(), is(newEmail));
+		Assert.assertThat(user.getImg(), is(newImg));
 	}
 	
 	@Test
@@ -210,19 +178,18 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAutoLogin(){
-		Assert.assertThat(userService.autoLogin(null, ""), is(false));
-		Assert.assertThat(userService.autoLogin(null, "asdasdasd"), is(false));
-		Assert.assertThat(userService.autoLogin(userRepository.findOne(2), ""), is(false));
-		Assert.assertThat(userService.autoLogin(userRepository.findOne(100), "asdasdasd"), is(false));
-		Assert.assertThat(userService.autoLogin(userRepository.findOne(1), ""), is(false));
-		Assert.assertThat(userService.autoLogin(userRepository.findOne(1), "asdasdasd"), is(true));
+		String loginId = "asdasdasdasdfasdf";
+		AutoLogin autoLogin = autoLoginRepository.findOne(3);
+		Assert.assertThat(autoLogin, nullValue());
+		Assert.assertThat(userService.autoLogin(userRepository.findOne(1), loginId), is(true));
+		autoLogin = autoLoginRepository.findOne(3);
+		Assert.assertThat(autoLogin, notNullValue());
+		Assert.assertThat(autoLogin.getLoginId(), is(loginId));
 	}
 	
 	@Test
 	public void testAutoLogout(){
 		user = userRepository.findOne(1);
-		Assert.assertThat(userService.autoLogout(null, ""), is(false));
-		Assert.assertThat(userService.autoLogout(null, "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogout(userRepository.findOne(3), "asdasdasd"), is(false));
 		Assert.assertThat(userService.autoLogout(user, ""), is(false));
 		Assert.assertThat(userService.autoLoginCheck(user, "asdasdasd"), is(true));
