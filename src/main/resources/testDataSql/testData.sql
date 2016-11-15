@@ -18,3 +18,8 @@ insert into comment (comment_idx, comment, circle, step, depth, board, writer, r
 insert into comment (comment_idx, comment, circle, step, depth, board, writer, reg_date, up_date) values ('7', 'comment7', '1', '5', '1', '1' , '1', '2016-2-2', '2016-2-2');
 insert into comment (comment_idx, comment, circle, step, depth, board, writer, reg_date, up_date) values ('8', 'comment8', '5', '1', '1', '1' , '1', '2016-2-2', '2016-2-2');
 insert into board_like (idx, board_idx, user_idx) values ('1', '1', '2');
+ALTER TABLE user AUTO_INCREMENT=4;
+ALTER TABLE board AUTO_INCREMENT=2;
+ALTER TABLE auto_login AUTO_INCREMENT=3;
+ALTER TABLE comment AUTO_INCREMENT=9;
+ALTER TABLE board_like AUTO_INCREMENT=2;

@@ -87,21 +87,22 @@ public class AdminController {
 	@RequestMapping(value="/admin/translatePassword", method=RequestMethod.POST)
 	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea){
 		log.info("execute AdminController translatePassword");
-		if(StringUtils.isEmpty(email)){
-			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
+		OkCheck okEmail = common.isEmail(email);
+		if(!okEmail.isBool()){
+			rea.addFlashAttribute("message", okEmail.getMessage());
 			return "redirect:/admin/users";
 		}
-		OkCheck ok = userService.translatePassword(email);
-		if(ok.isBool()){
+		OkCheck okPassword = userService.translatePassword(email);
+		if(okPassword.isBool()){
 			try {
-				commonMail.sendMail(email, message.MAIL_TRANSLATE_PASSWORD_TITLE, ok.getMessage());
+				commonMail.sendMail(email, message.MAIL_TRANSLATE_PASSWORD_TITLE, okPassword.getMessage());
 			} catch (MessagingException e) {
 				rea.addFlashAttribute("message", message.MAIL_FAIL_SEND);
 				return "redirect:/admin/users";
 			}
 			rea.addFlashAttribute("message", message.MAIL_SUCCESS_TRANSLATE_PASSWORD);
 		} else {
-			rea.addFlashAttribute("message", ok.getMessage());
+			rea.addFlashAttribute("message", okPassword.getMessage());
 		}
 		return "redirect:/admin/users";
 	}
