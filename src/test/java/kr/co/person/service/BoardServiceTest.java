@@ -37,10 +37,11 @@ public class BoardServiceTest {
 	
 	@Test
 	public void testWrite() {
-		Assert.assertThat(boardService.write("", "content", 1).getMessage(), is(message.BOARD_NO_TITLE));
-		Assert.assertThat(boardService.write("title", "", 1).getMessage(), is(message.BOARD_NO_CONTENT));
-		Assert.assertThat(boardService.write("title", "content", 0).getMessage(), is(message.USER_WRONG_USER));
+		board = boardService.findBoardForIdx(2);
+		Assert.assertThat(board.getIdx(), is(0));
 		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is(message.BOARD_SUCCESS_WRITE));
+		board = boardService.findBoardForIdx(2);
+		Assert.assertThat(board, notNullValue());
 	}
 	
 	@Test
@@ -60,14 +61,17 @@ public class BoardServiceTest {
 	
 	@Test
 	public void testUpdate(){
+		String newTitle = "ttttt";
+		String newContent = "ccccc";
 		board = boardService.findBoardForIdx(1);
 		Assert.assertThat(board.getRegDate(), is(board.getUpdateDate()));
-		Assert.assertThat(boardService.update(1, "hyun", ""), is(false));
-		Assert.assertThat(boardService.update(1, "", "hyun"), is(false));
-		Assert.assertThat(boardService.update(5, "hyun", "hyun"), is(false));
-		Assert.assertThat(boardService.update(1, "ttttt", "ccccc"), is(true));
+		Assert.assertThat(board.getTitle(), not(newTitle));
+		Assert.assertThat(board.getContent(), not(newContent));
+		Assert.assertThat(boardService.update(1, newTitle, newContent), is(true));
 		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getRegDate(), is(not(board.getUpdateDate())));
+		Assert.assertThat(board.getRegDate(), not(board.getUpdateDate()));
+		Assert.assertThat(board.getTitle(), is(newTitle));
+		Assert.assertThat(board.getContent(), is(newContent));
 	}
 	
 	@Test

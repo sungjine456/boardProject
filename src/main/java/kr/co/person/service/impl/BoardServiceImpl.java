@@ -2,7 +2,6 @@ package kr.co.person.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,15 +35,6 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public OkCheck write(String title, String content, int userIdx) {
 		log.info("execute BoardServiceImpl write");
-		if(StringUtils.isEmpty(title)){
-			return new OkCheck(message.BOARD_NO_TITLE, false);
-		}
-		if(StringUtils.isEmpty(content)){
-			return new OkCheck(message.BOARD_NO_CONTENT, false);
-		}
-		if(IsValid.isNotValidInts(userIdx)){
-			return new OkCheck(message.USER_WRONG_USER, false);
-		}
 		DateTime date = new DateTime();
 		User user = userRepository.findOne(userIdx);
 		if(IsValid.isNotValidObjects(user)){
@@ -59,27 +49,26 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public Page<Board> findAll(Pageable pageable) {
 		log.info("execute BoardServiceImpl findAll");
-		if(IsValid.isNotValidObjects(pageable)){
+		Page<Board> findBoard = boardRepository.findAll(pageable);
+		if(IsValid.isNotValidObjects(findBoard)){
 			return null;
 		}
-		return boardRepository.findAll(pageable);
+		return findBoard;
 	}
 
 	@Override
 	public Board findBoardForIdx(int idx) {
 		log.info("execute BoardServiceImpl findBoardForIdx");
-		if(IsValid.isNotValidInts(idx)){
+		Board findBoard = boardRepository.findOne(idx);
+		if(IsValid.isNotValidBoard(findBoard)){
 			return new Board();
 		}
-		return boardRepository.findOne(idx);
+		return findBoard;
 	}
 
 	@Override
 	public boolean update(int idx, String title, String content) {
 		log.info("execute BoardServiceImpl update");
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(title) || StringUtils.isEmpty(content)){
-			return false;
-		}
 		Board board = boardRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(board)){
 			return false;
@@ -94,9 +83,6 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public boolean addHitCount(int boardIdx) {
 		log.info("execute BoardServiceImple addHitCount");
-		if(IsValid.isNotValidInts(boardIdx)){
-			return false;
-		}
 		Board board = boardRepository.findOne(boardIdx);
 		if(IsValid.isNotValidObjects(board)){
 			return false;
@@ -109,12 +95,12 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int getBoardLikeCount(int boardIdx) {
 		log.info("execute BoardServiceImple getBoardLikeCount");
-		if(IsValid.isNotValidInts(boardIdx)){
+		Board board = boardRepository.findOne(boardIdx);
+		if(IsValid.isNotValidBoard(board)){
 			return -1;
 		}
-		Board board = boardRepository.findOne(boardIdx);
 		List<BoardLike> boardLikes = boardLikeRepository.findByBoardIdx(boardIdx);
-		if(IsValid.isNotValidObjects(board, boardLikes)){
+		if(IsValid.isNotValidObjects(boardLikes)){
 			return -1;
 		}
 		return boardLikes.size();
@@ -123,9 +109,6 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public BoardLike getBoardLike(int boardIdx, User user) {
 		log.info("execute BoardServiceImple getBoardLike");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidInts(boardIdx, user.getIdx())){
-			return null;
-		}
 		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
 		if(IsValid.isNotValidObjects(like)){
 			return null;
@@ -136,16 +119,16 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public boolean addBoardLike(int boardIdx, User user) {
 		log.info("execute BoardServiceImple addBoardLike");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidInts(boardIdx, user.getIdx())){
+		User checkUser = userRepository.findOne(user.getIdx());
+		if(IsValid.isNotValidUser(checkUser)){
+			return false;
+		}
+		Board board = boardRepository.findOne(boardIdx);
+		if(IsValid.isNotValidBoard(board)){
 			return false;
 		}
 		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
 		if(IsValid.isValidObjects(like)){
-			return false;
-		}
-		Board board = boardRepository.findOne(boardIdx);
-		User userCheck = userRepository.findOne(user.getIdx());
-		if(IsValid.isNotValidObjects(board, userCheck)){
 			return false;
 		}
 		like = new BoardLike(board, user);
@@ -156,9 +139,6 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public boolean removeBoardLike(int boardIdx, User user) {
 		log.info("execute BoardServiceImple removeBoardLike");
-		if(IsValid.isNotValidObjects(user) || IsValid.isNotValidInts(boardIdx, user.getIdx())){
-			return false;
-		}
 		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
 		if(IsValid.isNotValidObjects(like)){
 			return false;

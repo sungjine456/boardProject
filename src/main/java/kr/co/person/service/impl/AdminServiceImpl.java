@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.person.common.IsValid;
 import kr.co.person.domain.User;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.AdminService;
@@ -18,6 +19,10 @@ public class AdminServiceImpl implements AdminService {
 	
 	@Override
 	public Page<User> findUserAll(Pageable pageable) {
-		return userRepository.findAll(pageable);
+		Page<User> findUser = userRepository.findAll(pageable);
+		if(IsValid.isNotValidObjects(findUser)){
+			return null;
+		}
+		return findUser;
 	}
 }

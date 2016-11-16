@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import kr.co.person.common.Common;
 import kr.co.person.common.CommonCookie;
 import kr.co.person.common.CommonMail;
+import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.User;
@@ -69,6 +70,9 @@ public class AdminController {
 		}
 		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, direction, sort);
 		Page<User> pages = adminService.findUserAll(pageable);
+		if(IsValid.isNotValidObjects(pages)){
+			return "redirect:/";
+		}
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		int maxPage = pages.getTotalPages();
