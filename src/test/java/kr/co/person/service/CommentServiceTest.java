@@ -1,7 +1,6 @@
 package kr.co.person.service;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.util.List;
 
@@ -34,9 +33,10 @@ public class CommentServiceTest {
 			    new Sort.Order(Direction.DESC, "circle"),
 			    new Sort.Order(Direction.ASC, "step")));
 		Page<Comment> pages = commentService.findAllCommentByBoard(0, pageable);
-		Assert.assertThat(pages, is(nullValue()));
-		pages = commentService.findAllCommentByBoard(1, pageable);
 		List<Comment> comments = pages.getContent();
+		Assert.assertThat(comments.size(), is(0));
+		pages = commentService.findAllCommentByBoard(1, pageable);
+		comments = pages.getContent();
 		Assert.assertThat(comments.size(), is(8));
 	}
 	

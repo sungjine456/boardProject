@@ -31,12 +31,7 @@ public class CommentServiceImpl implements CommentService {
 	
 	public Page<Comment> findAllCommentByBoard(int boardIdx, Pageable pageable){
 		log.info("execute CommentServiceImple findAllCommentByBoard");
-		Page<Comment> findComment = commentRepository.findByBoardIdx(boardIdx, pageable);
-		List<Comment> commentList = findComment.getContent();
-		if(commentList.size() == 0){
-			return null;
-		}
-		return findComment;
+		return commentRepository.findByBoardIdx(boardIdx, pageable);
 	}
 
 	@Override

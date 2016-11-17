@@ -183,9 +183,6 @@ public class BoardController {
 		}
 		String like = (IsValid.isNotValidObjects(boardLike))? message.BOARD_LIKE:message.BOARD_LIKE_CANCLE;
 		Page<Comment> comments = commentService.findAllCommentByBoard(boardNum, pageable);
-		if(IsValid.isNotValidObjects(comments)){
-			return "view/frame";
-		}
 		int maxPage = comments.getTotalPages();
 		if(lastPage > maxPage){
 			lastPage = maxPage;
