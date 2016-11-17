@@ -2,6 +2,8 @@ package kr.co.person.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -162,7 +164,11 @@ public class UserController {
 					}
 				}
 				if(StringUtils.equals("psvlgnd", key)){
-					loginId = val;
+					try {
+						loginId = URLDecoder.decode(val, "UTF-8");
+					} catch (UnsupportedEncodingException uee) {
+						return "view/user/login";
+					}
 				}
 			}
 		}
@@ -213,10 +219,15 @@ public class UserController {
 				try {
 					loginId = common.cookieValueEncryption(new DateTime().toString());
 					enKeyId = commonCookie.aesEncode(id);
+					res.addCookie(common.addCookie("psvd", enKeyId));
+				    res.addCookie(common.addCookie("psvlgnd", loginId));
 				} catch(EmptyStringException e) {
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
 				} catch(NoSuchAlgorithmException e) {
+					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
+					return "redirect:/";
+				} catch (UnsupportedEncodingException uee){
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
 				} catch (Exception e){
@@ -227,8 +238,6 @@ public class UserController {
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
 				}
-			    res.addCookie(common.addCookie("psvd", enKeyId));
-			    res.addCookie(common.addCookie("psvlgnd", loginId));
 			}
 			return "redirect:/board";
 		} else {
@@ -250,9 +259,12 @@ public class UserController {
 		if(IsValid.isValidArrays(cookies)){
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
-				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvlgnd", key)){
-					loginId = val;
+					try {
+						loginId = URLDecoder.decode(cookies[i].getValue(), "UTF-8");
+					} catch (UnsupportedEncodingException uee) {
+						return "redirect:/";
+					}
 				}
 			}
 		}
@@ -355,9 +367,12 @@ public class UserController {
 		if(IsValid.isValidArrays(cookies)){
 			for(int i = 0; i < cookies.length; i++){
 				String key = cookies[i].getName();
-				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvlgnd", key)){
-					loginId = val;
+					try {
+						loginId = URLDecoder.decode(cookies[i].getValue(), "UTF-8");
+					} catch (UnsupportedEncodingException uee) {
+						return "redirect:/";
+					}
 				}
 			}
 		}

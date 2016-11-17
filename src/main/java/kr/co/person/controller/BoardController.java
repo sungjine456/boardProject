@@ -2,6 +2,8 @@ package kr.co.person.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -191,6 +193,41 @@ public class BoardController {
 		if(maxPage == 0){
 			lastPage = 1;
 		}
+		try {
+			Cookie[] cookies = req.getCookies();
+			if(IsValid.isValidArrays(cookies)){
+				boolean addHit = true;
+				for(int i = 0; i < cookies.length; i++){
+					String key = cookies[i].getName();
+					String val = URLDecoder.decode(cookies[i].getValue(), "UTF-8");
+					if(StringUtils.equals("pht", key)){
+						String[] vals = val.split(" ");
+						int length = vals.length;
+						for(int j = 0; j < length; j++){
+							int value = Integer.parseInt(vals[j]);
+							if(value == boardNum){
+								addHit = false;
+							}
+						}
+						if(addHit){
+							boardService.addHitCount(boardNum);
+							res.addCookie(common.addCookie("pht", val + boardNum + " "));
+							addHit = false;
+						}
+					}
+				}
+				if(addHit){
+				    res.addCookie(common.addCookie("pht", boardNum + " "));
+				    boardService.addHitCount(boardNum);
+				}
+			} else {
+				res.addCookie(common.addCookie("pht", boardNum + " "));
+			    boardService.addHitCount(boardNum);
+			}
+		} catch(UnsupportedEncodingException uee){
+			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
+			return "redirect:/board";
+		}
 		model.addAttribute("comments", comments);
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("lastPage", lastPage);
@@ -199,36 +236,6 @@ public class BoardController {
 		model.addAttribute("board", board);
 		model.addAttribute("likeCount", likeCount);
 		model.addAttribute("like", like);
-		Cookie[] cookies = req.getCookies();
-		if(IsValid.isValidArrays(cookies)){
-			boolean addHit = true;
-			for(int i = 0; i < cookies.length; i++){
-				String key = cookies[i].getName();
-				String val = cookies[i].getValue();
-				if(StringUtils.equals("pht", key)){
-					String[] vals = val.split(" ");
-					int length = vals.length;
-					for(int j = 0; j < length; j++){
-						int value = Integer.parseInt(vals[j]);
-						if(value == boardNum){
-							addHit = false;
-						}
-					}
-					if(addHit){
-						boardService.addHitCount(boardNum);
-						res.addCookie(common.addCookie("pht", val + boardNum + " "));
-						addHit = false;
-					}
-				}
-			}
-			if(addHit){
-			    res.addCookie(common.addCookie("pht", boardNum + " "));
-			    boardService.addHitCount(boardNum);
-			}
-		} else {
-			res.addCookie(common.addCookie("pht", boardNum + " "));
-		    boardService.addHitCount(boardNum);
-		}
 		return "view/frame";
 	}
 	

@@ -2,6 +2,8 @@ package kr.co.person.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -95,11 +97,11 @@ public class Common {
     	return content;
     }
     
-    public Cookie addCookie(String key, String value){
+    public Cookie addCookie(String key, String value) throws UnsupportedEncodingException{
     	DateTime date1 = DateTime.now();
     	DateTime date2 = date1.plusYears(1);
     	int expiredate = (int)(date2.getMillis()-date1.getMillis())/1000;
-    	Cookie cookie = new Cookie(key, value);
+    	Cookie cookie = new Cookie(key, URLEncoder.encode(value, "UTF-8"));
 		cookie.setMaxAge(expiredate);
 	    return cookie;
     }

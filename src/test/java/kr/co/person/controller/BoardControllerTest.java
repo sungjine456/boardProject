@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.net.URLDecoder;
 import java.util.UUID;
 
 import javax.servlet.http.Cookie;
@@ -192,7 +193,7 @@ public class BoardControllerTest {
     	Cookie[] cookies = result.getResponse().getCookies();
     	Assert.assertThat(cookies, notNullValue());
     	Assert.assertThat("pht", is(cookies[0].getName()));
-    	Assert.assertThat("1 ", is(cookies[0].getValue()));
+    	Assert.assertThat("1 ", is(URLDecoder.decode(cookies[0].getValue(), "UTF-8")));
     }
     
     @Test
