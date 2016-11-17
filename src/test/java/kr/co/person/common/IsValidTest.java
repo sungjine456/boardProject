@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.domain.Board;
+import kr.co.person.domain.Comment;
 import kr.co.person.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -139,7 +140,16 @@ public class IsValidTest {
 		Assert.assertThat(IsValid.isValidUser(user), is(false));
 		user = new User();
 		Assert.assertThat(IsValid.isValidUser(user), is(false));
+		user = new User("id", "email", "", "name", "img", date, date);
+		Assert.assertThat(IsValid.isValidUser(user), is(false));
+		user = new User("id", "", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isValidUser(user), is(false));
+		user = new User("", "email", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isValidUser(user), is(false));
 		user = new User("id", "email", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isValidUser(user), is(false));
+		user = new User("id", "email", "password", "name", "img", date, date);
+		user.setIdx(1);
 		Assert.assertThat(IsValid.isValidUser(user), is(true));
 	}
 
@@ -150,7 +160,16 @@ public class IsValidTest {
 		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
 		user = new User();
 		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
+		user = new User("id", "email", "", "name", "img", date, date);
+		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
+		user = new User("id", "", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
+		user = new User("", "email", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
 		user = new User("id", "email", "password", "name", "img", date, date);
+		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
+		user = new User("id", "email", "password", "name", "img", date, date);
+		user.setIdx(1);
 		Assert.assertThat(IsValid.isNotValidUser(user), is(false));
 	}
 	
@@ -158,10 +177,18 @@ public class IsValidTest {
 	public void testIsValidBoard(){
 		DateTime date = new DateTime();
 		Board board = null;
+		User user = new User();
 		Assert.assertThat(IsValid.isValidBoard(board), is(false));
 		board = new Board();
 		Assert.assertThat(IsValid.isValidBoard(board), is(false));
-		board = new Board("title", "content", new User(), date, date);
+		board = new Board("title", "content", user, date, date);
+		Assert.assertThat(IsValid.isValidBoard(board), is(false));
+		user = new User("test", "test@av.co", "123", "test", "img/test", date, date);
+		user.setIdx(1);
+		board = new Board("title", "content", user, date, date);
+		Assert.assertThat(IsValid.isValidBoard(board), is(false));
+		board = new Board("title", "content", user, date, date);
+		board.setIdx(1);
 		Assert.assertThat(IsValid.isValidBoard(board), is(true));
 	}
 	
@@ -169,10 +196,60 @@ public class IsValidTest {
 	public void testIsNotValidBoard(){
 		DateTime date = new DateTime();
 		Board board = null;
+		User user = new User();
 		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
 		board = new Board();
 		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
-		board = new Board("title", "content", new User(), date, date);
+		board = new Board("title", "content", user, date, date);
+		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
+		user = new User("test", "test@av.co", "123", "test", "img/test", date, date);
+		user.setIdx(1);
+		board = new Board("title", "content", user, date, date);
+		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
+		board = new Board("title", "content", user, date, date);
+		board.setIdx(1);
 		Assert.assertThat(IsValid.isNotValidBoard(board), is(false));
+	}
+	
+	@Test
+	public void testIsValidComment(){
+		DateTime date = new DateTime();
+		Comment comment = null;
+		User user = new User();
+		Board board = new Board();
+		Assert.assertThat(IsValid.isValidComment(comment), is(false));
+		comment = new Comment();
+		Assert.assertThat(IsValid.isValidComment(comment), is(false));
+		comment = new Comment("comment", 0, 0, 0, user, board, date, date);
+		Assert.assertThat(IsValid.isValidComment(comment), is(false));
+		user = new User("test", "test@av.co", "123", "test", "img/test", date, date);
+		board = new Board("title", "content", user, date, date);
+		comment = new Comment("comment", 0, 0, 0, user, board, date, date);
+		Assert.assertThat(IsValid.isValidComment(comment), is(false));
+		user.setIdx(1);
+		board.setIdx(1);
+		comment.setIdx(1);
+		Assert.assertThat(IsValid.isValidComment(comment), is(true));
+	}
+	
+	@Test
+	public void testIsNotValidComment(){
+		DateTime date = new DateTime();
+		Comment comment = null;
+		User user = new User();
+		Board board = new Board();
+		Assert.assertThat(IsValid.isNotValidComment(comment), is(true));
+		comment = new Comment();
+		Assert.assertThat(IsValid.isNotValidComment(comment), is(true));
+		comment = new Comment("comment", 0, 0, 0, user, board, date, date);
+		Assert.assertThat(IsValid.isNotValidComment(comment), is(true));
+		user = new User("test", "test@av.co", "123", "test", "img/test", date, date);
+		board = new Board("title", "content", user, date, date);
+		comment = new Comment("comment", 0, 0, 0, user, board, date, date);
+		Assert.assertThat(IsValid.isNotValidComment(comment), is(true));
+		user.setIdx(1);
+		board.setIdx(1);
+		comment.setIdx(1);
+		Assert.assertThat(IsValid.isNotValidComment(comment), is(false));
 	}
 }

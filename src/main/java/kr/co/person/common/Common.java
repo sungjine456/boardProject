@@ -143,7 +143,7 @@ public class Common {
 			return false;
 		}
 		User user = userRepository.findOne(sessionUser.getIdx());
-		return (IsValid.isNotValidObjects(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
+		return (IsValid.isNotValidUser(user) || !StringUtils.equals(sessionUser.getId(), user.getId())
 				|| !StringUtils.equals(sessionUser.getName(), user.getName()) || !StringUtils.equals(sessionUser.getEmail(), user.getEmail())
 				|| !StringUtils.equals(loginYn, "Y"))
 				?false:true;

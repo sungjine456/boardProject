@@ -2,7 +2,6 @@ package kr.co.person.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,21 +31,20 @@ public class CommentServiceImpl implements CommentService {
 	
 	public Page<Comment> findAllCommentByBoard(int boardIdx, Pageable pageable){
 		log.info("execute CommentServiceImple findAllCommentByBoard");
-		if(IsValid.isNotValidObjects(pageable) || IsValid.isNotValidInts(boardIdx)){
+		Page<Comment> findComment = commentRepository.findByBoardIdx(boardIdx, pageable);
+		List<Comment> commentList = findComment.getContent();
+		if(commentList.size() == 0){
 			return null;
 		}
-		return commentRepository.findByBoardIdx(boardIdx, pageable);
+		return findComment;
 	}
 
 	@Override
 	public boolean write(String commentSentence, int userIdx, int boardIdx) {
 		log.info("execute CommentServiceImple write");
-		if(IsValid.isNotValidInts(userIdx, boardIdx) || StringUtils.isEmpty(commentSentence)){
-			return false;
-		}
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(IsValid.isNotValidObjects(writer, board)){
+		if(IsValid.isNotValidUser(writer) || IsValid.isNotValidBoard(board)){
 			return false;
 		}
 		DateTime date = new DateTime();
@@ -57,9 +55,6 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public boolean update(int idx, String commentSentence) {
 		log.info("execute CommentServiceImple update");
-		if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(commentSentence)){
-			return false;
-		}
 		Comment comment = commentRepository.findOne(idx);
 		if(IsValid.isNotValidObjects(comment)){
 			return false;
@@ -73,13 +68,10 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public boolean replyWrite(int idx, String commentSentence, int userIdx, int boardIdx) {
 		log.info("execute CommentServiceImple replyWrite");
-		if(IsValid.isNotValidInts(idx, userIdx, boardIdx) || StringUtils.isEmpty(commentSentence)){
-			return false;
-		}
 		Comment comment = commentRepository.findOne(idx);
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(IsValid.isNotValidObjects(comment, writer, board)){
+		if(IsValid.isNotValidUser(writer) && IsValid.isNotValidBoard(board) && IsValid.isNotValidObjects(comment)){
 			return false;
 		}
 		int circle = comment.getCircle();

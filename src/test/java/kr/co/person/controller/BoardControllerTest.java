@@ -64,6 +64,7 @@ public class BoardControllerTest {
     	user.setName("hong");
     	user.setImg("defaul.png");
     	user.setEmail("sungjin@naver.com");
+    	user.setPassword("123123");
     	mockSession.setAttribute("user", user);
     }
 

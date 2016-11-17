@@ -399,7 +399,7 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		if(IsValid.isNotValidUser(updateUser)){
+		if(IsValid.isNotValidObjects(updateUser)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}

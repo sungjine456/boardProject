@@ -57,9 +57,6 @@ public class UserControllerTest {
 	private MockMvc mock;
 	private MockHttpSession mockSession;
 	
-	// 비밀번호123123을 암호화한 형태
-    private String password = "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1epersonProject";
-	 
     @Before
     public void setUp() throws Exception {
     	MockitoAnnotations.initMocks(this);
@@ -608,8 +605,7 @@ public class UserControllerTest {
     			.session(mockSession)
     			.param("id", "test")
     			.param("email", "test@naver.com")
-    			.param("name", "test")
-    			.param("password", password))
+    			.param("name", "test"))
 	    	.andExpect(status().isFound())
 	    	.andExpect(redirectedUrl("/mypage"))
 	    	.andExpect(flash().attribute("message", message.USER_SUCCESS_UPDATE))

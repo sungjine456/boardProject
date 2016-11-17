@@ -42,13 +42,20 @@ public class CommentServiceTest {
 	
 	@Test
 	public void testWrite(){
+		Pageable pageable = new PageRequest(0, 10, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		Page<Comment> pages = commentService.findAllCommentByBoard(1, pageable);
+		List<Comment> comments = pages.getContent();
+		Assert.assertThat(comments.size(), is(8));
 		Assert.assertThat(commentService.write("comment write test", 1, 3), is(false));
 		Assert.assertThat(commentService.write("comment write test", 100, 1), is(false));
 		Assert.assertThat(commentService.write("comment write test", 100, 100), is(false));
 		Assert.assertThat(commentService.write("comment write test", 0, 0), is(false));
-		Assert.assertThat(commentService.write("", 1, 1), is(false));
-		Assert.assertThat(commentService.write(null, 1, 1), is(false));
 		Assert.assertThat(commentService.write("comment write test", 1, 1), is(true));
+		Page<Comment> reFindPages = commentService.findAllCommentByBoard(1, pageable);
+		List<Comment> reFindComments = reFindPages.getContent();
+		Assert.assertThat(reFindComments.size(), is(9));
 	}
 	
 	@Test
