@@ -55,9 +55,4 @@ public class CommonTest {
 	public void testCookieValueEncryptionEmptyException() throws EmptyStringException, NoSuchAlgorithmException {
 		common.cookieValueEncryption("");
 	}
-
-	@Test(expected=EmptyStringException.class)
-	public void testcleanXssEmptyException() throws EmptyStringException {
-		common.cleanXss("");
-	}
 }

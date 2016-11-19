@@ -13,7 +13,7 @@ public class IsValid {
 	public static boolean isValidInts(int... ints){
 		if(ints != null){
 			for(int i : ints) {
-		    	if(i == 0){
+		    	if(i <= 0){
 		    		return false;
 		    	}
 			}
@@ -26,7 +26,7 @@ public class IsValid {
 	public static boolean isNotValidInts(int... ints){
 		if(ints != null){
     		for(int i : ints) {
-		    	if(i == 0){
+		    	if(i <= 0){
 		    		return true;
 		    	}
 			}

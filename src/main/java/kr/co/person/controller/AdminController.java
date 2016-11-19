@@ -49,6 +49,10 @@ public class AdminController {
 	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
 	public String adminView(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminView");
+		if(!common.adminSessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
@@ -63,10 +67,6 @@ public class AdminController {
 			}
 		} else {
 			saveSort = sort;
-		}
-		if(!common.adminSessionComparedToDB(session)){
-			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
-			return "redirect:/";
 		}
 		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, direction, sort);
 		Page<User> pages = adminService.findUserAll(pageable);
@@ -89,8 +89,12 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/admin/translatePassword", method=RequestMethod.POST)
-	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea){
+	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea, HttpSession session){
 		log.info("execute AdminController translatePassword");
+		if(!common.adminSessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		OkCheck okEmail = common.isEmail(email);
 		if(!okEmail.isBool()){
 			rea.addFlashAttribute("message", okEmail.getMessage());
@@ -112,8 +116,12 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/admin/emailAccessRe", method=RequestMethod.POST)
-	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea){
+	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea, HttpSession session){
 		log.info("execute AdminController reEmailAccess");
+		if(!common.adminSessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		OkCheck ok = common.isEmail(email);
 		if(!ok.isBool()){
 			rea.addFlashAttribute("message", message.USER_NO_EMAIL);

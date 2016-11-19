@@ -187,7 +187,7 @@ public class UserControllerTest {
     public void testLoginViewLoginYn() throws Exception {
     	mock.perform(
     		get("/")
-    			.sessionAttr("loginYn", "Y"))
+    			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(redirectedUrl("/board"));
     }

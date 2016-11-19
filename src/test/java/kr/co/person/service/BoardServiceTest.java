@@ -60,6 +60,19 @@ public class BoardServiceTest {
 	}
 	
 	@Test
+	public void test(){
+		Board board = boardService.findBoardForIdx(-1);
+		Assert.assertThat(board.getTitle(), is(nullValue()));
+		board = boardService.findBoardForIdx(0);
+		Assert.assertThat(board.getTitle(), is(nullValue()));
+		board = boardService.findBoardForIdx(100);
+		Assert.assertThat(board.getTitle(), is(nullValue()));
+		board = boardService.findBoardForIdx(1);
+		Assert.assertThat(board.getTitle(), is("title"));
+		Assert.assertThat(board.getContent(), is("content"));
+	}
+	
+	@Test
 	public void testUpdate(){
 		String newTitle = "ttttt";
 		String newContent = "ccccc";

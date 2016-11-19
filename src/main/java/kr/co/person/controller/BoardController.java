@@ -35,7 +35,6 @@ import kr.co.person.annotation.IsValidBoard;
 import kr.co.person.common.Common;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
-import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
@@ -64,8 +63,6 @@ public class BoardController {
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
-		User user = (User)session.getAttribute("user");
-		log.info(user.getImg());
 		Pageable pageable = new CustomPageable(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
@@ -86,11 +83,11 @@ public class BoardController {
 	
 	@RequestMapping(value="/boardWrite", method=RequestMethod.GET)
 	public String boardWriteView(Model model, HttpSession session, RedirectAttributes rea){
+		log.info("execute BoardController boardWriteView");
 		if(!common.sessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		log.info("execute BoardController boardWriteView");
 		model.addAttribute("include", "board/write.ftl");
 		return "view/frame";
 	}
@@ -104,6 +101,7 @@ public class BoardController {
 		}
 		String title = board.getTitle();
 		String content = board.getContent();
+		User user = (User)session.getAttribute("user");
 		if(StringUtils.isEmpty(title) || StringUtils.isEmpty(title.trim())){
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
 			return "redirect:/boardWrite";
@@ -111,11 +109,6 @@ public class BoardController {
 		if(StringUtils.isEmpty(content) || StringUtils.isEmpty(content.trim())){
 			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
 			return "redirect:/boardWrite";
-		}
-		User user = (User)session.getAttribute("user");
-		if(IsValid.isNotValidUser(user)){
-			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
-			return "redirect:/";
 		}
 		if(editImage.getOriginalFilename().split("\\.").length == 2){
 			String imgPath = "";
@@ -135,9 +128,8 @@ public class BoardController {
 	        String fileName = paths[2];
 			content = content.replaceAll("<img src=\"[a-zA-Z0-9!@#$%^&*()`~/\\=+:;,]{0,}\">", "<img src=/"+filePath+se+kindPath+se+fileName+">");
 		}
-		try {
-			title = common.cleanXss(title.trim());
-		} catch(EmptyStringException e) {
+		title = common.cleanXss(title.trim());
+		if(StringUtils.isEmpty(title)){
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
 			return "redirect:/boardWrite";
 		}
@@ -170,10 +162,6 @@ public class BoardController {
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 
 		User user = (User)session.getAttribute("user");
-		if(IsValid.isNotValidUser(user)){
-			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
-			return "redirect:/";
-		}
 		Board board = boardService.findBoardForIdx(boardNum);
 		BoardLike boardLike = boardService.getBoardLike(boardNum, user);
 		long likeCount = boardService.getBoardLikeCount(boardNum);
@@ -265,43 +253,38 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		int num = board.getIdx();
+		int boardNum = board.getIdx();
 		String title = board.getTitle();
 		String content = board.getContent();
-		if(IsValid.isNotValidInts(num)){
+		if(IsValid.isNotValidInts(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board findBoard = boardService.findBoardForIdx(num);
+		Board findBoard = boardService.findBoardForIdx(boardNum);
 		if(IsValid.isNotValidBoard(findBoard)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
 		if(StringUtils.isEmpty(title) || StringUtils.isEmpty(title.trim())){
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardUpdateView";
 		}
-		try {
-			title = common.cleanXss(title.trim());
-		} catch(EmptyStringException e) {
-			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
-			rea.addAttribute("num", num);
-			return "redirect:/boardUpdateView";
-		}
-		try {
-			content = common.cleanXss(content);
-		} catch(EmptyStringException e) {
+		if(StringUtils.isEmpty(content)){
 			rea.addFlashAttribute("message", message.BOARD_NO_CONTENT);
-			rea.addAttribute("num", num);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardUpdateView";
 		}
-		if(!boardService.update(num, title, content)){
+		title = common.cleanXss(title.trim());
+		content = common.cleanXss(content);
+		
+		if(!boardService.update(boardNum, title, content)){
 			rea.addFlashAttribute("message", message.BOARD_FAIL_UPDATE);
-			rea.addAttribute("num", num);
+			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardUpdateView";
 		}
 		rea.addFlashAttribute("message", message.BOARD_SUCCESS_UPDATE);
-		rea.addAttribute("boardNum", num);
+		rea.addAttribute("boardNum", boardNum);
 		return "redirect:/boardDetail";
 	}
 	
@@ -316,22 +299,20 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		String commentSentence = comment.getComment();
 		Board board = boardService.findBoardForIdx(boardNum);
 		User user = (User)session.getAttribute("user");
 		if(IsValid.isNotValidBoard(board)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		if(IsValid.isNotValidUser(user)){
-			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
-			return "redirect:/";
+		String commentSentence = comment.getComment();
+		if(StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())){
+			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
+			rea.addAttribute("boardNum", boardNum);
+			return "redirect:/boardDetail";
 		}
-		try {
-			if(!commentService.write(common.enter(common.cleanXss(commentSentence)), user.getIdx(), boardNum)){
-				rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			}
-		} catch(EmptyStringException e) {
+		commentSentence = common.cleanXss(commentSentence);
+		if(!commentService.write(common.enter(commentSentence), user.getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 		}
 		rea.addAttribute("boardNum", boardNum);
@@ -365,12 +346,13 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		try {
-			if(IsValid.isNotValidInts(idx) || StringUtils.isEmpty(common.cleanXss(commentSentence)) || StringUtils.isEmpty(commentSentence.trim())
-					|| !commentService.update(idx, common.enter(commentSentence))){
-				rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
-			}
-		} catch(EmptyStringException e) {
+		if(StringUtils.isEmpty(commentSentence) || StringUtils.isEmpty(commentSentence.trim())){
+			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
+			rea.addAttribute("boardNum", boardNum);
+			return "redirect:/boardDetail";
+		}
+		commentSentence = common.cleanXss(commentSentence);
+		if(IsValid.isNotValidInts(idx) || !commentService.update(idx, common.enter(commentSentence))){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 		}
 		rea.addAttribute("boardNum", boardNum);
@@ -409,17 +391,13 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(IsValid.isNotValidUser(user)){
-			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
-			return "redirect:/";
+		commentSentence = common.cleanXss(commentSentence);
+		if(StringUtils.isEmpty(commentSentence)){
+			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
+			rea.addAttribute("boardNum", boardNum);
+			return "redirect:/boardDetail";
 		}
-		try {
-			if(!commentService.replyWrite(idx, common.enter(common.cleanXss(commentSentence)), user.getIdx(), boardNum)){
-				rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
-				rea.addAttribute("boardNum", boardNum);
-				return "redirect:/boardDetail";
-			}
-		} catch(EmptyStringException e) {
+		if(!commentService.replyWrite(idx, common.enter(commentSentence), user.getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
 		}
 		rea.addAttribute("boardNum", boardNum);

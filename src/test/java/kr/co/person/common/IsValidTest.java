@@ -20,6 +20,7 @@ public class IsValidTest {
 
 	@Test
 	public void testIsValidInts() {
+		Assert.assertThat(IsValid.isValidInts(-1), is(false));
 		Assert.assertThat(IsValid.isValidInts(0), is(false));
 		Assert.assertThat(IsValid.isValidInts(1), is(true));
 		Assert.assertThat(IsValid.isValidInts(0, 0), is(false));
@@ -38,6 +39,7 @@ public class IsValidTest {
 	
 	@Test
 	public void testIsNotValidInts() {
+		Assert.assertThat(IsValid.isNotValidInts(-1), is(true));
 		Assert.assertThat(IsValid.isNotValidInts(0), is(true));
 		Assert.assertThat(IsValid.isNotValidInts(1), is(false));
 		Assert.assertThat(IsValid.isNotValidInts(0, 0), is(true));

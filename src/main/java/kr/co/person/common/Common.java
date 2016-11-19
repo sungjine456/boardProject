@@ -75,10 +75,7 @@ public class Common {
 		}
     }
     
-    public String cleanXss(String str) throws EmptyStringException {
-		if(StringUtils.isEmpty(str)){
-			throw new EmptyStringException("빈 문자열은 안됩니다.");
-		}
+    public String cleanXss(String str) {
     	str = str.replaceAll("&", "&amp;");
     	str = str.replaceAll("%2F", "");
     	str = str.replaceAll("\"","&#34;");

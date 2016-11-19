@@ -109,9 +109,8 @@ public class UserController {
 			
 			return map;
 		}
-		try {
-			id = common.cleanXss(id);
-		} catch(EmptyStringException e) {
+		id = common.cleanXss(id);
+		if(StringUtils.isEmpty(id)){
 			map.put("str", message.USER_NO_ID);
 			map.put("bool", "false");
 			
@@ -144,7 +143,7 @@ public class UserController {
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String loginView(HttpSession session, HttpServletRequest req){
 		log.info("execute UserController loginView");
-		if(IsValid.isValidObjects(session.getAttribute("loginYn")) && session.getAttribute("loginYn").equals("Y")){
+		if(common.sessionComparedToDB(session)){
 			return "redirect:/board";
 		}
 		String id = "";
@@ -194,17 +193,17 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/";
 		}
-		try {
-			OkUserCheck ouc = userService.confirmUserPassword(common.cleanXss(id), password);
-			if(!ouc.isBool()){
-				rea.addFlashAttribute("message", ouc.getMessage());
-				return "redirect:/";
-			} else {
-				user = ouc.getUser();
-			}
-		} catch(EmptyStringException e) {
+		id = common.cleanXss(id);
+		if(StringUtils.isEmpty(id)){
 			rea.addFlashAttribute("message", message.USER_NO_ID);
+			return "redirect:/";			
+		}
+		OkUserCheck ouc = userService.confirmUserPassword(id, password);
+		if(!ouc.isBool()){
+			rea.addFlashAttribute("message", ouc.getMessage());
 			return "redirect:/";
+		} else {
+			user = ouc.getUser();
 		}
 		if(IsValid.isValidUser(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
@@ -414,13 +413,14 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		if(IsValid.isNotValidObjects(updateUser)){
-			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+		String id = updateUser.getId();
+		if(StringUtils.isEmpty(id)){
+			rea.addFlashAttribute("message", message.USER_FAIL_UPDATE);
 			return "redirect:/";
 		}
 		String imgPath = "";
 		try {
-			imgPath = common.createImg(ufile, updateUser.getId(), "user");
+			imgPath = common.createImg(ufile, id, "user");
 		} catch (IOException e) {
 			rea.addFlashAttribute("message", message.FILE_FAIL_UPLOAD);
 			return "redirect:/mypage";
@@ -441,9 +441,8 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_NAME);
 			return "redirect:/mypage";
 		}
-		try {
-			name = common.cleanXss(name);
-		} catch(EmptyStringException e) {
+		name = common.cleanXss(name);
+		if(StringUtils.isEmpty(name)){
 			rea.addFlashAttribute("message", message.USER_NO_NAME);
 			return "redirect:/mypage";
 		}

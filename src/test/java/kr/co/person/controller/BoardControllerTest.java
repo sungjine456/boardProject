@@ -248,20 +248,19 @@ public class BoardControllerTest {
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_TITLE))
-    		.andExpect(redirectedUrl("/boardUpdateView"));
+    		.andExpect(redirectedUrl("/boardUpdateView?boardNum=1"));
     }
     
     @Test
     public void testBoardUpdateNoContent() throws Exception {
-    	int idx = 1;
     	mock.perform(
     		post("/boardUpdate")
-	    		.param("idx", idx + "")
+	    		.param("idx", "1")
 	    		.param("title", "testTitle")
     			.session(mockSession))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.BOARD_NO_CONTENT))
-    		.andExpect(redirectedUrl("/boardUpdateView?num=" + idx));
+    		.andExpect(redirectedUrl("/boardUpdateView?boardNum=1"));
     }
     
     @Test
@@ -274,7 +273,7 @@ public class BoardControllerTest {
     			.session(mockSession))
 	  		.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.BOARD_NO_TITLE))
-			.andExpect(redirectedUrl("/boardUpdateView"));
+			.andExpect(redirectedUrl("/boardUpdateView?boardNum=1"));
     }
     
     @Test
