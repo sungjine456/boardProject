@@ -108,6 +108,8 @@ public class UserServiceTest {
 	
 	@Test
 	public void testJoin(){
+		user = userRepository.findById("sungjin1");
+		Assert.assertThat(user, nullValue());
 		user = new User();
 		user.setId("sungjin1");
 		user.setPassword(password);
@@ -116,6 +118,8 @@ public class UserServiceTest {
 		OkCheck ok = userService.join(user);
 		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_JOIN));
 		Assert.assertThat(ok.isBool(), is(true));
+		user = userRepository.findById("sungjin1");
+		Assert.assertThat(user, notNullValue());
 		ok = userService.join(user);
 		Assert.assertThat(ok.getMessage(), is(message.USER_ALREADY_JOIN_ID));
 		Assert.assertThat(ok.isBool(), is(false));

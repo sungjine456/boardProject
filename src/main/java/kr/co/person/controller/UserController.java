@@ -59,10 +59,32 @@ public class UserController {
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController join");
+		String id = user.getId();
+		String password = user.getPassword();
+		String name = user.getName();
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
+		try {
+			id = common.cleanXss(id);
+			password = common.passwordEncryption(password);
+			name = common.cleanXss(name);
+		} catch(EmptyStringException e){
+			rea.addFlashAttribute("message", message.USER_FAIL_JOIN);
+			return "redirect:/join";
+		} catch(NoSuchAlgorithmException e) {
+			rea.addFlashAttribute("message", message.USER_RE_PASSWORD);
+			return "redirect:/join";
+		}
 		if(!emailCheck.isBool()){
 			rea.addFlashAttribute("message", emailCheck.getMessage());
+			return "redirect:/join";
+		}
+		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
+			rea.addFlashAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
+			return "redirect:/join";
+		}
+		if(StringUtils.isEmpty(name)){
+			rea.addFlashAttribute("message", message.USER_NO_NAME);
 			return "redirect:/join";
 		}
 		String imgPath = "";
@@ -76,6 +98,10 @@ public class UserController {
 		if(StringUtils.isEmpty(imgPath)){
 			imgPath = "/img"+se+"user"+se+"default.png";
 		}
+		user.setId(id);
+		user.setName(name);
+		user.setPassword(password);
+		user.setEmail(email);
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
 		if(ok.isBool()){

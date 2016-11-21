@@ -1,6 +1,7 @@
 package kr.co.person.controller;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -86,7 +87,8 @@ public class UserControllerTest {
 			fileUpload("/join")
 				.file(new MockMultipartFile("file", null, null, "bar".getBytes()))
 				.param("id", "test")
-				.param("password", "123456"))
+				.param("password", "123456")
+				.param("name", "test"))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.USER_NO_EMAIL))
     		.andExpect(redirectedUrl("/join"));
@@ -99,6 +101,7 @@ public class UserControllerTest {
     			.file(new MockMultipartFile("file", null, null, "bar".getBytes()))
     			.param("id", "test")
     			.param("password", "123456")
+    			.param("name", "test")
     			.param("email", "aaa"))
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("message", message.USER_NO_EMAIL_FORMAT))
@@ -107,16 +110,25 @@ public class UserControllerTest {
     
     @Test
     public void testJoinSuccess() throws Exception {
+    	String id = "test";
+    	User user = userRepository.findById(id);
+    	Assert.assertThat(user, nullValue());
+    	
     	mock.perform(
     		fileUpload("/join")
     			.file(new MockMultipartFile("file", null, null, "bar".getBytes()))
-    			.param("id", "test")
-    			.param("name", "test")
+    			.param("id", id)
+    			.param("name", "<test>")
     			.param("password", "123456")
     			.param("email", "tjdwlsdms100@naver.com"))
 			.andExpect(status().isFound())
 			.andExpect(flash().attribute("email", "tjdwlsdms100@naver.com"))
 			.andExpect(redirectedUrl("/emailAccessAgo"));
+    	
+    	user = userRepository.findById(id);
+    	Assert.assertThat(user, notNullValue());
+    	Assert.assertThat(user.getName(), is("&lt;test&gt;"));
+    	Assert.assertThat(user.getEmail(), is("tjdwlsdms100@naver.com"));
     }
     
     @Test

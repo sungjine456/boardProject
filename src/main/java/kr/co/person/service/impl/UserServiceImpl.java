@@ -35,40 +35,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserServiceImpl join");
-		String id = user.getId();
-		String password = user.getPassword();
-		String name = user.getName();
-		try {
-			id = common.cleanXss(id);
-			password = common.passwordEncryption(password);
-			name = common.cleanXss(name);
-		} catch(EmptyStringException e){
-			return new OkCheck(message.USER_FAIL_JOIN, false);
-		} catch(NoSuchAlgorithmException e) {
-			return new OkCheck(message.USER_RE_PASSWORD, false);
-		}
-		String email = user.getEmail();
-		OkCheck emailCheck = common.isEmail(email);
-		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
-			return new OkCheck(message.USER_WRONG_ID_OR_WRONG_PASSWORD, false);	
-		}
-		if(StringUtils.isEmpty(name)){
-			return new OkCheck(message.USER_NO_NAME, false);
-		}
-		if(!emailCheck.isBool()){
-			return new OkCheck(emailCheck.getMessage(), false);
-		}
-		OkCheck joinCheckId = idCheck(id);
-		OkCheck joinCheckEmail = emailCheck(email);
+		OkCheck joinCheckId = idCheck(user.getId());
+		OkCheck joinCheckEmail = emailCheck(user.getEmail());
 		if(!joinCheckId.isBool()){
 			return joinCheckId;
 		}
 		if(!joinCheckEmail.isBool()){
 			return joinCheckEmail;
 		}
-		user.setId(id);
-		user.setName(name);
-		user.setPassword(password);
+		
 		DateTime date = new DateTime();
 		user.setRegDate(date);
 		user.setUpdateDate(date);
