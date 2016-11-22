@@ -18,7 +18,7 @@ import kr.co.person.common.Message;
 import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
-import kr.co.person.pojo.OkUserCheck;
+import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.repository.AutoLoginRepository;
 import kr.co.person.repository.UserRepository;
 
@@ -37,12 +37,12 @@ public class UserServiceTest {
 
 	@Test
 	public void testConfirmUserPassword(){
-		OkUserCheck userCheck = userService.confirmUserPassword("sungjin", "123123");
+		OkObjectCheck<User> userCheck = userService.confirmUserPassword("sungjin", "123123");
 		Assert.assertThat(userCheck, is(notNullValue()));
 		Assert.assertThat(userCheck.getMessage(), is(""));
 		Assert.assertThat(userCheck.isBool(), is(true));
-		Assert.assertThat(userCheck.getUser(), is(notNullValue()));
-		Assert.assertThat(userCheck.getUser().getId(), is("sungjin"));
+		Assert.assertThat(userCheck.getObject(), is(notNullValue()));
+		Assert.assertThat(userCheck.getObject().getId(), is("sungjin"));
 	}
 	
 	@Test
@@ -70,7 +70,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testFindUserForId(){
-		OkUserCheck ouc = userService.findUserForId(null);
+		OkObjectCheck<User> ouc = userService.findUserForId(null);
 		Assert.assertThat(ouc.isBool(), is(false));
 		ouc = userService.findUserForId("");
 		Assert.assertThat(ouc.isBool(), is(false));
@@ -78,21 +78,21 @@ public class UserServiceTest {
 		Assert.assertThat(ouc.isBool(), is(false));
 		ouc = userService.findUserForId("sungjin");
 		Assert.assertThat(ouc.isBool(), is(true));
-		Assert.assertThat(ouc.getUser().getName(), is("hong"));
-		Assert.assertThat(ouc.getUser().getId(), is("sungjin"));
-		Assert.assertThat(ouc.getUser().getEmail(), is("sungjin@naver.com"));
+		Assert.assertThat(ouc.getObject().getName(), is("hong"));
+		Assert.assertThat(ouc.getObject().getId(), is("sungjin"));
+		Assert.assertThat(ouc.getObject().getEmail(), is("sungjin@naver.com"));
 	}
 	
 	@Test
 	public void testFindUserForEmail(){
-		OkUserCheck	ouc = userService.findUserForEmail("su@naver.com");
+		OkObjectCheck<User> ouc = userService.findUserForEmail("su@naver.com");
 		Assert.assertThat(ouc.isBool(), is(false));
 		Assert.assertThat(ouc.getMessage(), is(message.USER_WRONG_EMAIL));
 		ouc = userService.findUserForEmail("sungjin@naver.com");
 		Assert.assertThat(ouc.isBool(), is(true));
-		Assert.assertThat(ouc.getUser().getName(), is("hong"));
-		Assert.assertThat(ouc.getUser().getId(), is("sungjin"));
-		Assert.assertThat(ouc.getUser().getEmail(), is("sungjin@naver.com"));
+		Assert.assertThat(ouc.getObject().getName(), is("hong"));
+		Assert.assertThat(ouc.getObject().getId(), is("sungjin"));
+		Assert.assertThat(ouc.getObject().getEmail(), is("sungjin@naver.com"));
 	}
 	
 	@Test
@@ -211,10 +211,10 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAccessEmail(){
-		OkUserCheck ouc = userService.findUserForId("sungjine");
-		Assert.assertThat(ouc.getUser().getAccess(), is("N"));
+		OkObjectCheck<User> ouc = userService.findUserForId("sungjine");
+		Assert.assertThat(ouc.getObject().getAccess(), is("N"));
 		userService.accessEmail("sungjine@naver.com");
 		ouc = userService.findUserForId("sungjine");
-		Assert.assertThat(ouc.getUser().getAccess(), is("Y"));
+		Assert.assertThat(ouc.getObject().getAccess(), is("Y"));
 	}
 }

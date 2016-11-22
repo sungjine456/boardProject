@@ -17,7 +17,7 @@ import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.AutoLogin;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
-import kr.co.person.pojo.OkUserCheck;
+import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.repository.AutoLoginRepository;
 import kr.co.person.repository.UserRepository;
 import kr.co.person.service.UserService;
@@ -104,23 +104,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public OkUserCheck confirmUserPassword(String id, String password) {
+	public OkObjectCheck<User> confirmUserPassword(String id, String password) {
 		log.info("execute UserServiceImpl confirmUserPassword");
 		try {
 			password = common.passwordEncryption(password);
 		} catch(EmptyStringException e){
-			return new OkUserCheck(new User(), message.USER_NO_PASSWORD, false);
+			return new OkObjectCheck<User>(new User(), message.USER_NO_PASSWORD, false);
 		} catch (NoSuchAlgorithmException e) {
-			return new OkUserCheck(new User(), message.USER_RE_PASSWORD, false);
+			return new OkObjectCheck<User>(new User(), message.USER_RE_PASSWORD, false);
 		}
 		if(StringUtils.isEmpty(password)){
-			return new OkUserCheck(new User(), message.USER_RE_PASSWORD, false);
+			return new OkObjectCheck<User>(new User(), message.USER_RE_PASSWORD, false);
 		}
 		User user = userRepository.findByIdAndPassword(id, password);
 		if(IsValid.isNotValidUser(user)){
-			return new OkUserCheck(user, message.USER_WRONG_USER, true);
+			return new OkObjectCheck<User>(user, message.USER_WRONG_USER, true);
 		}
-		return new OkUserCheck(user, "", true);
+		return new OkObjectCheck<User>(user, "", true);
 	}
 
 	@Override
@@ -151,24 +151,24 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public OkUserCheck findUserForId(String id) {
+	public OkObjectCheck<User> findUserForId(String id) {
 		log.info("execute UserServiceImpl findUserForId");
 		User user = userRepository.findById(id);
 		if(IsValid.isValidUser(user)){
-			return new OkUserCheck(user, "", true);
+			return new OkObjectCheck<User>(user, "", true);
 		} else {
-			return new OkUserCheck(user, message.USER_WRONG_ID, false);
+			return new OkObjectCheck<User>(user, message.USER_WRONG_ID, false);
 		}
 	}
 	
 	@Override
-	public OkUserCheck findUserForEmail(String email) {
+	public OkObjectCheck<User> findUserForEmail(String email) {
 		log.info("execute UserServiceImpl findUserForEmail");
 		User user = userRepository.findByEmail(email);
 		if(IsValid.isValidUser(user)){
-			return new OkUserCheck(user, "", true);
+			return new OkObjectCheck<User>(user, "", true);
 		} else {
-			return new OkUserCheck(user, message.USER_WRONG_EMAIL, false);
+			return new OkObjectCheck<User>(user, message.USER_WRONG_EMAIL, false);
 		}
 	}
 
@@ -264,13 +264,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public OkUserCheck accessEmail(String email) {
+	public OkObjectCheck<User> accessEmail(String email) {
 		log.info("execute UserServiceImpl accessEmail");
 		User user = userRepository.findByEmail(email);
 		if(IsValid.isNotValidUser(user)){
-			return new OkUserCheck(new User(), message.ACCESS_FAIL_ACCESS, false);
+			return new OkObjectCheck<User>(new User(), message.ACCESS_FAIL_ACCESS, false);
 		}
 		user.setAccess("Y");
-		return new OkUserCheck(user, message.ACCESS_THANK_YOU_FOR_AGREE, true);
+		return new OkObjectCheck<User>(user, message.ACCESS_THANK_YOU_FOR_AGREE, true);
 	}
 }

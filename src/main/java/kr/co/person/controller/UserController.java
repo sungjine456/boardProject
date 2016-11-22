@@ -37,7 +37,7 @@ import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
-import kr.co.person.pojo.OkUserCheck;
+import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.service.UserService;
 
 @Controller
@@ -197,10 +197,10 @@ public class UserController {
 				}
 			}
 		}
-		OkUserCheck ouc = userService.findUserForId(id);
-		if(ouc.isBool() && userService.autoLoginCheck(ouc.getUser(), loginId)){
+		OkObjectCheck<User> ouc = userService.findUserForId(id);
+		if(ouc.isBool() && userService.autoLoginCheck(ouc.getObject(), loginId)){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("user", ouc.getUser());
+			session.setAttribute("user", ouc.getObject());
 			return "redirect:/board";
 		}
 		return "view/user/login";
@@ -224,12 +224,12 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_ID);
 			return "redirect:/";			
 		}
-		OkUserCheck ouc = userService.confirmUserPassword(id, password);
+		OkObjectCheck<User> ouc = userService.confirmUserPassword(id, password);
 		if(!ouc.isBool()){
 			rea.addFlashAttribute("message", ouc.getMessage());
 			return "redirect:/";
 		} else {
-			user = ouc.getUser();
+			user = ouc.getObject();
 		}
 		if(IsValid.isValidUser(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
@@ -378,12 +378,12 @@ public class UserController {
 		}
 		User user = (User)session.getAttribute("user");
 		int idx = user.getIdx();
-		OkUserCheck ouc = userService.confirmUserPassword(user.getId(), password);
+		OkObjectCheck<User> ouc = userService.confirmUserPassword(user.getId(), password);
 		if(!ouc.isBool()){
 			rea.addFlashAttribute("message", ouc.getMessage());
 			return "redirect:/";
 		}
-		if(ouc.getUser().getIdx() != idx){
+		if(ouc.getObject().getIdx() != idx){
 			rea.addFlashAttribute("message", message.USER_WRONG_USER);
 			return "redirect:/";
 		}
@@ -501,23 +501,23 @@ public class UserController {
 			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
 			return "redirect:/";
 		}
-		OkUserCheck findUserForEmail = userService.findUserForEmail(email);
+		OkObjectCheck<User> findUserForEmail = userService.findUserForEmail(email);
 		if(!findUserForEmail.isBool()){
 			rea.addFlashAttribute("message", findUserForEmail.getMessage());
 			return "redirect:/";
 		}
-		if(StringUtils.equals(findUserForEmail.getUser().getAccess(), "Y")){
+		if(StringUtils.equals(findUserForEmail.getObject().getAccess(), "Y")){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("user", findUserForEmail.getUser());
+			session.setAttribute("user", findUserForEmail.getObject());
 			return "redirect:/board";
 		}
-		OkUserCheck accessEmail = userService.accessEmail(email);
+		OkObjectCheck<User> accessEmail = userService.accessEmail(email);
 		if(!accessEmail.isBool()){
 			rea.addFlashAttribute("message", accessEmail.getMessage());
 			return "redirect:/";
 		}
 		session.setAttribute("loginYn", "Y");
-		session.setAttribute("user", accessEmail.getUser());
+		session.setAttribute("user", accessEmail.getObject());
 		rea.addFlashAttribute("message", accessEmail.getMessage());
 		return "redirect:/board";
 	}
