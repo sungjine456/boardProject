@@ -17,6 +17,7 @@ import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.repository.BoardLikeRepository;
 import kr.co.person.repository.BoardRepository;
 import kr.co.person.repository.UserRepository;
@@ -57,13 +58,23 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Board findBoardForIdx(int idx) {
+	public OkObjectCheck<Board> findBoardForIdx(int idx) {
+		log.info("execute BoardServiceImpl findBoardForIdx");
+		Board board = boardRepository.findOne(idx);
+		if(IsValid.isNotValidBoard(board)){
+			return new OkObjectCheck<Board>(new Board(), message.BOARD_NO_BOARD, false);
+		}
+		return new OkObjectCheck<Board>(board, "", true);
+	}
+	
+	@Override
+	public boolean isNotBoardForIdx(int idx) {
 		log.info("execute BoardServiceImpl findBoardForIdx");
 		Board findBoard = boardRepository.findOne(idx);
 		if(IsValid.isNotValidBoard(findBoard)){
-			return new Board();
+			return true;
 		}
-		return findBoard;
+		return false;
 	}
 
 	@Override

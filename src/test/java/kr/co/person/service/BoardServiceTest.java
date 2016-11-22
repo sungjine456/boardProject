@@ -25,6 +25,7 @@ import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
+import kr.co.person.pojo.OkObjectCheck;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BoardProjectApplication.class)
@@ -33,15 +34,14 @@ public class BoardServiceTest {
 
 	@Autowired private BoardService boardService;
 	@Autowired private Message message;
-	private Board board;
 	
 	@Test
 	public void testWrite() {
-		board = boardService.findBoardForIdx(2);
-		Assert.assertThat(board.getIdx(), is(0));
+		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(2);
+		Assert.assertThat(boardCheck.isBool(), is(false));
 		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is(message.BOARD_SUCCESS_WRITE));
-		board = boardService.findBoardForIdx(2);
-		Assert.assertThat(board, notNullValue());
+		boardCheck = boardService.findBoardForIdx(2);
+		Assert.assertThat(boardCheck.isBool(), is(true));
 	}
 	
 	@Test
@@ -61,42 +61,45 @@ public class BoardServiceTest {
 	
 	@Test
 	public void test(){
-		Board board = boardService.findBoardForIdx(-1);
-		Assert.assertThat(board.getTitle(), is(nullValue()));
-		board = boardService.findBoardForIdx(0);
-		Assert.assertThat(board.getTitle(), is(nullValue()));
-		board = boardService.findBoardForIdx(100);
-		Assert.assertThat(board.getTitle(), is(nullValue()));
-		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getTitle(), is("title"));
-		Assert.assertThat(board.getContent(), is("content"));
+		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(-1);
+		Assert.assertThat(boardCheck.isBool(), is(false));
+		boardCheck = boardService.findBoardForIdx(0);
+		Assert.assertThat(boardCheck.isBool(), is(false));
+		boardCheck = boardService.findBoardForIdx(100);
+		Assert.assertThat(boardCheck.isBool(), is(false));
+		boardCheck = boardService.findBoardForIdx(1);
+		Assert.assertThat(boardCheck.isBool(), is(true));
+		Assert.assertThat(boardCheck.getObject().getTitle(), is("title"));
+		Assert.assertThat(boardCheck.getObject().getContent(), is("content"));
 	}
 	
 	@Test
 	public void testUpdate(){
 		String newTitle = "ttttt";
 		String newContent = "ccccc";
-		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getRegDate(), is(board.getUpdateDate()));
-		Assert.assertThat(board.getTitle(), not(newTitle));
-		Assert.assertThat(board.getContent(), not(newContent));
+		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(1);
+		Board findBoard = boardCheck.getObject();
+		Assert.assertThat(findBoard.getRegDate(), is(findBoard.getUpdateDate()));
+		Assert.assertThat(findBoard.getTitle(), not(newTitle));
+		Assert.assertThat(findBoard.getContent(), not(newContent));
 		Assert.assertThat(boardService.update(1, newTitle, newContent), is(true));
-		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getRegDate(), not(board.getUpdateDate()));
-		Assert.assertThat(board.getTitle(), is(newTitle));
-		Assert.assertThat(board.getContent(), is(newContent));
+		boardCheck = boardService.findBoardForIdx(1);
+		findBoard = boardCheck.getObject();
+		Assert.assertThat(findBoard.getRegDate(), not(findBoard.getUpdateDate()));
+		Assert.assertThat(findBoard.getTitle(), is(newTitle));
+		Assert.assertThat(findBoard.getContent(), is(newContent));
 	}
 	
 	@Test
 	public void testAddHitCount(){
-		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getHitCount(), is(0));
+		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(1);
+		Assert.assertThat(boardCheck.getObject().getHitCount(), is(0));
 		boardService.addHitCount(1);
-		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getHitCount(), is(1));
+		boardCheck = boardService.findBoardForIdx(1);
+		Assert.assertThat(boardCheck.getObject().getHitCount(), is(1));
 		boardService.addHitCount(1);
-		board = boardService.findBoardForIdx(1);
-		Assert.assertThat(board.getHitCount(), is(2));
+		boardCheck = boardService.findBoardForIdx(1);
+		Assert.assertThat(boardCheck.getObject().getHitCount(), is(2));
 	}
 	
 	@Test

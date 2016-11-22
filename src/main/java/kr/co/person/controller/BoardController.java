@@ -41,6 +41,7 @@ import kr.co.person.domain.Comment;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.service.BoardService;
 import kr.co.person.service.CommentService;
 
@@ -58,8 +59,12 @@ public class BoardController {
 	private final int COMMENT_MAX_COUNT_OF_PAGE = 20;
 	
 	@RequestMapping(value="/board", method=RequestMethod.GET)
-	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpSession session){
+	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController main");
+		if(!common.sessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
 		if(pageNum > 0){
 			pageNum -= 1;
 		}
@@ -134,8 +139,8 @@ public class BoardController {
 			return "redirect:/boardWrite";
 		}
 		OkCheck ok = boardService.write(title, content, user.getIdx());
+		rea.addFlashAttribute("message", ok.getMessage());
 		if(!ok.isBool()){
-			rea.addFlashAttribute("message", ok.getMessage());
 			return "redirect:/boardWrite";
 		}
 		return "redirect:/board";
@@ -161,12 +166,11 @@ public class BoardController {
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 
-		User user = (User)session.getAttribute("user");
-		Board board = boardService.findBoardForIdx(boardNum);
-		BoardLike boardLike = boardService.getBoardLike(boardNum, user);
+		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(boardNum);
+		BoardLike boardLike = boardService.getBoardLike(boardNum, (User)session.getAttribute("user"));
 		long likeCount = boardService.getBoardLikeCount(boardNum);
-		if(IsValid.isNotValidBoard(board) || likeCount < 0){
-			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
+		if(!boardCheck.isBool() || likeCount < 0){
+			rea.addFlashAttribute("message", boardCheck.getMessage());
 			return "redirect:/board";
 		}
 		String like = (IsValid.isNotValidObjects(boardLike))? message.BOARD_LIKE:message.BOARD_LIKE_CANCLE;
@@ -218,7 +222,7 @@ public class BoardController {
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("maxPage", maxPage);
 		model.addAttribute("include", "board/boardDetail.ftl");
-		model.addAttribute("board", board);
+		model.addAttribute("board", boardCheck.getObject());
 		model.addAttribute("likeCount", likeCount);
 		model.addAttribute("like", like);
 		return "view/frame";
@@ -235,13 +239,13 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidBoard(board)){
-			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
+		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(boardNum);
+		if(!boardCheck.isBool()){
+			rea.addFlashAttribute("message", boardCheck.getMessage());
 			return "redirect:/board";
 		}
 		model.addAttribute("include", "board/update.ftl");
-		model.addAttribute("board", board);
+		model.addAttribute("board", boardCheck.getObject());
 		model.addAttribute("num", boardNum);
 		return "view/frame";
 	}
@@ -260,8 +264,7 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board findBoard = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidBoard(findBoard)){
+		if(boardService.isNotBoardForIdx(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -299,9 +302,7 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
-		Board board = boardService.findBoardForIdx(boardNum);
-		User user = (User)session.getAttribute("user");
-		if(IsValid.isNotValidBoard(board)){
+		if(boardService.isNotBoardForIdx(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -312,7 +313,7 @@ public class BoardController {
 			return "redirect:/boardDetail";
 		}
 		commentSentence = common.cleanXss(commentSentence);
-		if(!commentService.write(common.enter(commentSentence), user.getIdx(), boardNum)){
+		if(!commentService.write(common.enter(commentSentence), ((User)session.getAttribute("user")).getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_RE_COMMENT);
 		}
 		rea.addAttribute("boardNum", boardNum);
@@ -341,8 +342,7 @@ public class BoardController {
 		}
 		int idx = comment.getIdx();
 		String commentSentence = comment.getComment();
-		Board board = boardService.findBoardForIdx(boardNum);
-		if(IsValid.isNotValidBoard(board)){
+		if(boardService.isNotBoardForIdx(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -380,9 +380,7 @@ public class BoardController {
 		}
 		String commentSentence = comment.getComment();
 		int idx = comment.getIdx();
-		Board board = boardService.findBoardForIdx(boardNum);
-		User user = (User)session.getAttribute("user");
-		if(IsValid.isNotValidBoard(board)){
+		if(boardService.isNotBoardForIdx(boardNum)){
 			rea.addFlashAttribute("message", message.BOARD_NO_BOARD);
 			return "redirect:/board";
 		}
@@ -397,7 +395,7 @@ public class BoardController {
 			rea.addAttribute("boardNum", boardNum);
 			return "redirect:/boardDetail";
 		}
-		if(!commentService.replyWrite(idx, common.enter(commentSentence), user.getIdx(), boardNum)){
+		if(!commentService.replyWrite(idx, common.enter(commentSentence), ((User)session.getAttribute("user")).getIdx(), boardNum)){
 			rea.addFlashAttribute("message", message.COMMENT_NO_REPLY);
 		}
 		rea.addAttribute("boardNum", boardNum);

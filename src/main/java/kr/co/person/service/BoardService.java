@@ -7,11 +7,13 @@ import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkCheck;
+import kr.co.person.pojo.OkObjectCheck;
 
 public interface BoardService {
 	OkCheck write(String title, String content, int userIdx);
 	Page<Board> findAll(Pageable pageable);
-	Board findBoardForIdx(int idx);
+	OkObjectCheck<Board> findBoardForIdx(int idx);
+	boolean isNotBoardForIdx(int boardIdx);
 	boolean update(int idx, String title, String content);
 	boolean addHitCount(int boardIdx);
 	int getBoardLikeCount(int boardIdx);
