@@ -6,11 +6,10 @@ import org.springframework.data.domain.Pageable;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.User;
-import kr.co.person.pojo.OkCheck;
 import kr.co.person.pojo.OkObjectCheck;
 
 public interface BoardService {
-	OkCheck write(String title, String content, int userIdx);
+	boolean write(String title, String content, int userIdx);
 	Page<Board> findAll(Pageable pageable);
 	OkObjectCheck<Board> findBoardForIdx(int idx);
 	boolean isNotBoardForIdx(int boardIdx);

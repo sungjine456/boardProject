@@ -16,7 +16,6 @@ import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.User;
-import kr.co.person.pojo.OkCheck;
 import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.repository.BoardLikeRepository;
 import kr.co.person.repository.BoardRepository;
@@ -34,17 +33,17 @@ public class BoardServiceImpl implements BoardService {
 	@Autowired private Message message;
 	
 	@Override
-	public OkCheck write(String title, String content, int userIdx) {
+	public boolean write(String title, String content, int userIdx) {
 		log.info("execute BoardServiceImpl write");
 		DateTime date = new DateTime();
 		User user = userRepository.findOne(userIdx);
 		if(IsValid.isNotValidObjects(user)){
-			return new OkCheck(message.USER_WRONG_USER, false);
+			return false;
 		}
 		Board board = new Board(title, content, user, date, date);
 		boardRepository.save(board);
 		
-		return new OkCheck(message.BOARD_SUCCESS_WRITE, true);
+		return true;
 	}
 
 	@Override

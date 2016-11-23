@@ -17,7 +17,7 @@ public interface UserService {
 	boolean autoLoginCheck(User user, String loginId);
 	boolean autoLogin(User user, String loginId);
 	boolean autoLogout(User user, String loginId);
-	boolean update(User user);
+	OkObjectCheck<User> update(User user);
 	boolean passwordCheck(int idx, String password);
 	OkObjectCheck<User> accessEmail(String email);
 }

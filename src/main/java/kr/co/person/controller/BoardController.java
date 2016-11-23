@@ -40,7 +40,6 @@ import kr.co.person.domain.BoardLike;
 import kr.co.person.domain.Comment;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.CustomPageable;
-import kr.co.person.pojo.OkCheck;
 import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.service.BoardService;
 import kr.co.person.service.CommentService;
@@ -138,11 +137,11 @@ public class BoardController {
 			rea.addFlashAttribute("message", message.BOARD_NO_TITLE);
 			return "redirect:/boardWrite";
 		}
-		OkCheck ok = boardService.write(title, content, user.getIdx());
-		rea.addFlashAttribute("message", ok.getMessage());
-		if(!ok.isBool()){
+		if(!boardService.write(title, content, user.getIdx())){
+			rea.addFlashAttribute("message", message.USER_WRONG_USER);
 			return "redirect:/boardWrite";
 		}
+		rea.addFlashAttribute("message", message.BOARD_SUCCESS_WRITE);
 		return "redirect:/board";
 	}
 	

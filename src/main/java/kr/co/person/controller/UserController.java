@@ -476,10 +476,12 @@ public class UserController {
 		user.setName(name);
 		user.setEmail(email);
 		user.setImg(imgPath);
-		if(userService.update(user)){
-			rea.addFlashAttribute("message", message.USER_SUCCESS_UPDATE);
+		OkObjectCheck<User> ok = userService.update(user);
+		if(ok.isBool()){
+			session.setAttribute("user", ok.getObject());
+			rea.addFlashAttribute("message", ok.getMessage());
 		} else {
-			rea.addFlashAttribute("message", message.USER_FAIL_UPDATE);
+			rea.addFlashAttribute("message", ok.getMessage());
 		}
 		return "redirect:/mypage";
 	}

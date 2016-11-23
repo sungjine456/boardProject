@@ -233,17 +233,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean update(User user) {
+	public OkObjectCheck<User> update(User user) {
 		log.info("execute UserServiceImpl update");
 		User findUser = userRepository.findOne(user.getIdx());
 		findUser.setName(user.getName());
 		findUser.setEmail(user.getEmail());
 		findUser.setImg(user.getImg());
 		findUser.setUpdateDate(new DateTime());
-		if(userRepository.save(findUser) == null){
-			return false;
+		User updateUser = userRepository.save(findUser);
+		if(updateUser == null){
+			return new OkObjectCheck<User>(new User(), message.USER_FAIL_UPDATE, false);
 		}
-		return true;
+		return new OkObjectCheck<User>(updateUser, message.USER_SUCCESS_UPDATE, true);
 	}
 
 	@Override
