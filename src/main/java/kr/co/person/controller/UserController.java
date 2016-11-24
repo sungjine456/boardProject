@@ -87,6 +87,16 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_NAME);
 			return "redirect:/join";
 		}
+		OkCheck joinCheckId = userService.idCheck(id);
+		OkCheck joinCheckEmail = userService.emailCheck(email);
+		if(!joinCheckId.isBool()){
+			rea.addFlashAttribute("message", joinCheckId.getMessage());
+			return "redirect:/join";
+		}
+		if(!joinCheckEmail.isBool()){
+			rea.addFlashAttribute("message", joinCheckEmail.getMessage());
+			return "redirect:/join";
+		}
 		String imgPath = "";
 		try {
 			imgPath = common.createImg(file, user.getId(), "user");
@@ -117,6 +127,7 @@ public class UserController {
 				rea.addFlashAttribute("message", message.USER_RE_EMAIL);
 				return "redirect:/join";
 			}
+			rea.addFlashAttribute("message", ok.getMessage());
 			rea.addFlashAttribute("email", email);
 			return "redirect:/emailAccessAgo";
 		} else {

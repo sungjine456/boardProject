@@ -35,21 +35,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserServiceImpl join");
-		OkCheck joinCheckId = idCheck(user.getId());
-		OkCheck joinCheckEmail = emailCheck(user.getEmail());
-		if(!joinCheckId.isBool()){
-			return joinCheckId;
-		}
-		if(!joinCheckEmail.isBool()){
-			return joinCheckEmail;
-		}
-		
 		DateTime date = new DateTime();
 		user.setRegDate(date);
 		user.setUpdateDate(date);
 		
-		userRepository.save(user);
-		return new OkCheck(message.USER_SUCCESS_JOIN, true);
+		User updateUser = userRepository.save(user);
+		if(updateUser == null){
+			return new OkCheck(message.USER_FAIL_JOIN, true);
+		} else {
+			return new OkCheck(message.USER_SUCCESS_JOIN, true);
+		}
 	}
 	
 	@Override
@@ -57,9 +52,6 @@ public class UserServiceImpl implements UserService {
 		log.info("execute userServiceImpl leave");
 		String garbage = "b94c56f6f1cf92d48e021c573b77fa253eca91e579e308473c0536716c8e7bd6personProject";
 		User user = userRepository.findOne(idx);
-		if(IsValid.isNotValidUser(user)){
-			return false;
-		}
 		if(StringUtils.isNotEmpty(loginId)){
 			if(autoLoginCheck(user, loginId)){
 				if(!autoLogout(user, loginId)){
@@ -157,7 +149,7 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isValidUser(user)){
 			return new OkObjectCheck<User>(user, "", true);
 		} else {
-			return new OkObjectCheck<User>(user, message.USER_WRONG_ID, false);
+			return new OkObjectCheck<User>(new User(), message.USER_WRONG_ID, false);
 		}
 	}
 	
@@ -168,7 +160,7 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isValidUser(user)){
 			return new OkObjectCheck<User>(user, "", true);
 		} else {
-			return new OkObjectCheck<User>(user, message.USER_WRONG_EMAIL, false);
+			return new OkObjectCheck<User>(new User(), message.USER_WRONG_EMAIL, false);
 		}
 	}
 

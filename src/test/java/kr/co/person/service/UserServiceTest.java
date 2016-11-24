@@ -59,22 +59,8 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testFindUserForIdx() {
-		user = userRepository.findOne(0);
-		Assert.assertThat(user, is(nullValue()));
-		user = userRepository.findOne(1);
-		Assert.assertThat(user.getName(), is("hong"));
-		Assert.assertThat(user.getId(), is("sungjin"));
-		Assert.assertThat(user.getEmail(), is("sungjin@naver.com"));
-	}
-	
-	@Test
 	public void testFindUserForId(){
-		OkObjectCheck<User> ouc = userService.findUserForId(null);
-		Assert.assertThat(ouc.isBool(), is(false));
-		ouc = userService.findUserForId("");
-		Assert.assertThat(ouc.isBool(), is(false));
-		ouc = userService.findUserForId("abcdabcd");
+		OkObjectCheck<User> ouc = userService.findUserForId("abcdabcd");
 		Assert.assertThat(ouc.isBool(), is(false));
 		ouc = userService.findUserForId("sungjin");
 		Assert.assertThat(ouc.isBool(), is(true));
@@ -120,9 +106,6 @@ public class UserServiceTest {
 		Assert.assertThat(ok.isBool(), is(true));
 		user = userRepository.findById("sungjin1");
 		Assert.assertThat(user, notNullValue());
-		ok = userService.join(user);
-		Assert.assertThat(ok.getMessage(), is(message.USER_ALREADY_JOIN_ID));
-		Assert.assertThat(ok.isBool(), is(false));
 	}
 	
 	@Test
@@ -164,7 +147,14 @@ public class UserServiceTest {
 		user.setName(newName);
 		user.setEmail(newEmail);
 		user.setImg(newImg);
-		Assert.assertThat(userService.update(user), is(true));
+		OkObjectCheck<User> ok = userService.update(user);
+		Assert.assertThat(ok.isBool(), is(true));
+		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_UPDATE));
+		user = ok.getObject();
+		Assert.assertThat(user.getUpdateDate(), not(user.getRegDate()));
+		Assert.assertThat(user.getName(), is(newName));
+		Assert.assertThat(user.getEmail(), is(newEmail));
+		Assert.assertThat(user.getImg(), is(newImg));
 		user = userRepository.findOne(1);
 		Assert.assertThat(user.getUpdateDate(), not(user.getRegDate()));
 		Assert.assertThat(user.getName(), is(newName));
@@ -211,10 +201,10 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAccessEmail(){
-		OkObjectCheck<User> ouc = userService.findUserForId("sungjine");
-		Assert.assertThat(ouc.getObject().getAccess(), is("N"));
+		User user = userRepository.findByEmail("sungjine@naver.com");
+		Assert.assertThat(user.getAccess(), is("N"));
 		userService.accessEmail("sungjine@naver.com");
-		ouc = userService.findUserForId("sungjine");
-		Assert.assertThat(ouc.getObject().getAccess(), is("Y"));
+		user = userRepository.findByEmail("sungjine@naver.com");
+		Assert.assertThat(user.getAccess(), is("Y"));
 	}
 }

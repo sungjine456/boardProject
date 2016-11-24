@@ -22,10 +22,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import kr.co.person.BoardProjectApplication;
-import kr.co.person.common.Message;
 import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.OkObjectCheck;
+import kr.co.person.repository.BoardRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BoardProjectApplication.class)
@@ -33,15 +33,18 @@ import kr.co.person.pojo.OkObjectCheck;
 public class BoardServiceTest {
 
 	@Autowired private BoardService boardService;
-	@Autowired private Message message;
+	@Autowired private BoardRepository boardRepository;
 	
 	@Test
 	public void testWrite() {
-		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(2);
-		Assert.assertThat(boardCheck.isBool(), is(false));
-		Assert.assertThat(boardService.write("title", "content", 1).getMessage(), is(message.BOARD_SUCCESS_WRITE));
-		boardCheck = boardService.findBoardForIdx(2);
-		Assert.assertThat(boardCheck.isBool(), is(true));
+		Board board = boardRepository.findOne(2);
+		Assert.assertThat(board, is(nullValue()));
+		Assert.assertThat(boardService.write("title", "content", 1), is(true));
+		board = boardRepository.findOne(2);
+		Assert.assertThat(board, is(notNullValue()));
+		Assert.assertThat(board.getTitle(), is("title"));
+		Assert.assertThat(board.getContent(), is("content"));
+		Assert.assertThat(board.getHitCount(), is(0));
 	}
 	
 	@Test
@@ -60,7 +63,7 @@ public class BoardServiceTest {
 	}
 	
 	@Test
-	public void test(){
+	public void testFindBoardForIdx(){
 		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(-1);
 		Assert.assertThat(boardCheck.isBool(), is(false));
 		boardCheck = boardService.findBoardForIdx(0);
@@ -77,14 +80,12 @@ public class BoardServiceTest {
 	public void testUpdate(){
 		String newTitle = "ttttt";
 		String newContent = "ccccc";
-		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(1);
-		Board findBoard = boardCheck.getObject();
+		Board findBoard = boardRepository.findOne(1);
 		Assert.assertThat(findBoard.getRegDate(), is(findBoard.getUpdateDate()));
 		Assert.assertThat(findBoard.getTitle(), not(newTitle));
 		Assert.assertThat(findBoard.getContent(), not(newContent));
 		Assert.assertThat(boardService.update(1, newTitle, newContent), is(true));
-		boardCheck = boardService.findBoardForIdx(1);
-		findBoard = boardCheck.getObject();
+		findBoard = boardRepository.findOne(1);
 		Assert.assertThat(findBoard.getRegDate(), not(findBoard.getUpdateDate()));
 		Assert.assertThat(findBoard.getTitle(), is(newTitle));
 		Assert.assertThat(findBoard.getContent(), is(newContent));
@@ -92,14 +93,14 @@ public class BoardServiceTest {
 	
 	@Test
 	public void testAddHitCount(){
-		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(1);
-		Assert.assertThat(boardCheck.getObject().getHitCount(), is(0));
+		Board board = boardRepository.findOne(1);
+		Assert.assertThat(board.getHitCount(), is(0));
 		boardService.addHitCount(1);
-		boardCheck = boardService.findBoardForIdx(1);
-		Assert.assertThat(boardCheck.getObject().getHitCount(), is(1));
+		board = boardRepository.findOne(1);
+		Assert.assertThat(board.getHitCount(), is(1));
 		boardService.addHitCount(1);
-		boardCheck = boardService.findBoardForIdx(1);
-		Assert.assertThat(boardCheck.getObject().getHitCount(), is(2));
+		board = boardRepository.findOne(1);
+		Assert.assertThat(board.getHitCount(), is(2));
 	}
 	
 	@Test
@@ -134,8 +135,6 @@ public class BoardServiceTest {
 		Assert.assertThat(boardService.addBoardLike(121, user), is(false));
 		Assert.assertThat(boardService.addBoardLike(1, user), is(true));
 		Assert.assertThat(boardService.getBoardLike(1, user), is(notNullValue()));
-		user.setIdx(2);
-		Assert.assertThat(boardService.addBoardLike(1, user), is(false));
 		user.setIdx(350);
 		Assert.assertThat(boardService.addBoardLike(66, user), is(false));
 		Assert.assertThat(boardService.addBoardLike(1, user), is(false));
