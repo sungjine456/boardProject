@@ -57,24 +57,13 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpSession session, RedirectAttributes rea){
+	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController join");
-		String id = user.getId();
-		String password = user.getPassword();
-		String name = user.getName();
+		String id = common.cleanXss(user.getId());
+		String password = (String)req.getAttribute("password");
+		String name = common.cleanXss(user.getName());
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
-		try {
-			id = common.cleanXss(id);
-			password = common.passwordEncryption(password);
-			name = common.cleanXss(name);
-		} catch(EmptyStringException e){
-			rea.addFlashAttribute("message", message.USER_FAIL_JOIN);
-			return "redirect:/join";
-		} catch(NoSuchAlgorithmException e) {
-			rea.addFlashAttribute("message", message.USER_RE_PASSWORD);
-			return "redirect:/join";
-		}
 		if(!emailCheck.isBool()){
 			rea.addFlashAttribute("message", emailCheck.getMessage());
 			return "redirect:/join";
@@ -209,19 +198,19 @@ public class UserController {
 			}
 		}
 		OkObjectCheck<User> ouc = userService.findUserForId(id);
-		if(ouc.isBool() && userService.autoLoginCheck(ouc.getObject(), loginId)){
+		User user = ouc.getObject();
+		if(ouc.isBool() && userService.autoLoginCheck(user, loginId)){
 			session.setAttribute("loginYn", "Y");
-			session.setAttribute("user", ouc.getObject());
+			session.setAttribute("user", user);
 			return "redirect:/board";
 		}
 		return "view/user/login";
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String login(@IsValidUser User user, @RequestParam(required=false) String idSave, HttpSession session, HttpServletResponse res, RedirectAttributes rea){
+	public String login(@RequestParam(required=false) String id, @RequestParam(required=false) String idSave, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
-		String id = user.getId();
-		String password = user.getPassword();
+		String password = (String)req.getAttribute("password");
 		if(StringUtils.isEmpty(id)){
 			rea.addFlashAttribute("message", message.USER_NO_ID);
 			return "redirect:/";
@@ -239,9 +228,9 @@ public class UserController {
 		if(!ouc.isBool()){
 			rea.addFlashAttribute("message", ouc.getMessage());
 			return "redirect:/";
-		} else {
-			user = ouc.getObject();
 		}
+		User user = ouc.getObject();
+		
 		if(IsValid.isValidUser(user)){
 			if(StringUtils.equals(user.getAccess(), "N")){
 				rea.addFlashAttribute("email", user.getEmail());
@@ -353,12 +342,14 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
-	public String changePassword(@RequestParam(required=false) String password, @RequestParam(required=false) String changePassword, HttpSession session, RedirectAttributes rea){
+	public String changePassword(HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController changePassword");
 		if(!common.sessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
+		String password = (String)req.getAttribute("password");
+		String changePassword = (String)req.getAttribute("changePassword");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
@@ -377,12 +368,13 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/leave")
-	public String leave(@RequestParam(required=false) String password, HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
+	public String leave(HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(!common.sessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
+		String password = (String)req.getAttribute("password");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";
@@ -425,12 +417,13 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/updateView", method=RequestMethod.POST)
-	public String updateView(@RequestParam(required=false) String password, Model model, HttpSession session, RedirectAttributes rea){
+	public String updateView(Model model, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController updateView");
 		if(!common.sessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
+		String password = (String)req.getAttribute("password");
 		if(StringUtils.isEmpty(password)){
 			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
 			return "redirect:/mypage";

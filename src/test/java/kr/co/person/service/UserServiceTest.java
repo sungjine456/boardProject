@@ -37,7 +37,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testConfirmUserPassword(){
-		OkObjectCheck<User> userCheck = userService.confirmUserPassword("sungjin", "123123");
+		OkObjectCheck<User> userCheck = userService.confirmUserPassword("sungjin", password);
 		Assert.assertThat(userCheck, is(notNullValue()));
 		Assert.assertThat(userCheck.getMessage(), is(""));
 		Assert.assertThat(userCheck.isBool(), is(true));
@@ -193,7 +193,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testPasswordCheck(){
-		Assert.assertThat(userService.passwordCheck(1, "123123"), is(true));
+		Assert.assertThat(userService.passwordCheck(1, password), is(true));
 		Assert.assertThat(userService.passwordCheck(100, "123123"), is(false));
 		Assert.assertThat(userService.passwordCheck(1, "654321"), is(false));
 		Assert.assertThat(userService.passwordCheck(100, "654321"), is(false));

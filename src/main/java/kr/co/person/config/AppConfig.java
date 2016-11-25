@@ -37,6 +37,7 @@ import freemarker.template.utility.XmlEscape;
 import kr.co.person.common.Message;
 import kr.co.person.common.ServerCustomization;
 import kr.co.person.interceptor.LoginInterceptor;
+import kr.co.person.interceptor.PasswordEncoderInterceptor;
 
 @Configuration
 @EnableWebMvc
@@ -121,6 +122,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(new PasswordEncoderInterceptor()).addPathPatterns("/**");
 	}
 	
 	@Bean

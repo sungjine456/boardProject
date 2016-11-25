@@ -98,16 +98,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkObjectCheck<User> confirmUserPassword(String id, String password) {
 		log.info("execute UserServiceImpl confirmUserPassword");
-		try {
-			password = common.passwordEncryption(password);
-		} catch(EmptyStringException e){
-			return new OkObjectCheck<User>(new User(), message.USER_NO_PASSWORD, false);
-		} catch (NoSuchAlgorithmException e) {
-			return new OkObjectCheck<User>(new User(), message.USER_RE_PASSWORD, false);
-		}
-		if(StringUtils.isEmpty(password)){
-			return new OkObjectCheck<User>(new User(), message.USER_RE_PASSWORD, false);
-		}
 		User user = userRepository.findByIdAndPassword(id, password);
 		if(IsValid.isNotValidUser(user)){
 			return new OkObjectCheck<User>(user, message.USER_WRONG_USER, true);
@@ -132,9 +122,6 @@ public class UserServiceImpl implements UserService {
 		} catch (EmptyStringException e) {
 			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
 		} catch (NoSuchAlgorithmException e) {
-			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
-		}
-		if(StringUtils.isEmpty(password)){
 			return new OkCheck(message.USER_FAIL_TRANSLATE_PASSWORD, false);
 		}
 		user.setPassword(password);
@@ -171,21 +158,8 @@ public class UserServiceImpl implements UserService {
 		if(IsValid.isNotValidUser(user)){
 			return new OkCheck(message.USER_WRONG_USER, false);
 		}
-		try {
-			password = common.passwordEncryption(password);
-			changePassword = common.passwordEncryption(changePassword);
-		} catch (EmptyStringException e) {
+		if(!password.equals(user.getPassword())){
 			return new OkCheck(message.USER_RE_PASSWORD, false);
-		} catch (NoSuchAlgorithmException e) {
-			return new OkCheck(message.USER_RE_PASSWORD, false);
-		}
-		if(StringUtils.isEmpty(password)){
-			return new OkCheck(message.USER_NO_PASSWORD, false);
-		} else if(!password.equals(user.getPassword())){
-			return new OkCheck(message.USER_RE_PASSWORD, false);
-		}
-		if(StringUtils.isEmpty(changePassword)){
-			return new OkCheck(message.USER_RE_UPDATE_PASSWORD, false);
 		}
 		user.setPassword(changePassword);
 		
@@ -243,13 +217,6 @@ public class UserServiceImpl implements UserService {
 	public boolean passwordCheck(int idx, String password) {
 		log.info("execute UserServiceImpl passwordCheck");
 		User user = userRepository.findOne(idx);
-		try {
-			password = common.passwordEncryption(password);
-		} catch(EmptyStringException e){
-			return false;
-		} catch (NoSuchAlgorithmException e) {
-			return false;
-		}
 		if(IsValid.isNotValidUser(user) || !StringUtils.equals(password, user.getPassword())){
 			return false;
 		}
