@@ -86,7 +86,6 @@ public class BoardServiceImpl implements BoardService {
 		board.setContent(content);
 		board.setTitle(title);
 		board.setUpdateDate(new DateTime());
-		boardRepository.save(board);
 		return true;
 	}
 
@@ -98,7 +97,6 @@ public class BoardServiceImpl implements BoardService {
 			return false;
 		}
 		board.setHitCount(board.getHitCount() + 1);
-		boardRepository.save(board);
 		return true;
 	}
 

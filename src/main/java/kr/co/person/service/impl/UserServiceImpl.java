@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
 		user.setName(garbage);
 		user.setImg(garbage);
 		user.setAccess("N");
-		userRepository.save(user);
 		return true;
 	}
 
@@ -206,11 +205,7 @@ public class UserServiceImpl implements UserService {
 		findUser.setEmail(user.getEmail());
 		findUser.setImg(user.getImg());
 		findUser.setUpdateDate(new DateTime());
-		User updateUser = userRepository.save(findUser);
-		if(updateUser == null){
-			return new OkObjectCheck<User>(new User(), message.USER_FAIL_UPDATE, false);
-		}
-		return new OkObjectCheck<User>(updateUser, message.USER_SUCCESS_UPDATE, true);
+		return new OkObjectCheck<User>(findUser, message.USER_SUCCESS_UPDATE, true);
 	}
 
 	@Override

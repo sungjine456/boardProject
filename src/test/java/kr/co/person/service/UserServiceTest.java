@@ -85,7 +85,7 @@ public class UserServiceTest {
 	public void testChangePassword(){
 		user = userRepository.findOne(1);
 		Assert.assertThat(user.getPassword(), is(password));
-		OkCheck ok = userService.changePassword(1, "123123", "654321");
+		OkCheck ok = userService.changePassword(1, password, "654321");
 		Assert.assertThat(ok.isBool(), is(true));
 		Assert.assertThat(ok.getMessage(), is(message.USER_SUCCESS_TRANSlATE_PASSWORD));
 		user = userRepository.findOne(1);

@@ -56,7 +56,6 @@ public class CommentServiceImpl implements CommentService {
 		}
 		comment.setComment(commentSentence);
 		comment.setUpdateDate(new DateTime());
-		commentRepository.save(comment);
 		return true;
 	}
 
