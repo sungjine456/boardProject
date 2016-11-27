@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
 		Comment comment = commentRepository.findOne(idx);
 		User writer = userRepository.findOne(userIdx);
 		Board board = boardRepository.findOne(boardIdx);
-		if(IsValid.isNotValidUser(writer) && IsValid.isNotValidBoard(board) && IsValid.isNotValidObjects(comment)){
+		if(IsValid.isNotValidUser(writer) || IsValid.isNotValidBoard(board) || IsValid.isNotValidObjects(comment)){
 			return false;
 		}
 		int circle = comment.getCircle();

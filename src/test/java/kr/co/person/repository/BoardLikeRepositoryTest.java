@@ -33,7 +33,7 @@ public class BoardLikeRepositoryTest {
 	}
 	
 	@Test
-	public void test(){
+	public void testFindByBoardIdx(){
 		Assert.assertThat(boardLikeRepository.findByBoardIdx(1).size(), is(1));
 	}
 }

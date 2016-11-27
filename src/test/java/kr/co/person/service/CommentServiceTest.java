@@ -73,4 +73,21 @@ public class CommentServiceTest {
 		List<Comment> comments = pages.getContent();
 		Assert.assertThat(comments.get(0).getComment(), is("comment update test"));
 	}
+	
+	@Test
+	public void testReplyWrite(){
+		Pageable pageable = new PageRequest(0, 10, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		Page<Comment> pages = commentService.findAllCommentByBoard(1, pageable);
+		List<Comment> comments = pages.getContent();
+		Assert.assertThat(comments.size(), is(8));
+		Assert.assertThat(commentService.replyWrite(100, "comment", 1, 1), is(false));
+		Assert.assertThat(commentService.replyWrite(1, "comment", 100, 1), is(false));
+		Assert.assertThat(commentService.replyWrite(1, "comment", 1, 100), is(false));
+		Assert.assertThat(commentService.replyWrite(1, "comment", 1, 1), is(true));
+		Page<Comment> reFindPages = commentService.findAllCommentByBoard(1, pageable);
+		List<Comment> reFindComments = reFindPages.getContent();
+		Assert.assertThat(reFindComments.size(), is(9));
+	}
 }

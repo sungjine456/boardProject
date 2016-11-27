@@ -77,6 +77,12 @@ public class BoardServiceTest {
 	}
 	
 	@Test
+	public void testIsNotBoardForIdx(){
+		Assert.assertThat(boardService.isNotBoardForIdx(1), is(false));
+		Assert.assertThat(boardService.isNotBoardForIdx(100), is(true));
+	}
+	
+	@Test
 	public void testUpdate(){
 		String newTitle = "ttttt";
 		String newContent = "ccccc";

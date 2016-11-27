@@ -56,45 +56,6 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void testGetCommentListBoardIdxAndCircleAndStepAndDepth(){
-		List<Comment> comments = commentRepository.getCommentList(1, 1, 1, 1);
-		Assert.assertThat(comments.size(), is(3));
-		Assert.assertThat(comments.get(0).getIdx(), is(3));
-		Assert.assertThat(comments.get(1).getIdx(), is(6));
-		Assert.assertThat(comments.get(2).getIdx(), is(7));
-		comments = commentRepository.getCommentList(1, 1, 2, 1);
-		Assert.assertThat(comments.size(), is(2));
-		Assert.assertThat(comments.get(0).getIdx(), is(6));
-		Assert.assertThat(comments.get(1).getIdx(), is(7));
-		comments = commentRepository.getCommentList(1, 1, 3, 2);
-		Assert.assertThat(comments.size(), is(2));
-		Assert.assertThat(comments.get(0).getIdx(), is(6));
-		Assert.assertThat(comments.get(1).getIdx(), is(7));
-		comments = commentRepository.getCommentList(1, 1, 3, 1);
-		Assert.assertThat(comments.size(), is(2));
-		Assert.assertThat(comments.get(0).getIdx(), is(6));
-		Assert.assertThat(comments.get(1).getIdx(), is(7));
-	}
-	
-	@Test
-	public void testGetCommentListBoardIdx(){
-		Pageable pageable = new PageRequest(0, 10, new Sort(
-			    new Sort.Order(Direction.DESC, "circle"),
-			    new Sort.Order(Direction.ASC, "step")));
-		Page<Comment> pages = commentRepository.findByBoardIdx(1, pageable);
-		List<Comment> comments = pages.getContent();
-		Assert.assertThat(comments.size(), is(8));
-		Assert.assertThat(comments.get(0).getIdx(), is(5));
-		Assert.assertThat(comments.get(1).getIdx(), is(8));
-		Assert.assertThat(comments.get(2).getIdx(), is(1));
-		Assert.assertThat(comments.get(3).getIdx(), is(2));
-		Assert.assertThat(comments.get(4).getIdx(), is(3));
-		Assert.assertThat(comments.get(5).getIdx(), is(4));
-		Assert.assertThat(comments.get(6).getIdx(), is(6));
-		Assert.assertThat(comments.get(7).getIdx(), is(7));
-	}
-	
-	@Test
 	public void testGetCommentListBoardIdxAndCircle(){
 		List<Comment> comments = commentRepository.getCommentList(1, 1);
 		Assert.assertThat(comments.size(), is(6));
@@ -117,6 +78,45 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
+	public void testGetCommentListBoardIdxAndCircleAndStepAndDepth(){
+		List<Comment> comments = commentRepository.getCommentList(1, 1, 1, 1);
+		Assert.assertThat(comments.size(), is(3));
+		Assert.assertThat(comments.get(0).getIdx(), is(3));
+		Assert.assertThat(comments.get(1).getIdx(), is(6));
+		Assert.assertThat(comments.get(2).getIdx(), is(7));
+		comments = commentRepository.getCommentList(1, 1, 2, 1);
+		Assert.assertThat(comments.size(), is(2));
+		Assert.assertThat(comments.get(0).getIdx(), is(6));
+		Assert.assertThat(comments.get(1).getIdx(), is(7));
+		comments = commentRepository.getCommentList(1, 1, 3, 2);
+		Assert.assertThat(comments.size(), is(2));
+		Assert.assertThat(comments.get(0).getIdx(), is(6));
+		Assert.assertThat(comments.get(1).getIdx(), is(7));
+		comments = commentRepository.getCommentList(1, 1, 3, 1);
+		Assert.assertThat(comments.size(), is(2));
+		Assert.assertThat(comments.get(0).getIdx(), is(6));
+		Assert.assertThat(comments.get(1).getIdx(), is(7));
+	}
+	
+	@Test
+	public void testFindByBoardIdx(){
+		Pageable pageable = new PageRequest(0, 10, new Sort(
+			    new Sort.Order(Direction.DESC, "circle"),
+			    new Sort.Order(Direction.ASC, "step")));
+		Page<Comment> pages = commentRepository.findByBoardIdx(1, pageable);
+		List<Comment> comments = pages.getContent();
+		Assert.assertThat(comments.size(), is(8));
+		Assert.assertThat(comments.get(0).getIdx(), is(5));
+		Assert.assertThat(comments.get(1).getIdx(), is(8));
+		Assert.assertThat(comments.get(2).getIdx(), is(1));
+		Assert.assertThat(comments.get(3).getIdx(), is(2));
+		Assert.assertThat(comments.get(4).getIdx(), is(3));
+		Assert.assertThat(comments.get(5).getIdx(), is(4));
+		Assert.assertThat(comments.get(6).getIdx(), is(6));
+		Assert.assertThat(comments.get(7).getIdx(), is(7));
+	}
+	
+	@Test
 	public void testSaveComment(){
 		User user = new User("tes", "test@naver.com", "test", "test", "img/user/default.png", date, date);
 		Board board = new Board("title", "content", user, date, date);
@@ -129,7 +129,7 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void testUpdateComment(){
+	public void testIncreaseCommentIdx(){
 		List<Comment> comments = commentRepository.getCommentList(1, 1, 1);
 		Assert.assertThat(comments.size(), is(4));
 		Assert.assertThat(comments.get(0).getStep(), is(2));

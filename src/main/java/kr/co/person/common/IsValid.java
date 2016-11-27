@@ -30,6 +30,8 @@ public class IsValid {
 		    		return true;
 		    	}
 			}
+    	} else {
+    		return true;
     	}
     	return false;
 	}
@@ -54,6 +56,8 @@ public class IsValid {
 		    		return true;
 		    	}
 			}
+    	} else {
+    		return true;
     	}
     	return false;
     }
@@ -78,6 +82,8 @@ public class IsValid {
     				return true;
     			}
     		}
+    	} else {
+    		return true;
     	}
     	return false;
     }
