@@ -50,9 +50,16 @@ public class BoardServiceTest {
 	@Test
 	@Transactional
 	public void testFindAll(){
-		Pageable pageable = new PageRequest(0, 10, Direction.DESC, "idx");
+		Pageable pageable = new PageRequest(1000, 10, Direction.DESC, "idx");
 		Page<Board> page = boardService.findAll(pageable);
 		List<Board> boards = page.getContent();
+		Assert.assertThat(page, notNullValue());
+		Assert.assertThat(page.getTotalPages(), is(1));
+		Assert.assertThat(page.getTotalElements(), is(1L));
+		Assert.assertThat(boards.size(), is(0));
+		pageable = new PageRequest(0, 10, Direction.DESC, "idx");
+		page = boardService.findAll(pageable);
+		boards = page.getContent();
 		Assert.assertThat(page.getTotalPages(), is(1));
 		Assert.assertThat(page.getTotalElements(), is(1L));
 		Assert.assertThat(boards.get(0).getIdx(), is(1));

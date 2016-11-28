@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
@@ -38,6 +39,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.common.Message;
+import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 import kr.co.person.service.BoardService;
 
@@ -70,16 +72,52 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void testMain() throws Exception {
+    public void testMainWrongSession0() throws Exception {
     	mock.perform(
     		get("/board")
-    			.session(mockSession))
+    			.sessionAttr("loginYn", "Y")
+		    	.sessionAttr("idx", 5))
+			.andExpect(status().isFound())
+			.andExpect(flash().attribute("message", message.USER_NO_LOGIN))
+			.andExpect(redirectedUrl("/"));
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testMainWrongPageNum() throws Exception {
+    	MvcResult result = mock.perform(
+    		get("/board")
+    			.session(mockSession)
+    			.param("pageNum", "100"))
     		.andExpect(status().isOk())
     		.andExpect(view().name("view/frame"))
     		.andExpect(model().attributeExists("boardList"))
     		.andExpect(model().attributeExists("startPage"))
     		.andExpect(model().attributeExists("lastPage"))
-    		.andExpect(model().attributeExists("maxPage"));
+    		.andExpect(model().attributeExists("maxPage"))
+    		.andReturn();
+    	
+    	Page<Board> pages = (Page<Board>)result.getRequest().getAttribute("boardList");
+    	Assert.assertThat(pages.getContent().size(), is(0));
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testMainSuccess() throws Exception {
+    	MvcResult result = mock.perform(
+    		get("/board")
+    			.session(mockSession)
+    			.param("pageNum", "1"))
+    		.andExpect(status().isOk())
+    		.andExpect(view().name("view/frame"))
+    		.andExpect(model().attributeExists("boardList"))
+    		.andExpect(model().attributeExists("startPage"))
+    		.andExpect(model().attributeExists("lastPage"))
+    		.andExpect(model().attributeExists("maxPage"))
+    		.andReturn();
+    	
+    	Page<Board> pages = (Page<Board>)result.getRequest().getAttribute("boardList");
+    	Assert.assertThat(pages.getContent().size(), is(1));
     }
     
     @Test

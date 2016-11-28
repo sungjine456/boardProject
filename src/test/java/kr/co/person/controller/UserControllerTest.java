@@ -285,7 +285,7 @@ public class UserControllerTest {
     }
     
     @Test
-    public void testLogoutWrongSessionIdx() throws Exception {
+    public void testLogoutWrongSession() throws Exception {
     	mock.perform(
     		get("/logout")
 	    		.sessionAttr("loginYn", "Y")
