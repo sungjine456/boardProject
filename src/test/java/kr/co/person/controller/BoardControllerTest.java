@@ -95,10 +95,11 @@ public class BoardControllerTest {
     		.andExpect(model().attributeExists("startPage"))
     		.andExpect(model().attributeExists("lastPage"))
     		.andExpect(model().attributeExists("maxPage"))
+    		.andExpect(model().attribute("message", message.BOARD_LAST_PAGE_EXCESS))
     		.andReturn();
     	
     	Page<Board> pages = (Page<Board>)result.getRequest().getAttribute("boardList");
-    	Assert.assertThat(pages.getContent().size(), is(0));
+    	Assert.assertThat(pages.getContent().size(), is(1));
     }
     
     @SuppressWarnings("unchecked")

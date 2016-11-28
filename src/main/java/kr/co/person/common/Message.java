@@ -12,6 +12,7 @@ public class Message {
 	public final String BOARD_FAIL_UPDATE;
 	public final String BOARD_LIKE;
 	public final String BOARD_LIKE_CANCLE;
+	public final String BOARD_LAST_PAGE_EXCESS;
 	
 	public final String COMMENT_NO_COMMENT;
 	public final String COMMENT_RE_COMMENT;
@@ -70,6 +71,7 @@ public class Message {
 		BOARD_FAIL_UPDATE = messageSource.getMessage("board.failUpdate", null, null);
 		BOARD_LIKE = messageSource.getMessage("board.like", null, null);
 		BOARD_LIKE_CANCLE = messageSource.getMessage("board.likeCancle", null, null);
+		BOARD_LAST_PAGE_EXCESS = messageSource.getMessage("board.lastPageExcess", null, null);
 		
 		COMMENT_NO_COMMENT = messageSource.getMessage("comment.noComment", null, null);
 		COMMENT_RE_COMMENT = messageSource.getMessage("comment.reComment", null, null);

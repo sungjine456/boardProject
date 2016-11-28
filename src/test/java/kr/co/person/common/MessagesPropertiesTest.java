@@ -39,6 +39,7 @@ public class MessagesPropertiesTest {
 		Assert.assertThat(message.BOARD_FAIL_UPDATE, is("수정에 실패하셨습니다."));
 		Assert.assertThat(message.BOARD_LIKE, is("좋아요"));
 		Assert.assertThat(message.BOARD_LIKE_CANCLE, is("좋아요 취소"));
+		Assert.assertThat(message.BOARD_LAST_PAGE_EXCESS, is("마지막 페이지입니다."));
 		
 		Assert.assertThat(message.COMMENT_NO_COMMENT, is("존재하지 않는 댓글입니다."));
 		Assert.assertThat(message.COMMENT_RE_COMMENT, is("댓글을 입력해주세요."));

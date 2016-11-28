@@ -68,13 +68,15 @@ public class BoardController {
 			pageNum -= 1;
 		}
 		Pageable pageable = new CustomPageable(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
-		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
-		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
-		Page<Board> pages = boardService.findAll(pageable);
-		if(IsValid.isNotValidObjects(pages)){
-			return "view/frame";
+		int maxPage = boardService.findAll(pageable).getTotalPages();
+		if(pageNum > maxPage){
+			pageNum = maxPage - 1;
+			pageable = new CustomPageable(pageNum, BOARD_MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
+			model.addAttribute("message", message.BOARD_LAST_PAGE_EXCESS);
 		}
-		int maxPage = pages.getTotalPages();
+		Page<Board> pages = boardService.findAll(pageable);
+		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) + PAGE_SIZE;
 		if(lastPage > maxPage){
 			lastPage = maxPage;
 		}
