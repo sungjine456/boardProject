@@ -60,7 +60,8 @@ public class UserController {
 	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String id = common.cleanXss(user.getId());
-		String password = (String)req.getAttribute("password");
+		@SuppressWarnings("unchecked")
+		OkObjectCheck<String> passwordCheck = (OkObjectCheck<String>)req.getAttribute("password");
 		String name = common.cleanXss(user.getName());
 		String email = user.getEmail();
 		OkCheck emailCheck = common.isEmail(email);
@@ -68,22 +69,12 @@ public class UserController {
 			rea.addFlashAttribute("message", emailCheck.getMessage());
 			return "redirect:/join";
 		}
-		if(StringUtils.isEmpty(id) || StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", message.USER_WRONG_ID_OR_WRONG_PASSWORD);
+		if(StringUtils.isEmpty(id)){
+			rea.addFlashAttribute("message", message.USER_WRONG_ID);
 			return "redirect:/join";
 		}
 		if(StringUtils.isEmpty(name)){
 			rea.addFlashAttribute("message", message.USER_NO_NAME);
-			return "redirect:/join";
-		}
-		OkCheck joinCheckId = userService.idCheck(id);
-		OkCheck joinCheckEmail = userService.emailCheck(email);
-		if(!joinCheckId.isBool()){
-			rea.addFlashAttribute("message", joinCheckId.getMessage());
-			return "redirect:/join";
-		}
-		if(!joinCheckEmail.isBool()){
-			rea.addFlashAttribute("message", joinCheckEmail.getMessage());
 			return "redirect:/join";
 		}
 		String imgPath = "";
@@ -99,7 +90,7 @@ public class UserController {
 		}
 		user.setId(id);
 		user.setName(name);
-		user.setPassword(password);
+		user.setPassword(passwordCheck.getObject());
 		user.setEmail(email);
 		user.setImg(imgPath);
 		OkCheck ok = userService.join(user);
@@ -210,13 +201,14 @@ public class UserController {
 	@RequestMapping(value="/", method=RequestMethod.POST)
 	public String login(@RequestParam(required=false) String id, @RequestParam(required=false) String idSave, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
-		String password = (String)req.getAttribute("password");
+		@SuppressWarnings("unchecked")
+		OkObjectCheck<String> passwordCheck = (OkObjectCheck<String>)req.getAttribute("password");
 		if(StringUtils.isEmpty(id)){
 			rea.addFlashAttribute("message", message.USER_NO_ID);
 			return "redirect:/";
 		}
-		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
+		if(!passwordCheck.isBool()){
+			rea.addFlashAttribute("message", passwordCheck.getMessage());
 			return "redirect:/";
 		}
 		id = common.cleanXss(id);
@@ -224,7 +216,7 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_ID);
 			return "redirect:/";			
 		}
-		OkObjectCheck<User> ouc = userService.confirmUserPassword(id, password);
+		OkObjectCheck<User> ouc = userService.confirmUserPassword(id, passwordCheck.getObject());
 		if(!ouc.isBool()){
 			rea.addFlashAttribute("message", ouc.getMessage());
 			return "redirect:/";
@@ -348,21 +340,23 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		String password = (String)req.getAttribute("password");
-		String changePassword = (String)req.getAttribute("changePassword");
-		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
+		@SuppressWarnings("unchecked")
+		OkObjectCheck<String> passwordCheck = (OkObjectCheck<String>)req.getAttribute("password");
+		@SuppressWarnings("unchecked")
+		OkObjectCheck<String> changePasswordCheck = (OkObjectCheck<String>)req.getAttribute("changePassword");
+		if(!passwordCheck.isBool()){
+			rea.addFlashAttribute("message", passwordCheck.getMessage());
 			return "redirect:/mypage";
 		}
-		if(StringUtils.isEmpty(changePassword)){
-			rea.addFlashAttribute("message", message.USER_NO_UPDATE_PASSWORD);
+		if(!changePasswordCheck.isBool()){
+			rea.addFlashAttribute("message", changePasswordCheck.getMessage());
 			return "redirect:/mypage";
 		}
-		if(password.equals(changePassword)){
+		if(passwordCheck.getObject().equals(changePasswordCheck.getObject())){
 			rea.addFlashAttribute("message", message.USER_PASSWORD_SAME_UPDATE_PASSWORD);
 			return "redirect:/mypage";
 		}
-		OkCheck ok = userService.changePassword(((User)session.getAttribute("user")).getIdx(), password, changePassword);
+		OkCheck ok = userService.changePassword(((User)session.getAttribute("user")).getIdx(), passwordCheck.getObject(), changePasswordCheck.getObject());
 		rea.addFlashAttribute("message", ok.getMessage());
 		return "redirect:/mypage";
 	}
@@ -374,14 +368,15 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		String password = (String)req.getAttribute("password");
-		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
+		@SuppressWarnings("unchecked")
+		OkObjectCheck<String> passwordCheck = (OkObjectCheck<String>)req.getAttribute("password");
+		if(!passwordCheck.isBool()){
+			rea.addFlashAttribute("message", passwordCheck.getMessage());
 			return "redirect:/mypage";
 		}
 		User user = (User)session.getAttribute("user");
 		int idx = user.getIdx();
-		OkObjectCheck<User> ouc = userService.confirmUserPassword(user.getId(), password);
+		OkObjectCheck<User> ouc = userService.confirmUserPassword(user.getId(), passwordCheck.getObject());
 		if(!ouc.isBool()){
 			rea.addFlashAttribute("message", ouc.getMessage());
 			return "redirect:/";
@@ -423,12 +418,13 @@ public class UserController {
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
 		}
-		String password = (String)req.getAttribute("password");
-		if(StringUtils.isEmpty(password)){
-			rea.addFlashAttribute("message", message.USER_NO_PASSWORD);
+		@SuppressWarnings("unchecked")
+		OkObjectCheck<String> passwordCheck = (OkObjectCheck<String>)req.getAttribute("password");
+		if(!passwordCheck.isBool()){
+			rea.addFlashAttribute("message", passwordCheck.getMessage());
 			return "redirect:/mypage";
 		}
-		if(!userService.passwordCheck(((User)session.getAttribute("user")).getIdx(), password)){
+		if(!userService.passwordCheck(((User)session.getAttribute("user")).getIdx(), passwordCheck.getObject())){
 			rea.addFlashAttribute("message", message.USER_RE_PASSWORD);
 			return "redirect:/mypage";
 		}

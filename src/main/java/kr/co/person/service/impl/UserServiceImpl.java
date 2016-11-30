@@ -35,6 +35,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public OkCheck join(User user){
 		log.info("execute UserServiceImpl join");
+		String id = user.getId();
+		String email = user.getEmail();
+		OkCheck joinCheckId = idCheck(id);
+		OkCheck joinCheckEmail = emailCheck(email);
+		if(!joinCheckId.isBool()){
+			return joinCheckId;
+		}
+		if(!joinCheckEmail.isBool()){
+			return joinCheckEmail;
+		}
 		DateTime date = new DateTime();
 		user.setRegDate(date);
 		user.setUpdateDate(date);

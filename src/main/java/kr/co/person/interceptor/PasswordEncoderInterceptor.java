@@ -11,6 +11,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import kr.co.person.common.Common;
 import kr.co.person.common.exception.EmptyStringException;
+import kr.co.person.pojo.OkObjectCheck;
 
 public class PasswordEncoderInterceptor extends HandlerInterceptorAdapter {
 	static final Logger log = LoggerFactory.getLogger(PasswordEncoderInterceptor.class);
@@ -24,24 +25,28 @@ public class PasswordEncoderInterceptor extends HandlerInterceptorAdapter {
     		String[] parameters = req.getParameterMap().get("password");
     		if(parameters != null){
     			try {
-    				req.setAttribute("password", common.passwordEncryption(parameters[0]));
+    				req.setAttribute("password", new OkObjectCheck<String>(common.passwordEncryption(parameters[0]), "", true));
     			} catch(EmptyStringException e) {
-    				req.setAttribute("message", "비밀번호를 다시 입력해주세요.");
+    				req.setAttribute("password", new OkObjectCheck<String>(common.passwordEncryption(parameters[0]), "비밀번호를 다시 입력해주세요.", false));
     			} catch(NoSuchAlgorithmException e) {
-    				req.setAttribute("message", "비밀번호를 다시 입력해주세요.");
+    				req.setAttribute("password", new OkObjectCheck<String>(common.passwordEncryption(parameters[0]), "비밀번호를 다시 입력해주세요.", false));
     			}
+    		} else {
+    			req.setAttribute("password", new OkObjectCheck<String>("", "비밀번호를 입력해주세요.", false));
     		}
     	}
     	if(url != null && (url.equals("/changePassword"))){
     		String[] parameters = req.getParameterMap().get("changePassword");
     		if(parameters != null){
     			try {
-    				req.setAttribute("changePassword", common.passwordEncryption(parameters[0]));
+    				req.setAttribute("changePassword", new OkObjectCheck<String>(common.passwordEncryption(parameters[0]), "", true));
     			} catch(EmptyStringException e) {
-    				req.setAttribute("message", "비밀번호를 다시 입력해주세요.");
+    				req.setAttribute("changePassword", new OkObjectCheck<String>(common.passwordEncryption(parameters[0]), "수정할 비밀번호를 다시 입력해주세요.", false));
     			} catch(NoSuchAlgorithmException e) {
-    				req.setAttribute("message", "비밀번호를 다시 입력해주세요.");
+    				req.setAttribute("changePassword", new OkObjectCheck<String>(common.passwordEncryption(parameters[0]), "수정할 비밀번호를 다시 입력해주세요.", false));
     			}
+    		} else {
+    			req.setAttribute("changePassword", new OkObjectCheck<String>("", "수정할 비밀번호를 입력해주세요.", false));
     		}
     	}
     	
