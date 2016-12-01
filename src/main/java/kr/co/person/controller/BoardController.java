@@ -168,7 +168,7 @@ public class BoardController {
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 
 		OkObjectCheck<Board> boardCheck = boardService.findBoardForIdx(boardNum);
-		BoardLike boardLike = boardService.getBoardLike(boardNum, (User)session.getAttribute("user"));
+		BoardLike boardLike = boardService.getBoardLike(boardNum, ((User)session.getAttribute("user")).getIdx());
 		long likeCount = boardService.getBoardLikeCount(boardNum);
 		if(!boardCheck.isBool() || likeCount < 0){
 			rea.addFlashAttribute("message", boardCheck.getMessage());
@@ -408,7 +408,8 @@ public class BoardController {
 		log.info("execute BoardController addBoardLikeCount");
 		Map<String, String> map = new HashMap<String, String>();
 		User user = (User)session.getAttribute("user");
-		BoardLike boardLike = boardService.getBoardLike(boardIdx, user);
+		int userIdx = user.getIdx();
+		BoardLike boardLike = boardService.getBoardLike(boardIdx, userIdx);
 		int count = boardService.getBoardLikeCount(boardIdx);
 		String likeStr = "";
 		if(IsValid.isNotValidObjects(boardLike)){
@@ -416,7 +417,7 @@ public class BoardController {
 			count += 1;
 			likeStr = message.BOARD_LIKE_CANCLE;
 		} else {
-			boardService.removeBoardLike(boardIdx, user);
+			boardService.removeBoardLike(boardIdx, userIdx);
 			count -= 1;
 			likeStr = message.BOARD_LIKE;
 		}

@@ -16,7 +16,7 @@ public interface BoardService {
 	boolean update(int idx, String title, String content);
 	boolean addHitCount(int boardIdx);
 	int getBoardLikeCount(int boardIdx);
-	BoardLike getBoardLike(int boardIdx, User user);
+	BoardLike getBoardLike(int boardIdx, int userIdx);
 	boolean addBoardLike(int boardIdx, User user);
-	boolean removeBoardLike(int boardIdx, User user);
+	boolean removeBoardLike(int boardIdx, int userIdx);
 }

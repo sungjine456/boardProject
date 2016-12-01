@@ -57,7 +57,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
-	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
+	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String id = common.cleanXss(user.getId());
 		@SuppressWarnings("unchecked")
