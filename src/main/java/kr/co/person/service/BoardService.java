@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 
 import kr.co.person.domain.Board;
 import kr.co.person.domain.BoardLike;
-import kr.co.person.domain.User;
 import kr.co.person.pojo.OkObjectCheck;
 
 public interface BoardService {
@@ -17,6 +16,6 @@ public interface BoardService {
 	boolean addHitCount(int boardIdx);
 	int getBoardLikeCount(int boardIdx);
 	BoardLike getBoardLike(int boardIdx, int userIdx);
-	boolean addBoardLike(int boardIdx, User user);
+	boolean addBoardLike(int boardIdx, int userIdx);
 	boolean removeBoardLike(int boardIdx, int userIdx);
 }

@@ -125,18 +125,18 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public boolean addBoardLike(int boardIdx, User user) {
+	public boolean addBoardLike(int boardIdx, int userIdx) {
 		log.info("execute BoardServiceImple addBoardLike");
 		Board board = boardRepository.findOne(boardIdx);
-		if(IsValid.isNotValidBoard(board)){
+		User user = userRepository.findOne(userIdx);
+		if(IsValid.isNotValidBoard(board) || IsValid.isNotValidUser(user)){
 			return false;
 		}
-		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, user.getIdx());
+		BoardLike like = boardLikeRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
 		if(IsValid.isValidObjects(like)){
 			return false;
 		}
-		like = new BoardLike(board, user);
-		boardLikeRepository.save(like);
+		boardLikeRepository.save(new BoardLike(board, user));
 		return true;
 	}
 

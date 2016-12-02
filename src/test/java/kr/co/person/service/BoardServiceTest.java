@@ -23,7 +23,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import kr.co.person.BoardProjectApplication;
 import kr.co.person.domain.Board;
-import kr.co.person.domain.User;
 import kr.co.person.pojo.OkObjectCheck;
 import kr.co.person.repository.BoardRepository;
 
@@ -125,45 +124,33 @@ public class BoardServiceTest {
 	
 	@Test
 	public void testGetBoardLike(){
-		User user = new User();
-		user.setIdx(1);
-		Assert.assertThat(boardService.getBoardLike(1, user), is(nullValue()));
-		Assert.assertThat(boardService.getBoardLike(2, user), is(nullValue()));
-		user.setIdx(2);
-		Assert.assertThat(boardService.getBoardLike(1, user), is(notNullValue()));
-		Assert.assertThat(boardService.getBoardLike(2, user), is(nullValue()));
-		user.setIdx(22);
-		Assert.assertThat(boardService.getBoardLike(52, user), is(nullValue()));
+		Assert.assertThat(boardService.getBoardLike(1, 1), is(nullValue()));
+		Assert.assertThat(boardService.getBoardLike(2, 1), is(nullValue()));
+		Assert.assertThat(boardService.getBoardLike(1, 2), is(notNullValue()));
+		Assert.assertThat(boardService.getBoardLike(2, 2), is(nullValue()));
+		Assert.assertThat(boardService.getBoardLike(52, 100), is(nullValue()));
 	}
 	
 	@Test
 	public void testAddBoardLike(){
-		User user = new User();
-		user.setIdx(0);
-		Assert.assertThat(boardService.addBoardLike(0, user), is(false));
-		Assert.assertThat(boardService.addBoardLike(1, user), is(false));
-		user.setIdx(1);
-		Assert.assertThat(boardService.getBoardLike(1, user), is(nullValue()));
-		Assert.assertThat(boardService.addBoardLike(0, user), is(false));
-		Assert.assertThat(boardService.addBoardLike(121, user), is(false));
-		Assert.assertThat(boardService.addBoardLike(1, user), is(true));
-		Assert.assertThat(boardService.getBoardLike(1, user), is(notNullValue()));
-		user.setIdx(350);
-		Assert.assertThat(boardService.addBoardLike(66, user), is(false));
-		Assert.assertThat(boardService.addBoardLike(1, user), is(false));
+		Assert.assertThat(boardService.addBoardLike(0, 0), is(false));
+		Assert.assertThat(boardService.addBoardLike(1, 0), is(false));
+		Assert.assertThat(boardService.getBoardLike(1, 1), is(nullValue()));
+		Assert.assertThat(boardService.addBoardLike(0, 1), is(false));
+		Assert.assertThat(boardService.addBoardLike(121, 1), is(false));
+		Assert.assertThat(boardService.addBoardLike(1, 1), is(true));
+		Assert.assertThat(boardService.getBoardLike(1, 1), is(notNullValue()));
+		Assert.assertThat(boardService.addBoardLike(66, 100), is(false));
+		Assert.assertThat(boardService.addBoardLike(1, 100), is(false));
 	}
 	
 	@Test
 	public void testRemoveBoardLike(){
-		User user = new User();
-		user.setIdx(2);
-		Assert.assertThat(boardService.getBoardLike(1, user), is(notNullValue()));
-		user.setIdx(0);
-		Assert.assertThat(boardService.removeBoardLike(0, user), is(false));
-		Assert.assertThat(boardService.removeBoardLike(1, user), is(false));
-		user.setIdx(2);
-		Assert.assertThat(boardService.removeBoardLike(0, user), is(false));
-		Assert.assertThat(boardService.removeBoardLike(1, user), is(true));
-		Assert.assertThat(boardService.getBoardLike(1, user), is(nullValue()));
+		Assert.assertThat(boardService.removeBoardLike(0, 0), is(false));
+		Assert.assertThat(boardService.removeBoardLike(1, 0), is(false));
+		Assert.assertThat(boardService.removeBoardLike(0, 2), is(false));
+		Assert.assertThat(boardService.getBoardLike(1, 2), is(notNullValue()));
+		Assert.assertThat(boardService.removeBoardLike(1, 2), is(true));
+		Assert.assertThat(boardService.getBoardLike(1, 2), is(nullValue()));
 	}
 }

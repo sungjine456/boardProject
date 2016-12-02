@@ -413,7 +413,7 @@ public class BoardController {
 		int count = boardService.getBoardLikeCount(boardIdx);
 		String likeStr = "";
 		if(IsValid.isNotValidObjects(boardLike)){
-			boardService.addBoardLike(boardIdx, user);
+			boardService.addBoardLike(boardIdx, userIdx);
 			count += 1;
 			likeStr = message.BOARD_LIKE_CANCLE;
 		} else {
