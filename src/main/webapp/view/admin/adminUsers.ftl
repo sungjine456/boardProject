@@ -1,5 +1,6 @@
 <div class="container" style="height:100%;">
 	<h1>유저 목록</h1>
+	<h3><a href="/admin/boards">글 목록</a></h3>
 	<BR>
 	<form id="translatePasswordForm" action="/admin/translatePassword" method="post">
 		<input type="hidden" id="translatePasswordEmail" name="email"/>

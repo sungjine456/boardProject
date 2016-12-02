@@ -76,7 +76,7 @@ public class BoardController {
 		}
 		Page<Board> pages = boardService.findAll(pageable);
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
-		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) + PAGE_SIZE;
+		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
 		if(lastPage > maxPage){
 			lastPage = maxPage;
 		}

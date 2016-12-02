@@ -23,6 +23,7 @@ import kr.co.person.common.CommonMail;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
+import kr.co.person.domain.Board;
 import kr.co.person.domain.User;
 import kr.co.person.pojo.CustomPageable;
 import kr.co.person.pojo.OkCheck;
@@ -47,8 +48,8 @@ public class AdminController {
 	private Direction direction = Direction.DESC;
 	
 	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
-	public String adminView(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
-		log.info("execute AdminController adminView");
+	public String adminUsers(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
+		log.info("execute AdminController adminUsers");
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
 			return "redirect:/";
@@ -69,13 +70,18 @@ public class AdminController {
 			saveSort = sort;
 		}
 		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, direction, sort);
+		int maxPage = adminService.findBoardAll(pageable).getTotalPages();
+		if(pageNum > maxPage){
+			pageNum = maxPage - 1;
+			pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
+			model.addAttribute("message", message.BOARD_LAST_PAGE_EXCESS);
+		}
 		Page<User> pages = adminService.findUserAll(pageable);
 		if(IsValid.isNotValidObjects(pages)){
 			return "redirect:/";
 		}
 		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
 		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
-		int maxPage = pages.getTotalPages();
 		if(lastPage > maxPage){
 			lastPage = maxPage;
 		}
@@ -84,7 +90,7 @@ public class AdminController {
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("maxPage", maxPage);
-		model.addAttribute("include", "/view/admin/adminView.ftl");
+		model.addAttribute("include", "/view/admin/adminUsers.ftl");
 		return "view/frame";
 	}
 	
@@ -137,5 +143,51 @@ public class AdminController {
 			rea.addFlashAttribute("message", message.USER_RE_EMAIL);
 		}
 		return "redirect:/admin/users";
+	}
+	
+	@RequestMapping(value="/admin/boards", method=RequestMethod.GET)
+	public String adminBoards(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
+		log.info("execute AdminController adminBoards");
+		if(!common.adminSessionComparedToDB(session)){
+			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
+			return "redirect:/";
+		}
+		if(pageNum > 0){
+			pageNum -= 1;
+		}
+		if(StringUtils.isEmpty(sort)){
+			sort = "idx";
+		}
+		if(saveSort.equals(sort)){
+			if(direction == Direction.DESC){
+				direction = Direction.ASC;
+			} else {
+				direction = Direction.DESC;
+			}
+		} else {
+			saveSort = sort;
+		}
+		Pageable pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, direction, sort);
+		int maxPage = adminService.findBoardAll(pageable).getTotalPages();
+		if(pageNum > maxPage){
+			pageNum = maxPage - 1;
+			pageable = new CustomPageable(pageNum, MAX_COUNT_OF_PAGE, Direction.DESC, "idx");
+			model.addAttribute("message", message.BOARD_LAST_PAGE_EXCESS);
+		}
+		Page<Board> pages = adminService.findBoardAll(pageable);
+		if(IsValid.isNotValidObjects(pages)){
+			return "redirect:/";
+		}
+		int startPage = pageNum / PAGE_SIZE * PAGE_SIZE + PAGE_SIZE_CONTROL_NUM;
+		int lastPage = (pageNum / PAGE_SIZE + PAGE_SIZE_CONTROL_NUM) * PAGE_SIZE;
+		if(lastPage > maxPage){
+			lastPage = maxPage;
+		}
+		model.addAttribute("boards", pages);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("lastPage", lastPage);
+		model.addAttribute("maxPage", maxPage);
+		model.addAttribute("include", "/view/admin/adminBoards.ftl");
+		return "view/frame";
 	}
 }
