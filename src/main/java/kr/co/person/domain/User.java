@@ -1,5 +1,7 @@
 package kr.co.person.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -7,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "user")
@@ -39,7 +39,7 @@ public class User extends CommonEntity {
 	public User(){
 	}
 	
-	public User(String id, String email, String password, String name, String img, DateTime regDate, DateTime updateDate){
+	public User(String id, String email, String password, String name, String img, LocalDateTime regDate, LocalDateTime updateDate){
 		super(regDate, updateDate);
 		this.id = id;
 		this.email = email;

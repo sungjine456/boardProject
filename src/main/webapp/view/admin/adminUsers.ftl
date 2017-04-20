@@ -60,10 +60,10 @@
 					${user.email}
 				</td>
 				<td class="text-center">
-					${user.regDate.toString("yyyy.MM.dd HH:mm")}
+					${user.regDate}
 				</td>
 				<td class="text-center">
-					${user.updateDate.toString("yyyy.MM.dd HH:mm")}
+					${user.updateDate}
 				</td>
 				<td class="text-center">
 					${user.access}

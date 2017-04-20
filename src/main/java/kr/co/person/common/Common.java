@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,9 +95,9 @@ public class Common {
     }
     
     public Cookie addCookie(String key, String value) throws UnsupportedEncodingException{
-    	DateTime date1 = DateTime.now();
-    	DateTime date2 = date1.plusYears(1);
-    	int expiredate = (int)(date2.getMillis()-date1.getMillis())/1000;
+    	LocalDateTime date1 = LocalDateTime.now();
+    	LocalDateTime date2 = date1.plusYears(1);
+    	int expiredate = date2.getNano()-date1.getNano()/1000;
     	Cookie cookie = new Cookie(key, URLEncoder.encode(value, "UTF-8"));
 		cookie.setMaxAge(expiredate);
 	    return cookie;

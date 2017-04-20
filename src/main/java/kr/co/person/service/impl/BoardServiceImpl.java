@@ -1,8 +1,8 @@
 package kr.co.person.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public boolean write(String title, String content, int userIdx) {
 		log.info("execute BoardServiceImpl write");
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		User user = userRepository.findOne(userIdx);
 		if(IsValid.isNotValidUser(user)){
 			return false;
@@ -85,7 +85,7 @@ public class BoardServiceImpl implements BoardService {
 		}
 		board.setContent(content);
 		board.setTitle(title);
-		board.setUpdateDate(new DateTime());
+		board.setUpdateDate(LocalDateTime.now());
 		return true;
 	}
 

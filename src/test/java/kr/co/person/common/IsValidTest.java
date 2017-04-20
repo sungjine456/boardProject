@@ -2,7 +2,8 @@ package kr.co.person.common;
 
 import static org.hamcrest.CoreMatchers.is;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -137,7 +138,7 @@ public class IsValidTest {
 	
 	@Test
 	public void testIsValidUser(){
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		User user = null;
 		Assert.assertThat(IsValid.isValidUser(user), is(false));
 		user = new User();
@@ -157,7 +158,7 @@ public class IsValidTest {
 
 	@Test
 	public void testIsNotValidUser(){
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		User user = null;
 		Assert.assertThat(IsValid.isNotValidUser(user), is(true));
 		user = new User();
@@ -177,7 +178,7 @@ public class IsValidTest {
 	
 	@Test
 	public void testIsValidBoard(){
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		Board board = null;
 		User user = new User();
 		Assert.assertThat(IsValid.isValidBoard(board), is(false));
@@ -196,7 +197,7 @@ public class IsValidTest {
 	
 	@Test
 	public void testIsNotValidBoard(){
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		Board board = null;
 		User user = new User();
 		Assert.assertThat(IsValid.isNotValidBoard(board), is(true));
@@ -215,7 +216,7 @@ public class IsValidTest {
 	
 	@Test
 	public void testIsValidComment(){
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		Comment comment = null;
 		User user = new User();
 		Board board = new Board();
@@ -236,7 +237,7 @@ public class IsValidTest {
 	
 	@Test
 	public void testIsNotValidComment(){
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		Comment comment = null;
 		User user = new User();
 		Board board = new Board();

@@ -35,12 +35,12 @@ public class QComment extends EntityPathBase<Comment> {
     public final NumberPath<Integer> idx = createNumber("idx", Integer.class);
 
     //inherited
-    public final DateTimePath<org.joda.time.DateTime> regDate = _super.regDate;
+    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
 
     public final NumberPath<Integer> step = createNumber("step", Integer.class);
 
     //inherited
-    public final DateTimePath<org.joda.time.DateTime> updateDate = _super.updateDate;
+    public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
 
     public final QUser writer;
 

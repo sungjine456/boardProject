@@ -26,7 +26,7 @@ public class QAutoLogin extends EntityPathBase<AutoLogin> {
 
     public final NumberPath<Integer> loginIdx = createNumber("loginIdx", Integer.class);
 
-    public final DateTimePath<org.joda.time.DateTime> regDate = createDateTime("regDate", org.joda.time.DateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
     public final QUser user;
 

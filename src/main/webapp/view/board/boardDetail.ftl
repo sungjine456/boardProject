@@ -53,7 +53,7 @@
 		</#if>
 	</#list>
 </#if>
-						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate.toString("yyyy.MM.dd HH:mm")}</span>
+						<span style="font-weight:bold; font-size:20px">${comment.writer.name}</span> <span style="font-size:2px">${comment.regDate}</span>
 						<span id="commentSpan${comment.idx}" style="padding-left:10px;">
 							<div style="float:right; padding-right: 3%;">
 			<#if comment.writer.idx == user.idx>

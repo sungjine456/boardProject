@@ -4,7 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class AutoLoginRepositoryTest {
 	@Test
 	public void testSave() {
 		User user = userRepository.findOne(1);
-		AutoLogin autoLoginSave = autoLoginRepository.save(new AutoLogin("asdasdasdaa", new DateTime(), user));
+		AutoLogin autoLoginSave = autoLoginRepository.save(new AutoLogin("asdasdasdaa", LocalDateTime.now(), user));
 		Assert.assertThat(autoLoginSave.getLoginId(), is("asdasdasdaa"));
 		Assert.assertThat(autoLoginSave.getUser().getIdx(), is(user.getIdx()));
 	}

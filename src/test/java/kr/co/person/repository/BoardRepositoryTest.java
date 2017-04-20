@@ -2,9 +2,9 @@ package kr.co.person.repository;
 
 import static org.hamcrest.CoreMatchers.is;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ import kr.co.person.domain.User;
 public class BoardRepositoryTest {
 	
 	@Autowired private BoardRepository boardRepository;
-	DateTime date = new DateTime();
+	LocalDateTime date = LocalDateTime.now();
 
 	@Test
 	public void testFind() {

@@ -49,10 +49,10 @@
 					${board.hitCount}
 				</td>
 				<td class="text-center">
-					${board.regDate.toString("yyyy.MM.dd HH:mm")}
+					${board.regDate}
 				</td>
 				<td class="text-center">
-					${board.updateDate.toString("yyyy.MM.dd HH:mm")}
+					${board.updateDate}
 				</td>
 			</tr>
 			</#list>

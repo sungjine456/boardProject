@@ -1,5 +1,7 @@
 package kr.co.person.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
@@ -11,8 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "board")
@@ -37,7 +37,7 @@ public class Board extends CommonEntity{
 	
 	public Board(){
 	}
-	public Board(String title, String content, User user, DateTime regDate, DateTime updateDate){
+	public Board(String title, String content, User user, LocalDateTime regDate, LocalDateTime updateDate){
 		super(regDate, updateDate);
 		this.title = title;
 		this.content = content;

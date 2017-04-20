@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -234,7 +234,7 @@ public class UserController {
 				String loginId = "";
 				String enKeyId = "";
 				try {
-					loginId = common.cookieValueEncryption(new DateTime().toString());
+					loginId = common.cookieValueEncryption(LocalDateTime.now().toString());
 					enKeyId = commonCookie.aesEncode(id);
 					res.addCookie(common.addCookie("psvd", enKeyId));
 				    res.addCookie(common.addCookie("psvlgnd", loginId));

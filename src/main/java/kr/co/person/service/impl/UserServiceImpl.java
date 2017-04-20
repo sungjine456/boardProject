@@ -1,9 +1,9 @@
 package kr.co.person.service.impl;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 		if(!joinCheckEmail.isBool()){
 			return joinCheckEmail;
 		}
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		user.setRegDate(date);
 		user.setUpdateDate(date);
 		
@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
 		log.info("execute UserServiceImpl autoLogin");
 		AutoLogin autoLogin = autoLoginRepository.findByUserIdxAndLoginId(user.getIdx(), loginId);
 		if(IsValid.isNotValidObjects(autoLogin)){
-			autoLoginRepository.save(new AutoLogin(loginId, new DateTime(), user));
+			autoLoginRepository.save(new AutoLogin(loginId, LocalDateTime.now(), user));
 		}
 		return true;
 	}
@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
 		findUser.setName(user.getName());
 		findUser.setEmail(user.getEmail());
 		findUser.setImg(user.getImg());
-		findUser.setUpdateDate(new DateTime());
+		findUser.setUpdateDate(LocalDateTime.now());
 		return new OkObjectCheck<User>(findUser, message.USER_SUCCESS_UPDATE, true);
 	}
 

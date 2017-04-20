@@ -31,12 +31,12 @@ public class QBoard extends EntityPathBase<Board> {
     public final NumberPath<Integer> idx = createNumber("idx", Integer.class);
 
     //inherited
-    public final DateTimePath<org.joda.time.DateTime> regDate = _super.regDate;
+    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
 
     public final StringPath title = createString("title");
 
     //inherited
-    public final DateTimePath<org.joda.time.DateTime> updateDate = _super.updateDate;
+    public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
 
     public final QUser user;
 

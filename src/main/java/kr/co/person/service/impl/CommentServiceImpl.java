@@ -1,8 +1,8 @@
 package kr.co.person.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
 		if(IsValid.isNotValidUser(writer) || IsValid.isNotValidBoard(board)){
 			return false;
 		}
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		commentRepository.saveComment(new Comment(commentSentence, 0, 0, 0, writer, board, date, date));
 		return true;
 	}
@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
 			return false;
 		}
 		comment.setComment(commentSentence);
-		comment.setUpdateDate(new DateTime());
+		comment.setUpdateDate(LocalDateTime.now());
 		return true;
 	}
 
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
 			return false;
 		}
 		int circle = comment.getCircle();
-		DateTime date = new DateTime();
+		LocalDateTime date = LocalDateTime.now();
 		List<Comment> comments = commentRepository.getCommentList(boardIdx, circle, comment.getStep(), comment.getDepth());
 		if(IsValid.isNotValidObjects(comments)){
 			return false;

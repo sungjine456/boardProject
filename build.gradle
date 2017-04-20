@@ -13,9 +13,21 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'war'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+eclipse{
+	project.natures "org.springsource.ide.eclipse.gradle.core.nature"
+	wtp{
+		facet{
+			facet name: 'jst.web', version : '3.0'
+			facet name: 'jst.java', version : '1.8'
+		}
+	}
+}
 
 repositories {
 	mavenCentral()
@@ -65,8 +77,6 @@ dependencies {
 	compile('org.mockito:mockito-all:1.9.5')
     compile 'com.querydsl:querydsl-jpa:' + querydsl
 	compile 'com.querydsl:querydsl-apt:' + querydsl
-	compile('joda-time:joda-time')
-	compile('org.jadira.usertype:usertype.core:5.0.0.GA')
 	compile('org.apache.commons:commons-lang3:3.4')
 	compile('com.h2database:h2')
 	compile('mysql:mysql-connector-java')
@@ -75,8 +85,4 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web:' + springBootVersion
 	testCompile 'com.jayway.jsonpath:json-path:2.0.0'
 	testCompile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '3.1'
 }

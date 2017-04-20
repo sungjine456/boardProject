@@ -3,7 +3,8 @@ package kr.co.person.repository;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,7 +71,7 @@ public class UserRepositoryTest {
     
     @Test
     public void testSave(){
-    	DateTime date = new DateTime();
+    	LocalDateTime date = LocalDateTime.now();
     	Assert.assertThat(userRepository.findById("test"), is(nullValue()));
     	User user = new User("test", "test@naver.com", "123", "test", "img", date ,date);
     	userRepository.save(user);

@@ -1,34 +1,35 @@
 package kr.co.person.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 
 @MappedSuperclass
 public class CommonEntity {
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime regDate;
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime updateDate;
+	@Type(type="kr.co.person.domain.LocalDateTimeUserType")
+	private LocalDateTime regDate;
+	@Type(type="kr.co.person.domain.LocalDateTimeUserType")
+	private LocalDateTime updateDate;
 	
 	public CommonEntity(){
 	}
-	public CommonEntity(DateTime regDate, DateTime updateDate){
+	public CommonEntity(LocalDateTime regDate, LocalDateTime updateDate){
 		this.regDate = regDate;
 		this.updateDate = updateDate;
 	}
 	
-	public DateTime getRegDate() {
+	public LocalDateTime getRegDate() {
 		return regDate;
 	}
-	public void setRegDate(DateTime regDate) {
+	public void setRegDate(LocalDateTime regDate) {
 		this.regDate = regDate;
 	}
-	public DateTime getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
-	public void setUpdateDate(DateTime updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 }
