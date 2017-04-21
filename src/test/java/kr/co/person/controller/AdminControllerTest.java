@@ -152,4 +152,14 @@ public class AdminControllerTest {
 	    	.andExpect(status().isFound())
 			.andExpect(redirectedUrl("/admin/users"));
     }
+    
+    @Test
+    public void testBoardsSuccess() throws Exception {
+    	mock.perform(
+    			get("/admin/boards")
+    			.session(mockSession))
+    	.andExpect(status().isOk())
+    	.andExpect(model().attribute("include", "/view/admin/adminBoards.ftl"))
+    	.andExpect(view().name("view/frame"));
+    }
 }

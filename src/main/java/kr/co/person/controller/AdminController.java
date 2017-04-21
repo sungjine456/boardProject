@@ -48,7 +48,9 @@ public class AdminController {
 	private Direction direction = Direction.DESC;
 	
 	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
-	public String adminUsers(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
+	public String adminUsers(@RequestParam(required=false, defaultValue="0") int pageNum, 
+			@RequestParam(required=false, defaultValue="") String sort, HttpSession session, 
+			Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminUsers");
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
@@ -95,7 +97,8 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/admin/translatePassword", method=RequestMethod.POST)
-	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea, HttpSession session){
+	public String translatePassword(@RequestParam(required=false) String email, 
+			RedirectAttributes rea, HttpSession session){
 		log.info("execute AdminController translatePassword");
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
@@ -122,7 +125,8 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/admin/emailAccessRe", method=RequestMethod.POST)
-	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea, HttpSession session){
+	public String reEmailAccess(@RequestParam(required=false) String email, 
+			RedirectAttributes rea, HttpSession session){
 		log.info("execute AdminController reEmailAccess");
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
@@ -146,7 +150,9 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/admin/boards", method=RequestMethod.GET)
-	public String adminBoards(@RequestParam(required=false, defaultValue="0") int pageNum, @RequestParam(required=false, defaultValue="") String sort, HttpSession session, Model model, RedirectAttributes rea){
+	public String adminBoards(@RequestParam(required=false, defaultValue="0") int pageNum, 
+			@RequestParam(required=false, defaultValue="") String sort, HttpSession session, 
+			Model model, RedirectAttributes rea){
 		log.info("execute AdminController adminBoards");
 		if(!common.adminSessionComparedToDB(session)){
 			rea.addFlashAttribute("message", message.USER_NO_LOGIN);
