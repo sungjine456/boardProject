@@ -49,7 +49,7 @@
 					${board.hitCount}
 				</td>
 				<td class="text-center">
-					${board.regDate}
+					${board.regDate?date("yyyy-MM-dd")}
 				</td>
 				<td class="text-center">
 					${board.updateDate}

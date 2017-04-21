@@ -60,10 +60,10 @@
 					${user.email}
 				</td>
 				<td class="text-center">
-					${user.regDate}
+					${user.regDate?date("yyyy-MM-dd")}
 				</td>
 				<td class="text-center">
-					${user.updateDate}
+					${user.updateDate?date("yyyy-MM-dd")}
 				</td>
 				<td class="text-center">
 					${user.access}
