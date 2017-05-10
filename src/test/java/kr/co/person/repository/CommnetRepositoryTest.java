@@ -56,43 +56,24 @@ public class CommnetRepositoryTest {
 	}
 	
 	@Test
-	public void testGetCommentListBoardIdxAndCircle(){
-		List<Comment> comments = commentRepository.getCommentList(1, 1);
-		Assert.assertThat(comments.size(), is(6));
-		Assert.assertThat(comments.get(5).getIdx(), is(1));
-		Assert.assertThat(comments.get(4).getIdx(), is(2));
-		Assert.assertThat(comments.get(3).getIdx(), is(3));
-		Assert.assertThat(comments.get(2).getIdx(), is(4));
-		Assert.assertThat(comments.get(1).getIdx(), is(6));
-		Assert.assertThat(comments.get(0).getIdx(), is(7));
-	}
-	
-	@Test
-	public void testGetCommentListBoardIdxAndCircleAndStep(){
-		List<Comment> comments = commentRepository.getCommentList(1, 1, 1);
-		Assert.assertThat(comments.size(), is(4));
-		Assert.assertThat(comments.get(0).getIdx(), is(3));
-		Assert.assertThat(comments.get(1).getIdx(), is(4));
-		Assert.assertThat(comments.get(2).getIdx(), is(6));
-		Assert.assertThat(comments.get(3).getIdx(), is(7));
-	}
-	
-	@Test
 	public void testGetCommentListBoardIdxAndCircleAndStepAndDepth(){
-		List<Comment> comments = commentRepository.getCommentList(1, 1, 1, 1);
+		Board board = new Board();
+		board.setIdx(1);
+		
+		List<Comment> comments = commentRepository.getCommentList(board, 1, 1, 1);
 		Assert.assertThat(comments.size(), is(3));
 		Assert.assertThat(comments.get(0).getIdx(), is(3));
 		Assert.assertThat(comments.get(1).getIdx(), is(6));
 		Assert.assertThat(comments.get(2).getIdx(), is(7));
-		comments = commentRepository.getCommentList(1, 1, 2, 1);
+		comments = commentRepository.getCommentList(board, 1, 2, 1);
 		Assert.assertThat(comments.size(), is(2));
 		Assert.assertThat(comments.get(0).getIdx(), is(6));
 		Assert.assertThat(comments.get(1).getIdx(), is(7));
-		comments = commentRepository.getCommentList(1, 1, 3, 2);
+		comments = commentRepository.getCommentList(board, 1, 3, 2);
 		Assert.assertThat(comments.size(), is(2));
 		Assert.assertThat(comments.get(0).getIdx(), is(6));
 		Assert.assertThat(comments.get(1).getIdx(), is(7));
-		comments = commentRepository.getCommentList(1, 1, 3, 1);
+		comments = commentRepository.getCommentList(board, 1, 3, 1);
 		Assert.assertThat(comments.size(), is(2));
 		Assert.assertThat(comments.get(0).getIdx(), is(6));
 		Assert.assertThat(comments.get(1).getIdx(), is(7));
@@ -130,14 +111,17 @@ public class CommnetRepositoryTest {
 	
 	@Test
 	public void testIncreaseCommentIdx(){
-		List<Comment> comments = commentRepository.getCommentList(1, 1, 1);
+		Board board = new Board();
+		board.setIdx(1);
+		
+		List<Comment> comments = commentRepository.getCommentList(board , 1, 1, 2);
 		Assert.assertThat(comments.size(), is(4));
 		Assert.assertThat(comments.get(0).getStep(), is(2));
 		Assert.assertThat(comments.get(1).getStep(), is(3));
 		Assert.assertThat(comments.get(2).getStep(), is(4));
 		Assert.assertThat(comments.get(3).getStep(), is(5));
-		commentRepository.increaseCommentIdx(1, 1, 1);
-		comments = commentRepository.getCommentList(1, 1, 1);
+		commentRepository.increaseCommentIdx(board, 1, 1);
+		comments = commentRepository.getCommentList(board, 1, 1, 2);
 		Assert.assertThat(comments.size(), is(4));
 		Assert.assertThat(comments.get(0).getStep(), is(3));
 		Assert.assertThat(comments.get(1).getStep(), is(4));

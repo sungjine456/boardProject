@@ -1,7 +1,6 @@
 package kr.co.person.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,27 +69,10 @@ public class CommentServiceImpl implements CommentService {
 		}
 		int circle = comment.getCircle();
 		LocalDateTime date = LocalDateTime.now();
-		List<Comment> comments = commentRepository.getCommentList(boardIdx, circle, comment.getStep(), comment.getDepth());
-		if(IsValid.isNotValidObjects(comments)){
-			return false;
-		}
 		int step = comment.getStep();
-		if(comments.size() == 0){
-			List<Comment> maxComments = commentRepository.getCommentList(boardIdx, circle);
-			if(IsValid.isNotValidObjects(maxComments)){
-				return false;
-			}
-			int maxSize = maxComments.size();
-			if(maxSize != 0){
-				commentRepository.increaseCommentIdx(boardIdx, circle, step);
-				commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
-			} else {
-				commentRepository.save(new Comment(commentSentence, circle, 1, comment.getDepth() + 1, writer, board, date, date));
-			}
-		} else {
-			commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth() + 1, writer, board, date, date));
-			commentRepository.increaseCommentIdx(boardIdx, circle, step);
-		}
+		
+		commentRepository.increaseCommentIdx(board, circle, step);
+		commentRepository.save(new Comment(commentSentence, circle, step + 1, comment.getDepth()+1, writer, board, date, date));
 		return true;
 	}
 }
