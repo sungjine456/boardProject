@@ -42,7 +42,7 @@ import kr.co.person.interceptor.PasswordEncoderInterceptor;
 @Configuration
 @EnableWebMvc
 @EnableAsync
-@ConfigurationProperties(locations = "classpath:application.yml", prefix="mail")
+@ConfigurationProperties("mail")
 @PropertySource("classpath:key.properties")
 public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigurer {
 	@Value("${emailId}") private String EMAIL_ID;
