@@ -1,6 +1,8 @@
 package kr.co.person.common;
 
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -14,8 +16,9 @@ import org.springframework.stereotype.Component;
 import kr.co.person.common.exception.EmptyStringException;
 
 @Component
-public class CommonCookie {
+public class Encryption {
 	@Value("${keyValue}") private String ENCRYPTION_KEY_OF_COOKIE;
+	private final String ENCRPYTION_SALT = "cookiesAutoLogin";
 	
 	private Key AES256Util() throws Exception {
         byte[] keyBytes = new byte[16];
@@ -64,4 +67,29 @@ public class CommonCookie {
     		throw new Exception();
     	}
     }
+    
+    public String oneWayEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
+    	return oneWayEncryptionExcution(str, null);
+    }
+    public String oneWayEncryption(String str, String salt) throws EmptyStringException, NoSuchAlgorithmException {
+    	return oneWayEncryptionExcution(str, salt);
+    }
+    
+    private String oneWayEncryptionExcution(String str, String salt) throws EmptyStringException, NoSuchAlgorithmException {
+		if(StringUtils.isEmpty(str)){
+			throw new EmptyStringException("빈 문자열은 안됩니다.");
+		}
+		try{
+			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
+			sh.update(str.getBytes()); 
+			byte byteData[] = sh.digest();
+			StringBuffer sb = new StringBuffer(); 
+			for(int i = 0 ; i < byteData.length ; i++){
+				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+			}
+			return sb.toString() + (salt==null?ENCRPYTION_SALT:salt);
+		}catch(NoSuchAlgorithmException e){
+			throw new NoSuchAlgorithmException();
+		}
+	}
 }

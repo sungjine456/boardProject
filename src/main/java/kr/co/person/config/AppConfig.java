@@ -105,6 +105,11 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
     }
 	
 	@Bean
+	public PasswordEncoderInterceptor passwordEncoderInterceptor(){
+		return new PasswordEncoderInterceptor();
+	}
+	
+	@Bean
     public LocaleChangeInterceptor localeChangeInterceptor(){
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
         localeChangeInterceptor.setParamName("language");
@@ -122,7 +127,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localeChangeInterceptor());
 		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
-		registry.addInterceptor(new PasswordEncoderInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(passwordEncoderInterceptor()).addPathPatterns("/**");
 	}
 	
 	@Bean

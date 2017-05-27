@@ -50,9 +50,4 @@ public class CommonTest {
 		String passwordEncryption = common.passwordEncryption(password);
 		Assert.assertThat(password, not(passwordEncryption));
 	}
-
-	@Test(expected=EmptyStringException.class)
-	public void testCookieValueEncryptionEmptyException() throws EmptyStringException, NoSuchAlgorithmException {
-		common.cookieValueEncryption("");
-	}
 }

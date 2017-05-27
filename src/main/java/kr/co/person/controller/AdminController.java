@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
-import kr.co.person.common.CommonCookie;
+import kr.co.person.common.Encryption;
 import kr.co.person.common.CommonMail;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
@@ -39,7 +39,7 @@ public class AdminController {
 	@Autowired private AdminService adminService;
 	@Autowired private UserService userService;
 	@Autowired private CommonMail commonMail;
-	@Autowired private CommonCookie commonCookie;
+	@Autowired private Encryption encryption;
 	
 	private final int PAGE_SIZE = 5;
 	private final int PAGE_SIZE_CONTROL_NUM = 1;
@@ -138,7 +138,7 @@ public class AdminController {
 			return "redirect:/admin/users";
 		}
 		try {
-			commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+			commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + encryption.aesEncode(email) + "'>동의</a>");
 		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
 		} catch(MessagingException e){

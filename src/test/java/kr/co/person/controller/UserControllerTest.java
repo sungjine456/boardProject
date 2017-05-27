@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import kr.co.person.BoardProjectApplication;
-import kr.co.person.common.CommonCookie;
+import kr.co.person.common.Encryption;
 import kr.co.person.common.Message;
 import kr.co.person.domain.User;
 import kr.co.person.repository.UserRepository;
@@ -51,7 +51,7 @@ public class UserControllerTest {
 	
 	@Mock private UserService userService;
 	@Autowired private Message message;
-	@Autowired private CommonCookie commonCookie;
+	@Autowired private Encryption encryption;
 	@InjectMocks private UserController userController;
 	@Autowired private UserRepository userRepository;
 	@Autowired private WebApplicationContext wac;
@@ -658,7 +658,7 @@ public class UserControllerTest {
     public void testEmailAccessSuccess() throws Exception {
     	mock.perform(
     		get("/emailAccess")
-    			.param("access", commonCookie.aesEncode("sungjine@naver.com")))
+    			.param("access", encryption.aesEncode("sungjine@naver.com")))
     		.andExpect(status().isFound())
     		.andExpect(flash().attribute("message", message.ACCESS_THANK_YOU_FOR_AGREE))
 			.andExpect(request().sessionAttribute("loginYn", "Y"))

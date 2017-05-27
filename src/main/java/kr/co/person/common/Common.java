@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -27,41 +26,12 @@ import kr.co.person.repository.UserRepository;
 public class Common {
 	@Autowired private Message message;
 	@Autowired private UserRepository userRepository;
+	@Autowired private Encryption encryption;
+	private final String ENCRYPTION_SALT = "personProject";
 	
 	public String passwordEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
-		if(StringUtils.isEmpty(str)){
-			throw new EmptyStringException("빈 문자열은 안됩니다.");
-		}
-		try{
-			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
-			sh.update(str.getBytes()); 
-			byte byteData[] = sh.digest();
-			StringBuffer sb = new StringBuffer(); 
-			for(int i = 0 ; i < byteData.length ; i++){
-				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
-			}
-			return sb.toString() + "personProject";
-		}catch(NoSuchAlgorithmException e){
-			throw new NoSuchAlgorithmException();
-		}
-	}
-	
-	public String cookieValueEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
-		if(StringUtils.isEmpty(str)){
-			throw new EmptyStringException("빈 문자열은 안됩니다.");
-		}
-		try{
-			MessageDigest sh = MessageDigest.getInstance("SHA-256"); 
-			sh.update(str.getBytes()); 
-			byte byteData[] = sh.digest();
-			StringBuffer sb = new StringBuffer(); 
-			for(int i = 0 ; i < byteData.length ; i++){
-				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
-			}
-			return sb.toString() + "cookiesAutoLogin";
-		}catch(NoSuchAlgorithmException e){
-			throw new NoSuchAlgorithmException();
-		}
+		System.out.println(encryption);
+		return encryption.oneWayEncryption(str, ENCRYPTION_SALT);
 	}
 	
 	public OkCheck isEmail(String email) {

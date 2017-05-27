@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.annotation.IsValidUser;
 import kr.co.person.common.Common;
-import kr.co.person.common.CommonCookie;
+import kr.co.person.common.Encryption;
 import kr.co.person.common.CommonMail;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
@@ -47,7 +47,7 @@ public class UserController {
 	@Autowired private CommonMail commonMail;
 	@Autowired private UserService userService;
 	@Autowired private Common common;
-	@Autowired private CommonCookie commonCookie;
+	@Autowired private Encryption encryption;
 	@Autowired private Message message;
 	
 	@RequestMapping(value="/join", method=RequestMethod.GET)
@@ -96,7 +96,7 @@ public class UserController {
 		OkCheck ok = userService.join(user);
 		if(ok.isBool()){
 			try {
-				commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+				commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + encryption.aesEncode(email) + "'>동의</a>");
 			} catch(EmptyStringException e) {
 				rea.addFlashAttribute("message", message.USER_RE_EMAIL);
 				return "redirect:/join";
@@ -172,7 +172,7 @@ public class UserController {
 				String val = cookies[i].getValue();
 				if(StringUtils.equals("psvd", key)){
 					try {
-						id = commonCookie.aesDecode(val);
+						id = encryption.aesDecode(val);
 					} catch (EmptyStringException e) {
 						return "view/user/login";
 					} catch (Exception e){
@@ -234,10 +234,10 @@ public class UserController {
 				String loginId = "";
 				String enKeyId = "";
 				try {
-					loginId = common.cookieValueEncryption(LocalDateTime.now().toString());
-					enKeyId = commonCookie.aesEncode(id);
-					res.addCookie(common.addCookie("psvd", enKeyId));
+					loginId = encryption.oneWayEncryption(LocalDateTime.now().toString());
+					enKeyId = encryption.aesEncode(id);
 				    res.addCookie(common.addCookie("psvlgnd", loginId));
+				    res.addCookie(common.addCookie("psvd", enKeyId));
 				} catch(EmptyStringException e) {
 					rea.addFlashAttribute("message", message.USER_FAIL_LOGIN);
 					return "redirect:/";
@@ -495,7 +495,7 @@ public class UserController {
 		}
 		String email = "";
 		try {
-			email = commonCookie.aesDecode(access);
+			email = encryption.aesDecode(access);
 		} catch (EmptyStringException e) {
 			rea.addFlashAttribute("message", message.ACCESS_FAIL_ACCESS);
 			return "redirect:/";
@@ -539,7 +539,7 @@ public class UserController {
 			return "redirect:/";
 		}
 		try {
-			commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + commonCookie.aesEncode(email) + "'>동의</a>");
+			commonMail.sendMail(email, message.ACCESS_THANK_YOU_FOR_JOIN, "<a href='http://localhost:8080/emailAccess?access=" + encryption.aesEncode(email) + "'>동의</a>");
 		} catch(EmptyStringException e) {
 			rea.addFlashAttribute("message", message.USER_NO_EMAIL);
 			return "redirect:/";
