@@ -1,7 +1,9 @@
 package kr.co.person.common;
 
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Message {
 	private MessageSource messageSource;
 	public final String BOARD_NO_BOARD;

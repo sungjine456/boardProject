@@ -8,12 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import kr.co.person.common.Common;
 import kr.co.person.common.exception.EmptyStringException;
 import kr.co.person.pojo.OkObjectCheck;
 
+@Component
 public class PasswordEncoderInterceptor extends HandlerInterceptorAdapter {
 	static final Logger log = LoggerFactory.getLogger(PasswordEncoderInterceptor.class);
 	@Autowired private Common common;

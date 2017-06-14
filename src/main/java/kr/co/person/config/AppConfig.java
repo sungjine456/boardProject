@@ -7,8 +7,8 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +34,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import freemarker.template.utility.XmlEscape;
-import kr.co.person.common.Message;
-import kr.co.person.common.ServerCustomization;
 import kr.co.person.interceptor.LoginInterceptor;
 import kr.co.person.interceptor.PasswordEncoderInterceptor;
 
@@ -63,11 +61,6 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
 		return configurer;
 	}
 	
-	@Bean
-	public ServerProperties getServerProperties(){
-		return new ServerCustomization();
-	}
-
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
 		configurer.ignoreUnknownPathExtensions(false).defaultContentType(MediaType.TEXT_HTML);
@@ -91,23 +84,12 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
 	}
 	
 	@Bean
-	public Message message(){
-		Message message = new Message(messageSource());
-		return message;
-	}
-	
-	@Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages/messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
-	
-	@Bean
-	public PasswordEncoderInterceptor passwordEncoderInterceptor(){
-		return new PasswordEncoderInterceptor();
-	}
 	
 	@Bean
     public LocaleChangeInterceptor localeChangeInterceptor(){
@@ -123,11 +105,14 @@ public class AppConfig extends WebMvcConfigurerAdapter implements AsyncConfigure
         return localeResolver;
     }
     
+	@Autowired private PasswordEncoderInterceptor passwordEncoderInterceptor;
+	@Autowired private LoginInterceptor loginInterceptor;
+    
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localeChangeInterceptor());
-		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
-		registry.addInterceptor(passwordEncoderInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
+		registry.addInterceptor(passwordEncoderInterceptor).addPathPatterns("/**");
 	}
 	
 	@Bean
