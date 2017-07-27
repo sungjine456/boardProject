@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,8 +30,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.annotation.IsValidUser;
 import kr.co.person.common.Common;
-import kr.co.person.common.Encryption;
 import kr.co.person.common.CommonMail;
+import kr.co.person.common.Encryption;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
@@ -50,13 +50,13 @@ public class UserController {
 	@Autowired private Encryption encryption;
 	@Autowired private Message message;
 	
-	@RequestMapping(value="/join", method=RequestMethod.GET)
+	@GetMapping("/join")
 	public String joinView(){
 		log.info("execute UserController joinView");
 		return "view/user/join";
 	}
 	
-	@RequestMapping(value="/join", method=RequestMethod.POST)
+	@PostMapping("/join")
 	public String join(@IsValidUser User user, @RequestParam MultipartFile file, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController join");
 		String id = common.cleanXss(user.getId());
@@ -116,7 +116,7 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value="/join/idCheck", method=RequestMethod.POST)
+	@PostMapping("/join/idCheck")
 	public @ResponseBody Map<String, String> idCheck(@RequestParam(required=false) String id){
 		log.info("execute UserController idCheck");
 		Map<String, String> map = new HashMap<String, String>();
@@ -140,7 +140,7 @@ public class UserController {
 		return map;
 	}
 	
-	@RequestMapping(value="/join/emailCheck", method=RequestMethod.POST)
+	@PostMapping("/join/emailCheck")
 	public @ResponseBody Map<String, String> emailCheck(@RequestParam(required=false) String email){
 		log.info("execute UserController emailCheck");
 		Map<String, String> map = new HashMap<String, String>();
@@ -157,7 +157,7 @@ public class UserController {
 		return map;
 	}
 	
-	@RequestMapping(value="/", method=RequestMethod.GET)
+	@GetMapping("/")
 	public String loginView(HttpSession session, HttpServletRequest req){
 		log.info("execute UserController loginView");
 		if(common.sessionComparedToDB(session)){
@@ -198,7 +198,7 @@ public class UserController {
 		return "view/user/login";
 	}
 	
-	@RequestMapping(value="/", method=RequestMethod.POST)
+	@PostMapping("/")
 	public String login(@RequestParam(required=false) String id, @RequestParam(required=false) String idSave, HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController login");
 		@SuppressWarnings("unchecked")
@@ -263,7 +263,7 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value="/logout", method=RequestMethod.GET)
+	@GetMapping("/logout")
 	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea){
 		log.info("execute UserController logout");
 		if(!common.sessionComparedToDB(session)){
@@ -299,7 +299,7 @@ public class UserController {
 	    return "redirect:/";
 	}
 	
-	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
+	@PostMapping("/translatePassword")
 	public String translatePassword(@RequestParam(required=false) String email, RedirectAttributes rea){
 		log.info("execute UserController translatePassword");
 		OkCheck okEmail = common.isEmail(email);
@@ -322,7 +322,7 @@ public class UserController {
 		return "redirect:/";
 	}
 	
-	@RequestMapping(value="/mypage", method=RequestMethod.GET)
+	@GetMapping("/mypage")
 	public String myPageView(Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController mypageView");
 		if(!common.sessionComparedToDB(session)){
@@ -333,7 +333,7 @@ public class UserController {
 		return "view/frame";
 	}
 	
-	@RequestMapping(value="/changePassword", method=RequestMethod.POST)
+	@PostMapping("/changePassword")
 	public String changePassword(HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController changePassword");
 		if(!common.sessionComparedToDB(session)){
@@ -361,7 +361,7 @@ public class UserController {
 		return "redirect:/mypage";
 	}
 	
-	@RequestMapping(value="/leave")
+	@GetMapping(value="/leave")
 	public String leave(HttpSession session, HttpServletResponse res, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController leave");
 		if(!common.sessionComparedToDB(session)){
@@ -411,7 +411,7 @@ public class UserController {
 		return "redirect:/";
 	}
 	
-	@RequestMapping(value="/updateView", method=RequestMethod.POST)
+	@PostMapping("/updateView")
 	public String updateView(Model model, HttpSession session, HttpServletRequest req, RedirectAttributes rea){
 		log.info("execute UserController updateView");
 		if(!common.sessionComparedToDB(session)){
@@ -432,7 +432,7 @@ public class UserController {
 		return "view/frame";
 	}
 
-	@RequestMapping(value="/update", method=RequestMethod.POST)
+	@PostMapping("/update")
 	public String update(@RequestParam MultipartFile ufile, @IsValidUser User updateUser, HttpSession session, RedirectAttributes rea){
 		log.info("execute UserController update");
 		if(!common.sessionComparedToDB(session)){
@@ -486,7 +486,7 @@ public class UserController {
 		return "redirect:/mypage";
 	}
 	
-	@RequestMapping(value="/emailAccess", method=RequestMethod.GET)
+	@GetMapping("/emailAccess")
 	public String emailAccess(@RequestParam(required=false) String access, RedirectAttributes rea, HttpSession session){
 		log.info("execute UserController emailAccess");
 		if(StringUtils.isEmpty(access)){
@@ -524,13 +524,13 @@ public class UserController {
 		return "redirect:/board";
 	}
 	
-	@RequestMapping(value="/emailAccessAgo", method=RequestMethod.GET)
+	@GetMapping("/emailAccessAgo")
 	public String emailAccessAgo(){
 		log.info("execute UserController emailAccessAgo");
 		return "view/user/emailAccessAgo";
 	}
 	
-	@RequestMapping(value="/emailAccessRe", method=RequestMethod.POST)
+	@PostMapping("/emailAccessRe")
 	public String reEmailAccess(@RequestParam(required=false) String email, RedirectAttributes rea){
 		log.info("execute UserController reEmailAccess");
 		OkCheck ok = common.isEmail(email);
@@ -553,7 +553,7 @@ public class UserController {
 		return "redirect:/emailAccessAgo";
 	}
 	
-	@RequestMapping("/interceptorView")
+	@GetMapping("/interceptorView")
 	public String interceptorView(){
 		log.info("execute UserController interceptorView");
 		return "common/interceptorPage";

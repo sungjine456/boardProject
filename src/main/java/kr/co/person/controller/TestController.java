@@ -4,8 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import kr.co.person.pojo.TestAsync;
 
@@ -15,7 +14,7 @@ public class TestController {
 	
     @Autowired TestAsync TestAsync;
     
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @GetMapping("/test")
     public String test() {
     	log.info("start");
         for(int i = 0; i < 10; i++) {

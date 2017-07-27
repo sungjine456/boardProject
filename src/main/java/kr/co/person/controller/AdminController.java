@@ -12,14 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.person.common.Common;
-import kr.co.person.common.Encryption;
 import kr.co.person.common.CommonMail;
+import kr.co.person.common.Encryption;
 import kr.co.person.common.IsValid;
 import kr.co.person.common.Message;
 import kr.co.person.common.exception.EmptyStringException;
@@ -47,7 +47,7 @@ public class AdminController {
 	private String saveSort = "";
 	private Direction direction = Direction.DESC;
 	
-	@RequestMapping(value="/admin/users", method=RequestMethod.GET)
+	@GetMapping("/admin/users")
 	public String adminUsers(@RequestParam(required=false, defaultValue="0") int pageNum, 
 			@RequestParam(required=false, defaultValue="") String sort, HttpSession session, 
 			Model model, RedirectAttributes rea){
@@ -96,7 +96,7 @@ public class AdminController {
 		return "view/frame";
 	}
 	
-	@RequestMapping(value="/admin/translatePassword", method=RequestMethod.POST)
+	@PostMapping("/admin/translatePassword")
 	public String translatePassword(@RequestParam(required=false) String email, 
 			RedirectAttributes rea, HttpSession session){
 		log.info("execute AdminController translatePassword");
@@ -124,7 +124,7 @@ public class AdminController {
 		return "redirect:/admin/users";
 	}
 	
-	@RequestMapping(value="/admin/emailAccessRe", method=RequestMethod.POST)
+	@PostMapping("/admin/emailAccessRe")
 	public String reEmailAccess(@RequestParam(required=false) String email, 
 			RedirectAttributes rea, HttpSession session){
 		log.info("execute AdminController reEmailAccess");
@@ -149,7 +149,7 @@ public class AdminController {
 		return "redirect:/admin/users";
 	}
 	
-	@RequestMapping(value="/admin/boards", method=RequestMethod.GET)
+	@GetMapping("/admin/boards")
 	public String adminBoards(@RequestParam(required=false, defaultValue="0") int pageNum, 
 			@RequestParam(required=false, defaultValue="") String sort, HttpSession session, 
 			Model model, RedirectAttributes rea){

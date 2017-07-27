@@ -23,9 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +57,7 @@ public class BoardController {
 	private final int BOARD_MAX_COUNT_OF_PAGE = 10;
 	private final int COMMENT_MAX_COUNT_OF_PAGE = 20;
 	
-	@RequestMapping(value="/board", method=RequestMethod.GET)
+	@GetMapping("/board")
 	public String main(@RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController main");
 		if(!common.sessionComparedToDB(session)){
@@ -87,7 +87,7 @@ public class BoardController {
 		return "view/frame";
 	}
 	
-	@RequestMapping(value="/boardWrite", method=RequestMethod.GET)
+	@GetMapping("/boardWrite")
 	public String boardWriteView(Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController boardWriteView");
 		if(!common.sessionComparedToDB(session)){
@@ -98,7 +98,7 @@ public class BoardController {
 		return "view/frame";
 	}
 
-	@RequestMapping(value="/boardWrite", method=RequestMethod.POST)
+	@PostMapping("/boardWrite")
 	public String boardWrite(@IsValidBoard Board board, @RequestParam MultipartFile editImage, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController boardWrite");
 		if(!common.sessionComparedToDB(session)){
@@ -147,7 +147,7 @@ public class BoardController {
 		return "redirect:/board";
 	}
 	
-	@RequestMapping(value="/boardDetail", method=RequestMethod.GET)
+	@GetMapping("/boardDetail")
 	public String boardDetailView(@RequestParam(required=false, defaultValue="0") int boardNum, @RequestParam(required=false, defaultValue="0") int pageNum, Model model, HttpServletRequest req, HttpServletResponse res, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardDetailView");
 		if(!common.sessionComparedToDB(session)){
@@ -229,7 +229,7 @@ public class BoardController {
 		return "view/frame";
 	}
 	
-	@RequestMapping(value="/boardUpdateView", method=RequestMethod.GET)
+	@GetMapping("/boardUpdateView")
 	public String boardUpdateView(@RequestParam(required=false, defaultValue="0") int boardNum, Model model, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardUpdateView");
 		if(!common.sessionComparedToDB(session)){
@@ -251,7 +251,7 @@ public class BoardController {
 		return "view/frame";
 	}
 	
-	@RequestMapping(value="/boardUpdate", method=RequestMethod.POST)
+	@PostMapping("/boardUpdate")
 	public String boardUpdate(@IsValidBoard Board board, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController boardUpdate");
 		if(!common.sessionComparedToDB(session)){
@@ -292,7 +292,7 @@ public class BoardController {
 		return "redirect:/boardDetail";
 	}
 	
-	@RequestMapping(value="/writeComment", method=RequestMethod.POST)
+	@PostMapping("/writeComment")
 	public String writeComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController writeComment");
 		if(!common.sessionComparedToDB(session)){
@@ -321,7 +321,7 @@ public class BoardController {
 		return "redirect:/boardDetail";
 	}
 	
-	@RequestMapping(value="/updateCommentView", method=RequestMethod.POST)
+	@PostMapping("/updateCommentView")
 	public String updateCommentView(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model){
 		log.info("execute BoardController updateCommentView");
 		model.addAttribute("boardNum", boardNum);
@@ -330,7 +330,7 @@ public class BoardController {
 		return "view/board/ajax/commentUpdate";
 	}
 	
-	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
+	@PostMapping("/updateComment")
 	public String updateComment(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, RedirectAttributes rea, HttpSession session){
 		log.info("execute BoardController updateComment");
 		if(!common.sessionComparedToDB(session)){
@@ -360,7 +360,7 @@ public class BoardController {
 		return "redirect:/boardDetail";
 	}
 	
-	@RequestMapping(value="/replyView", method=RequestMethod.POST)
+	@PostMapping("/replyView")
 	public String commentReplyView(@RequestParam(required=false, defaultValue="0") int boardNum, @RequestParam(required=false, defaultValue="0") int commentIdx, Model model){
 		log.info("execute BoardController commentReplyView");
 		model.addAttribute("boardNum", boardNum);
@@ -368,7 +368,7 @@ public class BoardController {
 		return "view/board/ajax/commentReply";
 	}
 	
-	@RequestMapping(value="/writeReply", method=RequestMethod.POST)
+	@PostMapping("/writeReply")
 	public String commentReplyWrite(@RequestParam(required=false, defaultValue="0") int boardNum, @ModelAttribute("Comment") @Valid Comment comment, Model model, HttpSession session, RedirectAttributes rea){
 		log.info("execute BoardController commentReplyWrite");
 		if(!common.sessionComparedToDB(session)){
@@ -403,7 +403,7 @@ public class BoardController {
 		return "redirect:/boardDetail";
 	}
 	
-	@RequestMapping(value="/boardLikeCount", method=RequestMethod.POST)
+	@PostMapping("/boardLikeCount")
 	public @ResponseBody Map<String, String> addBoardLikeCount(@RequestParam(required=false, defaultValue="0") int boardIdx, HttpSession session){
 		log.info("execute BoardController addBoardLikeCount");
 		Map<String, String> map = new HashMap<String, String>();
