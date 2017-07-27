@@ -30,7 +30,6 @@ public class Common {
 	private final String ENCRYPTION_SALT = "personProject";
 	
 	public String passwordEncryption(String str) throws EmptyStringException, NoSuchAlgorithmException {
-		System.out.println(encryption);
 		return encryption.oneWayEncryption(str, ENCRYPTION_SALT);
 	}
 	

@@ -295,8 +295,8 @@ public class UserController {
 	    res.addCookie(common.removeCookie("psvlgnd"));
 	    session.setAttribute("loginYn", "N");
 		session.removeAttribute("user");
-	    rea.addFlashAttribute("message", message.USER_LOGOUT);
-		return "redirect:/";
+	    req.setAttribute("message", message.USER_LOGOUT);
+	    return "redirect:/";
 	}
 	
 	@RequestMapping(value="/translatePassword", method=RequestMethod.POST)
